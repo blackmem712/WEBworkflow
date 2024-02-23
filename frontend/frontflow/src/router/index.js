@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '../views/Home.vue'
+import CadEquipamento from '../views/CadEquipamento.vue'
 
 const routes = [
   {
@@ -8,8 +9,12 @@ const routes = [
     component: Home
   },
   {
-    
+    path: '/cadastro',
+    name: 'cad-equip',
+    component: CadEquipamento
   }
+
+  
 ]
 
 const router = createRouter({
