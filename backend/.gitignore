@@ -103,7 +103,7 @@ venv/
 ENV/ 
 env.bak/ 
 venv.bak/ 
-venvweb/
+venvweb
 
 # mkdocs documentation 
 /site 
