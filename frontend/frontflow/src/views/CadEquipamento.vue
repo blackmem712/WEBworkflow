@@ -1,17 +1,18 @@
 <template>
   <div class="pai-container">
-    <div class="main-main">
+    <div class="main-main1">
 
 
       <span class="main-text">CADASTRO DE EQUIPAMENTOS</span>
 
+      <span class="main-text02">Insira os dados do cliente</span>
+
       <div class="search-box">
-        <input type="text" class="search-text" placeholder="Pesquisar...">
+        <input type="text" class="search-text" placeholder="Pesquisar o cliente...">
         <a class="bx bx-search"></a>
       </div>
 
-      <span class="main-text02">Insira os dados do cliente</span>
-
+     
 
       <div class="main-row">
         <div class="main-textfield">
@@ -78,12 +79,86 @@
       </div>
 
 
-      <button type="button" class="main-button">
-        <a class="main-text22">Salvar</a>
-      </button>
-
-
     </div>
+
+
+
+
+
+
+
+  <div class="main-main2">
+<span class="main-text02">Insira os dados do Equipamento</span>
+<div class="search-box">
+  <input type="text" class="search-text" placeholder="Pesquisar equipamento...">
+  <a class="bx bx-search"></a>
+</div>
+
+
+
+
+<div class="main-row1">
+
+
+  <div class="main-textfield">
+    <div class="main-label1">
+      <label class="main-text03">EQUIPAMENTO</label>
+    </div>
+      <input type="text" id="" name="equipamento" class="main-container2"/>
+  </div>
+
+  <div class="main-textfield1">
+    <div class="main-label2">
+      <label class="main-text03">MARCA</label> 
+    </div>
+      <input type="text" id="" name="MARCA" class="main-container3"/>
+  </div>
+
+</div>
+
+
+
+<div class="main-row2">
+
+
+  <div class="main-textfield">
+    <div class="main-label1">
+      <label class="main-text03">MODELO</label>
+    </div>
+      <input type="text" id="" name="modelo" class="main-container2"/>
+  </div>
+
+  <div class="main-textfield1">
+    <div class="main-label2">
+      <label class="main-text03">COR</label> 
+    </div>
+      <input type="text" id="" name="cor" class="main-container3"/>
+  </div>
+
+
+  
+</div>
+
+<div class="main-row3">
+
+
+  <div class="main-textfield1">
+    <div class="main-label2">
+      <label class="main-text03">NUMERO DE SÉRIE</label> 
+    </div>
+      <input type="text" id="" name="nunserie" class="main-container4"/>
+  </div>
+
+
+</div>
+
+
+<button type="button" class="main-button">
+  <a class="main-text22">Salvar</a>
+</button>
+
+
+</div>
   </div>
 
 
@@ -108,7 +183,8 @@
   flex-direction: column;
   justify-content: flex-start;
 }
-.main-main {
+.main-main1 {
+  width: 50%;
   gap: 32px;
   width: 700px;
   padding: 50px;
@@ -117,7 +193,16 @@
   flex-direction: column;
   background-color: rgba(0, 0, 0, 0);
 }
-
+.main-main2 {
+  width: 50%;
+  gap: 32px;
+  width: 700px;
+  padding: 50px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(0, 0, 0, 0);
+}
 
 .search-box{
   gap: 10px;
