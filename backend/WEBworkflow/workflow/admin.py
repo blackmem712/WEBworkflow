@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from workflow.models import models
+from . import models
 
 @admin.register(models.Pessoa)
 class WorkflowAdmin(admin.ModelAdmin):
@@ -18,9 +18,10 @@ class WorkflowAdmin(admin.ModelAdmin):
 class WorkflowAdmin(admin.ModelAdmin):
     ...
 
+
 @admin.register(models.Historico)
 class WorkflowAdmin(admin.ModelAdmin):
-    ...
+   ...
 
 @admin.register(models.Setor)
 class WorkflowAdmin(admin.ModelAdmin):
@@ -40,5 +41,8 @@ class WorkflowAdmin(admin.ModelAdmin):
 class WorkflowAdmin(admin.ModelAdmin):
     ...
 @admin.register(models.Orcamento)
+class WorkflowAdmin(admin.ModelAdmin):
+    ...
+@admin.register(models.Status)
 class WorkflowAdmin(admin.ModelAdmin):
     ...

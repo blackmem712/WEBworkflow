@@ -5,7 +5,7 @@ class Pessoa(models.Model):
     nome = models.CharField(max_length=200) 
     cpf = models.CharField(max_length=12) 
     email = models.EmailField(max_length=50)
-    endereco = models.TextField()
+    endereco = models.CharField(max_length=50)
     cidade = models.CharField(max_length=12)
     telefone = models.CharField(max_length=50) 
     
@@ -26,26 +26,9 @@ class Funcionario(models.Model):
 
  def __str__(self) -> str:
         return f'{self.funcionario}'
-
-class Equipamento(models.Model):
-    equipamento = models.CharField(max_length=200) 
-    marca= models.CharField(max_length=50) 
-    modelo = models.CharField(max_length=50)
-    cor = models.CharField(max_length=50 )
-    nun_serie = models.CharField(max_length=50)
-    cliente = models.ForeignKey(Cliente, on_delete= models.CASCADE)
-    
-    def __str__(self) -> str:
-        return f'{self.equipamento}'
+ 
 
 
-class Historico(models.Model):
-    observacao = models.TextField() 
-    equipamento = models.ForeignKey(Equipamento, on_delete=models.CASCADE)
-
-    def __str__(self) -> str:
-        return f'{self.id}'
-    
 class Status(models.Model):
     date_entrada = models.DateTimeField(default=timezone.now)
     date_saida = models.DateTimeField(default=timezone.now)
@@ -55,9 +38,27 @@ class Status(models.Model):
                                  ('MA','manutenção'),
                                  ('GA','entrega'),
                                  ('SA','Saida')))
-    historico = models.ForeignKey(Historico, on_delete= models.CASCADE)
+    
     def __str__(self) -> str:
         return f'{self.status}'
+
+class Historico(models.Model): 
+   status_id = models.ForeignKey(Status, on_delete= models.CASCADE,null=True)
+   
+   def __str__(self) -> str:
+        return f'{self.id}'
+
+class Equipamento(models.Model):
+    equipamento = models.CharField(max_length=200) 
+    marca= models.CharField(max_length=50) 
+    modelo = models.CharField(max_length=50)
+    cor = models.CharField(max_length=50 )
+    nun_serie = models.CharField(max_length=50)
+    cliente = models.ForeignKey(Cliente, on_delete= models.CASCADE)
+    historico_id = models.OneToOneField(Historico, on_delete=models.CASCADE)
+    
+    def __str__(self) -> str:
+       return f'{self.equipamento}'
 
 
 class Setor(models.Model):
