@@ -1,19 +1,14 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
+import { createApp } from 'vue'; // Importar createApp do Vue
+import App from './App.vue';
+import router from './router';
+import store from './store';
+import 'tailwindcss/tailwind.css'
 
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
 
-import {BootstrapVue} from 'bootstrap-vue';
 
-Vue.use(BootstrapVue);
+const app = createApp(App); // Criar instância do aplicativo
 
-new Vue({
-  el: '#app',
-  router,
-  store,
-  render: h => h(App)
-});
+app.use(router); // Adicionar o router ao aplicativo
+app.use(store); // Adicionar a store ao aplicativo
 
+app.mount('#app'); // Montar o aplicativo no elemento com id "app"
