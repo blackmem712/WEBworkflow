@@ -5,6 +5,6 @@ class PessoaSerializer(serializers.ModelSerializer):
  class Meta:
     model = Pessoa
     fields =[
-      'id','nome','cpf','email','endereco','cidade', 'telefone'
+      'id','nome','cpf','email','cep','rua','numero','bairro','cidade','estado' ,'telefone'
     ]
      

@@ -14,7 +14,7 @@ urlpatterns = [
     ),
     
     path(
-      'pessoas/api/v1',
+      'pessoas/api/v1/',
       views.WorkflowAPIv1ViewSet.as_view({
         'get': 'list',
         'post':'create'
@@ -29,6 +29,7 @@ urlpatterns = [
         'get':'retrieve',
         'patch':'partial_update',
         'delete': 'destroy',
+        
       }),
       name='pessoas_api_v1_detail',
     ),

@@ -5,8 +5,12 @@ class Pessoa(models.Model):
     nome = models.CharField(max_length=200) 
     cpf = models.CharField(max_length=12) 
     email = models.EmailField(max_length=50)
-    endereco = models.CharField(max_length=50)
+    cep = models.IntegerField(20,null=True)
+    rua = models.CharField(max_length=100,null=True)
+    numero = models.IntegerField(10,null=True)
+    bairro = models.CharField(max_length=100,null=True)
     cidade = models.CharField(max_length=12)
+    estado = models.CharField(max_length=100,null=True)
     telefone = models.CharField(max_length=50) 
     
     def __str__(self) -> str:
@@ -92,7 +96,7 @@ class Cargo_funcionario(models.Model):
    
 class Servico(models.Model):
     nome = models.CharField(max_length=200) 
-    valor= models.IntegerField(max_length=50)
+    valor= models.IntegerField(50)
     descricao = models.TextField()   
 
     def __str__(self) -> str:
@@ -102,7 +106,7 @@ class Produto(models.Model):
     nome = models.CharField(max_length=50) 
     marca = models.CharField(max_length=50) 
     modelo= models.CharField(max_length=50)
-    preco = models.IntegerField(max_length=50)
+    preco = models.IntegerField(50)
     descricao = models.TextField() 
     
     def __str__(self) -> str:
