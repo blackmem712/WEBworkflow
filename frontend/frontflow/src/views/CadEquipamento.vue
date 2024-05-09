@@ -1,6 +1,6 @@
 <template>
-  <div class=" bg-midnight ">
-      <div class="bg-midnight ">
+  <div :class="{'md:max-lg:flex bg-midnight': true, 'sidebar-open': isSidebarOpen}">
+      <div class="main-main2">
 
 
           <span class="main-text">CADASTRO DE EQUIPAMENTOS</span>
@@ -225,6 +225,7 @@ export default {
 
           return "/pessoas/api/v1/?" + queryString;
       },
+      
   },
   data() {
       return {

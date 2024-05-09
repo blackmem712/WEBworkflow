@@ -105,7 +105,7 @@ transition: all 0.4s ease;
 }
 .sidebar.open{
 width: 250px;
-padding: px;
+
 
 
 }

@@ -28,37 +28,7 @@ export default{
 }
 </script>
 
-<style scoped>
+<style >
 
- @import url('https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css');
-
-.search-box{
-  gap: 10px;
-  display: flex;
-  padding: 10px 16px;
-  align-self: stretch;
-  align-items: flex-start;
-  flex-shrink: 0;
-  border-color: rgba(0, 0, 0, 1);
-  border-style: solid;
-  border-width: 1px;
-  border-radius: 8px;
-  background-color: rgb(255, 245, 245);
-  justify-content: space-between;
-
-}
-.search-text{
-
-  background-color: none;
-  border: 0;
-  outline: 0;
-  font-size: 16px;
-
-}
-.bx-search{
-    
-   color: black;
-
-}
-
+ 
 </style>

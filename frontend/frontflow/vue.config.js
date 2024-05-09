@@ -1,8 +1,22 @@
 const { defineConfig } = require('@vue/cli-service')
-module.exports = defineConfig({
-  transpileDependencies: true,
+const tailwindcss = require('tailwindcss')
+const autoprefixer = require('autoprefixer')
 
-  chainWebpack: (config) => {
+module.exports = defineConfig({
+ transpileDependencies: true,
+ css: {
+    loaderOptions: {
+      postcss: {
+        postcssOptions: {
+          plugins: [
+            tailwindcss,
+            autoprefixer,
+          ],
+        },
+      },
+    },
+ },
+ chainWebpack: (config) => {
     config.plugin('define').tap((definitions) => {
       Object.assign(definitions[0], {
         __VUE_OPTIONS_API__: 'true',
@@ -11,5 +25,5 @@ module.exports = defineConfig({
       })
       return definitions
     })
-  }
+ }
 })
