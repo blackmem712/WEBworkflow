@@ -5,7 +5,6 @@ export default createStore({
   state() {
     return {
       verificarcampos: false,
-      login: false,
       cliente: {
         nome: "",
         cpf: "",
@@ -20,21 +19,25 @@ export default createStore({
       }
     };
   },
+  
   mutations: {
     UPDATE_CLIENTE(state, payload) {
       state.cliente = Object.assign(state.cliente, payload);
     },
-  },
+  }, 
   actions: {
     async criarUsuario(context, payload) {
       context.commit("UPDATE_CLIENTE", { id: payload.id });
       try {
-        const response = await api.post("/pessoas/api/v1", payload);
+        const response = await api.post("/pessoas/api/v1/", payload);
         return response;
       } catch (error) {
         console.error("Erro ao criar usuário:", error);
         throw error;
       }
+    },
+    clearCliente({commit}){
+      commit('CLEAR_CLIENTE');
     },
   },
   modules: {

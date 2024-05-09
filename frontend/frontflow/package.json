@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
+    "@tailwindcss/typography": "^0.5.13",
     "autoprefixer": "^10.4.19",
     "axios": "^1.6.7",
     "core-js": "^3.8.3",
