@@ -119,6 +119,8 @@
                         <button @click="criarUsuario"
                             class="px-6 py-2 leading-5 text-white transition-colors duration-200 transform bg-[#e2e8f0] rounded-md hover:bg-[#4b5563] focus:outline-none focus:bg-gray-600 ">Salvar</button>
                     </div>
+
+                    <button @click="$store.dispatch('clearCliente')">Limpar Cliente</button>
                 </form>
             </div>
         </div>
@@ -155,15 +157,17 @@ export default {
             ],
             base: "cliente",
             mutation: "UPDATE_CLIENTE",
+            
 
         }),
-
         clientePreenchido() {
             const cliente = this.$store.state.cliente;
             return Object.values(cliente).every(val => val !== "");
         },
+
+       
         url() {
-            let queryString = ""
+            let queryString = "";
             for (let key in this.$route.query) {
                 queryString += `${key}=${this.$route.query[key]}`
 
@@ -174,6 +178,10 @@ export default {
 
     },
     
+    created() {
+        
+      
+    },
     data() {
         return {
 
@@ -183,16 +191,15 @@ export default {
 
         };
     },
+   
     methods: {
 
         getPessoas() {
 
-            this.queryString = null;
+           this.cliente = null;
             this.pessoas = null;
             this.teste = null;
-            this.dadosApi = null;
-            this.objetoTrans = null;
-            
+
 
             api.get(this.url).then(response => {
 
@@ -209,7 +216,7 @@ export default {
                 this.cidade = objetoTrans.cidade
                 this.estado = objetoTrans.estado;
                 this.telefone = objetoTrans.telefone;
-            });
+            }); 
 
         },
         criarUsuario() {
@@ -230,7 +237,8 @@ export default {
     },
     watch: {
         url() {
-            this.getPessoas();
+          this.getPessoas()
+            
         },
         clientePreenchido(novoValor) {
             if (novoValor) {
@@ -241,9 +249,7 @@ export default {
         },
 
     },
-    created() {
-        this.getPessoas();
-    },
+    
     name: "cad-equip"
 }
 </script>

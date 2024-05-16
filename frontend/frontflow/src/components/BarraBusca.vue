@@ -10,13 +10,14 @@
 <script>
 export default{
     name: 'Barra-Busca',
-
+    
     data(){
         return{
             busca:""
 
         };
     },
+   
     methods:
     {
         buscarProdutos(){

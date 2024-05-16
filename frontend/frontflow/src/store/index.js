@@ -21,11 +21,31 @@ export default createStore({
   },
   
   mutations: {
+    CLEAR_CLIENTE(state) {
+      console.log('Executando CLEAR_CLIENTE');
+      state.cliente = {
+        nome: "",
+        cpf: "",
+        email: "",
+        cep: "",
+        rua: "",
+        numero: "",
+        bairro: "",
+        cidade: "",
+        estado: "",
+        telefone: ""
+      };
+    },
     UPDATE_CLIENTE(state, payload) {
       state.cliente = Object.assign(state.cliente, payload);
     },
+    
   }, 
   actions: {
+    clearCliente({commit}){
+      console.log('Chamando clearCliente');
+      commit('CLEAR_CLIENTE');
+    },
     async criarUsuario(context, payload) {
       context.commit("UPDATE_CLIENTE", { id: payload.id });
       try {
@@ -36,9 +56,7 @@ export default createStore({
         throw error;
       }
     },
-    clearCliente({commit}){
-      commit('CLEAR_CLIENTE');
-    },
+    
   },
   modules: {
   }

@@ -7,12 +7,15 @@ const routes = [
   {
     path: '/',
     name: 'home-main',
-    component: Home
+    component: Home,
+
   },
   {
     path: '/cadastro',
     name: 'cad-equip',
-    component: CadEquipamento
+    component: CadEquipamento,
+   
+
   }
 ];
 
