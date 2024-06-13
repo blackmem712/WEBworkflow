@@ -27,7 +27,7 @@ class WorkflowAPIv1ViewSet(ModelViewSet):
             context={'request': request},
             partial=True,
         )
-        print('parametros',self.kwargs)
+                       
         print('query Strings',self.request.query_params)
         serializer.is_valid(raise_exception=True)
         serializer.save()
