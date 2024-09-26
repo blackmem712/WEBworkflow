@@ -18,8 +18,8 @@ class WorkflowAPIv1ViewSet(ModelViewSet):
       
 
     def partial_update(self, request, *args, **kwargs):
-        nome = kwargs.get('nome')
-        pessoa = self.get_queryset().filter(nome=nome).first()
+        pk = kwargs.get('pk')
+        pessoa = self.get_queryset().filter(pk=pk).first()
         serializer = PessoaSerializer(
             instance=pessoa,
             data=request.data,
