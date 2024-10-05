@@ -19,6 +19,7 @@ export default createStore({
         telefone: ""
       }
 
+
     };
 
 
@@ -47,6 +48,7 @@ export default createStore({
 
   },
   actions: {
+    
     clearCliente({ commit }) {
       console.log('Chamando clearCliente');
       commit('CLEAR_CLIENTE');
@@ -55,6 +57,7 @@ export default createStore({
       context.commit("UPDATE_CLIENTE", { id: payload.id });
       try {
         const response = await api.post("/pessoas/api/v1/", payload);
+        alert('Cliente Cadastrado com sucesso!');
 
         return response;
 

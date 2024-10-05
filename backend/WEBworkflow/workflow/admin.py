@@ -2,9 +2,6 @@ from django.contrib import admin
 
 from . import models
 
-@admin.register(models.Pessoa)
-class WorkflowAdmin(admin.ModelAdmin):
-    ...
 
 @admin.register(models.Cliente)
 class WorkflowAdmin(admin.ModelAdmin):

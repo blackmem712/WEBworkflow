@@ -2,34 +2,35 @@ from django.db import models
 from django.utils import timezone
 
 class Pessoa(models.Model):
-    nome = models.CharField(max_length=200) 
-    cpf = models.CharField(max_length=12) 
-    email = models.EmailField(max_length=50)
+    nome = models.CharField(max_length=200,null=True) 
+    cpf = models.CharField(max_length=12,null=True) 
+    email = models.EmailField(max_length=50,null=True)
     cep = models.IntegerField(20,null=True)
     rua = models.CharField(max_length=100,null=True)
     numero = models.IntegerField(10,null=True)
     bairro = models.CharField(max_length=100,null=True)
-    cidade = models.CharField(max_length=12)
+    bairro = models.CharField(max_length=100,null=True)
+    cidade = models.CharField(max_length=50,null=True)
     estado = models.CharField(max_length=100,null=True)
-    telefone = models.CharField(max_length=50) 
+    telefone = models.CharField(max_length=50,null=True) 
     
-    def __str__(self) -> str:
-        return f'{self.nome}'
+    class Meta:
+        abstract = True  # Tornando Pessoa uma classe abstrata
 
- ### "Classes abstratas base" da pra usar aqui para que cliente e funcionário herdem pessoa   ####
- ### link da documentação "https://docs.djangoproject.com/pt-br/4.2/topics/db/models/#abstract-base-classes" #####
+    def __str__(self):
+        return self.nome
 
-class Cliente(models.Model):
-  cliente = models.ForeignKey(Pessoa, on_delete= models.CASCADE)
-  
-  def __str__(self) -> str:
-        return f'{self.cliente}'
- 
-class Funcionario(models.Model):
- funcionario = models.ForeignKey(Pessoa, on_delete=models.CASCADE)
 
- def __str__(self) -> str:
-        return f'{self.funcionario}'
+class Cliente(Pessoa):  # Herança de Pessoa
+    def __str__(self):
+        return self.nome
+
+
+class Funcionario(Pessoa):  # Herança de Pessoa
+    def __str__(self):
+        return self.nome
+
+
  
 
 
@@ -114,7 +115,7 @@ class Produto(models.Model):
 
 class Fornecedor(models.Model):
     produtos = models.ManyToManyField(Produto) 
-    nome = models.CharField(max_length=50) 
+    nome = models.CharField(max_length=50)   
     cnpj = models.CharField(max_length=50) 
     telefone = models.CharField(max_length=50) 
     descricao = models.TextField() 

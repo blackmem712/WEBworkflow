@@ -1,10 +1,8 @@
 from rest_framework import serializers
-from .models import Pessoa
+from .models import Cliente
 
-class PessoaSerializer(serializers.ModelSerializer):
+class ClienteSerializer(serializers.ModelSerializer):
  class Meta:
-    model = Pessoa
-    fields =[
-      'id','nome','cpf','email','cep','rua','numero','bairro','cidade','estado' ,'telefone'
-    ]
+    model = Cliente
+    fields = '__all__' 
      

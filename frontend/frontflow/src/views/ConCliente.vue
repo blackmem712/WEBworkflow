@@ -40,7 +40,7 @@
         </button>
 
         <CadEquipamento :mostrarModal="mostrarModal" :isEditing="isEditing" @close="fecharModal"
-          @atualizarCliente="atualizarCliente" @excluirCliente="excluirCliente"></CadEquipamento>
+          @atualizarCliente="atualizarCliente" @excluirCliente="excluirCliente" :clientes="clientes"> </CadEquipamento>
         <button
           class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-slate-500 to-slate-200 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-slate-300 dark:focus:ring-cyan-800">
           <span
@@ -159,6 +159,7 @@ export default {
       this.mostrarModal = false;
       this.$store.dispatch('clearCliente');
       this.isEditing = false;
+      this.getClientes(); 
 
     },
 
@@ -243,7 +244,7 @@ export default {
         .then(() => {
           alert('Cliente atualizado com sucesso!');
           this.fecharModal(); // Fechar o modal após atualização
-          this.getClientes();  // Atualizar a lista de clientes
+          // Atualizar a lista de clientes
         })
         .catch(error => {
           console.error('Erro ao atualizar cliente:', error);
@@ -258,7 +259,7 @@ export default {
         .then(() => {
           alert('Cliente Excluido com sucesso!');
           this.fecharModal(); // Fechar o modal após atualização
-          this.getClientes();  // Atualizar a lista de clientes
+           // Atualizar a lista de clientes
         })
         .catch(error => {
           console.error('Erro ao excluir cliente:', error);

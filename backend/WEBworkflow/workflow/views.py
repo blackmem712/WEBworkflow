@@ -4,24 +4,24 @@ from django.urls import path
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from .serializers import PessoaSerializer
-from .models import Pessoa
+from .serializers import ClienteSerializer
+from .models import Cliente
 
 def home(request):
     return render(request, 'workflow/pages/cad_equip.html')
 
 
 class WorkflowAPIv1ViewSet(ModelViewSet):
-    queryset = Pessoa.objects.all()
-    serializer_class = PessoaSerializer
+    queryset = Cliente.objects.all()
+    serializer_class = ClienteSerializer
     http_method_names = ['get', 'options', 'head', 'patch', 'post', 'delete']
       
 
     def partial_update(self, request, *args, **kwargs):
         pk = kwargs.get('pk')
         pessoa = self.get_queryset().filter(pk=pk).first()
-        serializer = PessoaSerializer(
-            instance=pessoa,
+        serializer = ClienteSerializer(
+            instance=cliente,
             data=request.data,
             many=False,
             context={'request': request},
@@ -53,7 +53,7 @@ class WorkflowAPIv1ViewSet(ModelViewSet):
    
 @api_view()
 def workflow_list(request):
-    pessoas = Pessoa.objects.all()
-    serializer = PessoaSerializer(instance = pessoas,many=True)
+    clientes = Cliente.objects.all()
+    serializer = ClienteSerializer(instance = clientes,many=True)
     return Response(serializer.data)
 
