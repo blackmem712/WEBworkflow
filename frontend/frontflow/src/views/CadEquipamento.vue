@@ -127,33 +127,30 @@
 
                        <!---------------------- INPUT DE PESQUISA DO CADASTRO DO EQUIPAMENTO -------------------->
 
-                    
-
-
                     <div v-if="!isEditing" class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2 md:grid-cols-3">
                         <div>
                             <label class="text-gray-700 dark:text-gray-200" for="equipamento">Equipamento</label>
-                            <input id="equipamento" type="text"
+                            <input id="equipamento" type="text" v-model="equipamento"
                                 class="block w-full p-4 pl-9 text-sm text-gray-900 dark:text-gray-200 border border-slate-300 rounded-lg focus:ring-slate-400 focus:border-slate-400">
                         </div>
                         <div>
                             <label class="text-gray-700 dark:text-gray-200" for="marca">Marca</label>
-                            <input id="marca" type="text"
+                            <input id="marca" type="text" v-model="marca"
                                 class="block w-full p-4 pl-9 text-sm text-gray-900 dark:text-gray-200 border border-slate-300 rounded-lg focus:ring-slate-400 focus:border-slate-400">
                         </div>
                         <div>
                             <label class="text-gray-700 dark:text-gray-200" for="modelo">Modelo</label>
-                            <input id="modelo" type="text"
+                            <input id="modelo" type="text" v-model="modelo"
                                 class="block w-full p-4 pl-9 text-sm text-gray-900 dark:text-gray-200 border border-slate-300 rounded-lg focus:ring-slate-400 focus:border-slate-400">
                         </div>
                         <div>
                             <label class="text-gray-700 dark:text-gray-200" for="cor">Cor</label>
-                            <input id="cor" type="text"
+                            <input id="cor" type="text" v-model="cor"
                                 class="block w-full p-4 pl-9 text-sm text-gray-900 dark:text-gray-200 border border-slate-300 rounded-lg focus:ring-slate-400 focus:border-slate-400">
                         </div>
                         <div>
                             <label class="text-gray-700 dark:text-gray-200" for="numeroSerie">Número em Série</label>
-                            <input id="numeroSerie" type="text"
+                            <input id="numeroSerie" type="text" v-model="nunserie"
                                 class="block w-full p-4 pl-9 text-sm text-gray-900 dark:text-gray-200 border border-slate-300 rounded-lg focus:ring-slate-400 focus:border-slate-400">
                         </div>
                     </div>
@@ -163,7 +160,7 @@
                             Equipamentos
                         </h3>
                     </div>
-
+                    <!---------------------- TABELA DO EQUIPAMENTO DO MODAL DE EDITAR -------------------->
                     <table v-if="isEditing" class="table-auto w-full">
                         <thead>
                             <tr class="text-xs text-gray-500 text-left">
@@ -277,9 +274,19 @@ export default {
             ],
             base: "cliente",
             mutation: "UPDATE_CLIENTE",
-
-
         }),
+        ...mapFields({
+            fields: [
+                "equipamento",
+                "marca",
+                "modelo",
+                "cor",
+                "nunserie",
+            ],
+            base: "equipamento",
+            mutation: "UPDATE_EQUIPAMENTO",
+        }),
+
         clientePreenchido() {
             const cliente = this.$store.state.cliente;
             return Object.values(cliente).every(val => val !== "");
@@ -320,7 +327,8 @@ export default {
             bairro: "",
             cidade: "",
             estado: "",
-            telefone: ""
+            telefone: "",
+            clienteId: null, 
 
         };
     },
@@ -377,6 +385,7 @@ export default {
             this.cidade = cliente.cidade;
             this.estado = cliente.estado;
             this.telefone = cliente.telefone;
+           
 
             this.busca = cliente.nome;  // Atualiza o campo de busca
             this.clientesFiltrados = [];

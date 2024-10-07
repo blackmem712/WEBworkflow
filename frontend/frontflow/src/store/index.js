@@ -6,6 +6,7 @@ export default createStore({
     return {
 
       verificarcampos: false,
+
       cliente: {
         nome: "",
         cpf: "",
@@ -17,6 +18,15 @@ export default createStore({
         cidade: "",
         estado: "",
         telefone: ""
+      },
+
+      equipamento: {
+        equipamento: "",
+        marca: "",
+        modelo: "",
+        cor: "",
+        nunserie: "",
+       
       }
 
 
@@ -46,9 +56,29 @@ export default createStore({
       state.cliente = Object.assign(state.cliente, payload);
     },
 
+
+
+
+    CLEAR_EQUIPAMENTO(state) {
+      console.log('Executando CLEAR_EQUIPAMENTO');
+      state.equipamento = {
+        equipamento: "",
+        marca: "",
+        modelo: "",
+        cor: "",
+        nunserie: "",
+       
+      };
+
+    },
+    UPDATE_EQUIPAMENTO(state, payload1) {
+      state.equipamento = Object.assign(state.equipamento, payload1);
+    },
+
   },
   actions: {
     
+
     clearCliente({ commit }) {
       console.log('Chamando clearCliente');
       commit('CLEAR_CLIENTE');
@@ -66,6 +96,40 @@ export default createStore({
         throw error;
       }
     },
+
+
+    clearEquipamento({ commit1 }) {
+      console.log('Chamando clearEquipamento');
+      commit1('CLEAR_EQUIPAMENTO');
+    },
+    async criarEquipamento({context1,payload1}){
+      context1.commit1("UPDATE_EQUIPAMENTO",{id: payload1.id});
+      try{
+        const response = await api.post("/equipamentos/api/v1/",payload1);
+        alert('Cliente Cadastrado com sucesso!');
+
+        return response
+
+      } catch(error){
+        console.error("Erro ao criar equipamento", error);
+        throw error;
+      }
+
+    },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   },
   modules: {
