@@ -39,8 +39,10 @@
           </span>
         </button>
 
-        <CadEquipamento :mostrarModal="mostrarModal" :isEditing="isEditing" @close="fecharModal"
-          @atualizarCliente="atualizarCliente" @excluirCliente="excluirCliente" :clientes="clientes"> </CadEquipamento>
+        <CadEquipamento :mostrarModal="mostrarModal" :isEditing="isEditing" @close="fecharModal"  :clientes="clientes"> </CadEquipamento>
+
+        <EdictEquipamento  :mostrarModalEdic="mostrarModalEdic" @close="fecharModalEdic"  @atualizarCliente="atualizarCliente" @excluirCliente="excluirCliente"></EdictEquipamento>
+        
         <button
           class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-slate-500 to-slate-200 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-slate-300 dark:focus:ring-cyan-800">
           <span
@@ -112,12 +114,14 @@
 <script>
 import { api } from '../axios-api.js';
 import CadEquipamento from '../views/CadEquipamento.vue';
+import EdictEquipamento from './EdictEquipamento.vue';
 
 
 export default {
 
   components: {
     CadEquipamento,
+    EdictEquipamento,
   },
   computed: {
 
@@ -144,15 +148,25 @@ export default {
       busca: "",
       mostrarModal: false,
       isEditing: false,
+      mostrarModalEdic:false,
 
     };
   },
   methods: {
 
+    abrirModalEdic(){
+      this.mostrarModalEdic = true;
+    },
+    fecharModalEdic(){
+      this.mostrarModalEdic = false;
+      this.$store.dispatch('clearCliente');
+    },
+
 
 
     abrirModal() {
       this.mostrarModal = true;
+      
     },
 
     fecharModal() {
@@ -196,7 +210,7 @@ export default {
       //  faz uma requisição à API para buscar os dados completos do cliente
       console.log(this.clienteId);
 
-      this.isEditing = true;
+    
       api.get(`/pessoas/api/v1/${clienteId}`).then(response => {
         const cliente = response.data;
 
@@ -216,7 +230,7 @@ export default {
         });
 
         // Abre o modal
-        this.mostrarModal = true;
+        this.mostrarModalEdic = true;
       });
     },
     atualizarCliente() {
@@ -243,7 +257,7 @@ export default {
       api.patch(`/pessoas/api/v1/${clienteId}/`, clienteAtualizado)
         .then(() => {
           alert('Cliente atualizado com sucesso!');
-          this.fecharModal(); // Fechar o modal após atualização
+          this.fecharModalEdic(); // Fechar o modal após atualização
           // Atualizar a lista de clientes
         })
         .catch(error => {
@@ -258,7 +272,7 @@ export default {
       api.delete(`/pessoas/api/v1/${clienteId}/`)
         .then(() => {
           alert('Cliente Excluido com sucesso!');
-          this.fecharModal(); // Fechar o modal após atualização
+          this.fecharModalEdic(); // Fechar o modal após atualização
            // Atualizar a lista de clientes
         })
         .catch(error => {

@@ -8,6 +8,7 @@ export default createStore({
       verificarcampos: false,
 
       cliente: {
+        id: null,
         nome: "",
         cpf: "",
         email: "",
@@ -21,12 +22,14 @@ export default createStore({
       },
 
       equipamento: {
+       
         equipamento: "",
         marca: "",
         modelo: "",
         cor: "",
         nunserie: "",
-       
+        cliente:null,
+        historico_id:null,
       }
 
 
@@ -39,6 +42,7 @@ export default createStore({
     CLEAR_CLIENTE(state) {
       console.log('Executando CLEAR_CLIENTE');
       state.cliente = {
+        id: null,
         nome: "",
         cpf: "",
         email: "",
@@ -66,14 +70,19 @@ export default createStore({
         marca: "",
         modelo: "",
         cor: "",
-        nunserie: "",
+        nun_serie: "",
+      
        
       };
 
     },
-    UPDATE_EQUIPAMENTO(state, payload1) {
-      state.equipamento = Object.assign(state.equipamento, payload1);
+    UPDATE_EQUIPAMENTO(state, payload) {
+      state.equipamento = Object.assign(state.equipamento, payload);
     },
+    SET_CLIENTE_ID_EQUIPAMENTO(state, cliente) {
+      // Atualiza o state do equipamento com o ID do cliente
+      state.equipamento.cliente = cliente;
+    }
 
   },
   actions: {
@@ -83,8 +92,8 @@ export default createStore({
       console.log('Chamando clearCliente');
       commit('CLEAR_CLIENTE');
     },
-    async criarUsuario(context, payload) {
-      context.commit("UPDATE_CLIENTE", { id: payload.id });
+    async criarUsuario({commit}, payload) {
+      commit("UPDATE_CLIENTE", { id: payload.id });
       try {
         const response = await api.post("/pessoas/api/v1/", payload);
         alert('Cliente Cadastrado com sucesso!');
@@ -98,15 +107,24 @@ export default createStore({
     },
 
 
-    clearEquipamento({ commit1 }) {
+    clearEquipamento({ commit }) {
       console.log('Chamando clearEquipamento');
-      commit1('CLEAR_EQUIPAMENTO');
+      commit('CLEAR_EQUIPAMENTO');
     },
-    async criarEquipamento({context1,payload1}){
-      context1.commit1("UPDATE_EQUIPAMENTO",{id: payload1.id});
+    async criarEquipamento({ state}){
+      
+      const equipamentoPayload  = {
+        cliente: state.equipamento.cliente,
+        equipamento: state.equipamento.equipamento,
+        marca: state.equipamento.marca,
+        modelo: state.equipamento.modelo,
+        cor: state.equipamento.cor,
+        nun_serie: state.equipamento.nun_serie,
+        historico_id:null
+      };
       try{
-        const response = await api.post("/equipamentos/api/v1/",payload1);
-        alert('Cliente Cadastrado com sucesso!');
+        const response = await api.post("/equipamentos/api/v1/",equipamentoPayload );
+        alert('Equipamento Cadastrado com sucesso!');
 
         return response
 
@@ -115,6 +133,9 @@ export default createStore({
         throw error;
       }
 
+    },
+    setClienteIdEquipamento({ commit }, clienteId) {
+      commit('SET_CLIENTE_ID_EQUIPAMENTO', clienteId);
     },
 
 

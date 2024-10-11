@@ -36,7 +36,7 @@ class Funcionario(Pessoa):  # Herança de Pessoa
 
 class Status(models.Model):
     date_entrada = models.DateTimeField(default=timezone.now)
-    date_saida = models.DateTimeField(default=timezone.now)
+    date_saida = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=2,default='EN',choices=(
                                  ('EN','Entrada'),
                                  ('OR','Orçamento'),
@@ -60,7 +60,7 @@ class Equipamento(models.Model):
     cor = models.CharField(max_length=50 )
     nun_serie = models.CharField(max_length=50)
     cliente = models.ForeignKey(Cliente, on_delete= models.CASCADE)
-    historico_id = models.OneToOneField(Historico, on_delete=models.CASCADE)
+    historico_id = models.OneToOneField(Historico, on_delete=models.CASCADE,null=True)
     
     def __str__(self) -> str:
        return f'{self.equipamento}'

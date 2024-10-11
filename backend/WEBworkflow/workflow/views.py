@@ -1,11 +1,15 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.urls import path
+from rest_framework import status 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from .serializers import ClienteSerializer, EquipamentoSerializer
-from .models import Cliente, Equipamento
+from .models import Cliente, Equipamento, Status, Historico
+from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
+
 
 def home(request):
     return render(request, 'workflow/pages/cad_equip.html')
@@ -61,38 +65,71 @@ def workflow_list(request):
 class WorkflowEquipamentoAPIv1ViewSet(ModelViewSet):
    queryset = Equipamento.objects.all()
    serializer_class = EquipamentoSerializer
-   http_method_names = ['get','options','head','patch','post','delete']
-   
+   filter_backends = [DjangoFilterBackend]  
+   filterset_fields = ['cliente']  
+   http_method_names = ['get', 'options', 'head', 'patch', 'post', 'delete']
+
+
+   # Sobrescrevendo o método 'create' para quando um novo Equipamento for cadastrado
+   def create(self, request, *args, **kwargs):
+        # Cria um novo status com "Entrada" e data de entrada como a data atual
+        status_obj = Status.objects.create(
+            date_entrada=timezone.now(),  
+            status='EN' 
+        )
+        
+        # Cria um novo histórico associado ao status criado
+        historico_obj = Historico.objects.create(status_id=status_obj)
+
+        
+        serializer = EquipamentoSerializer(
+            data=request.data,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        
+        serializer.save(historico_id=historico_obj)
+
+        # Retorna a resposta com os dados do equipamento criado
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+   # Método para 'PATCH' ou atualização parcial
    def partial_update(self, request, *args, **kwargs):
        pk = kwargs.get('pk')
        equipamento = self.get_queryset().filter(pk=pk).first()
+
+       # Serializando o objeto com atualização parcial
        serializer = EquipamentoSerializer(
-        isinstance = equipamento,
-        data= request.data,
-        many=False,
-        context= {'request': request},
-        partial= True,
+           equipamento,  # Objeto de Equipamento
+           data=request.data,
+           many=False,
+           context={'request': request},
+           partial=True  # Atualização parcial
        )
 
-       print('query Strings',self.request.query_params)
-       serializer.is_valid(raise_excepition=True)
+       print('Query Strings:', self.request.query_params)
+
+       # Validação do serializer
+       serializer.is_valid(raise_exception=True)
+
+       
        serializer.save()
 
-       return Response(
-         serializer.data,
-      )
-    
+       return Response(serializer.data)
+
+   
+
+   # Sobrescrevendo o método get_queryset para filtrar por query params
    def get_queryset(self):
        qs = super().get_queryset()
        query_params = self.request.query_params
 
-       for key,value in query_params.itens():
-           qs =qs.filter(**{key:value})
+       # Iterando sobre os parâmetros de consulta e aplicando filtros
+       for key, value in query_params.items():
+           qs = qs.filter(**{key: value})
 
-           print('parametros',self.kwargs)
-           print('query Strings',self.request.query_params)
+       print('Parâmetros:', self.kwargs)
+       print('Query Strings:', self.request.query_params)
 
        return qs
-           
-       
-          
