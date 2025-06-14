@@ -22,7 +22,7 @@ export default createStore({
       },
 
       equipamento: {
-       
+        id:null,
         equipamento: "",
         marca: "",
         modelo: "",

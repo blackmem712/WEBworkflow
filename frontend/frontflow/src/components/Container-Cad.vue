@@ -1,6 +1,5 @@
 <template>
-    <router-view> 
-    </router-view> 
+   
    
 </template>
 
@@ -13,7 +12,3 @@ export default {
 };
 </script>
 
-<style scoped>
-
-
-</style >

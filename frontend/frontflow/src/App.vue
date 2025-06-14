@@ -1,23 +1,15 @@
 <template>
-    <div>
-    
-      <TheHeader>
-      
-    </TheHeader>
-    </div>
-  </template>
+      <RouterView />
+</template>
   
-  <script>
-  import TheHeader from './components/TheHeader.vue';
+<script>
+  
  
   
   export default {
-    components: {
-      TheHeader,
-
-    }
+   
   }
-  </script>
+</script>
 <style>
 
     
