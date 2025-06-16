@@ -75,3 +75,20 @@ body {
   font-weight: bold;
   color: white;
 }
+/* layout.css */
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.layout-content {
+  flex: 1;
+  padding: 2rem;
+  margin-left: 60px; /* Largura da sidebar recolhida */
+  transition: margin-left 0.3s ease;
+}
+
+/* Quando passar o mouse na sidebar */
+.sidebar-hover:hover ~ .layout-content {
+  margin-left: 220px; /* Largura da sidebar expandida */
+}

@@ -1,13 +1,12 @@
 'use client'
 
-import Sidebar from '@/components/Sidebar'
 import Link from 'next/link'
 import './home.css'
 
 export default function HomePage() {
   return (
     <div className="home-container">
-      <Sidebar />
+     
       <main className="home-main">
         <h1 className="home-title">Bem-vindo 👋</h1>
         <p className="home-subtitle">Gerencie seus clientes, equipamentos e orçamentos de forma rápida e eficiente.</p>

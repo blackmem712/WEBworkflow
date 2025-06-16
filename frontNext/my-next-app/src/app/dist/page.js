@@ -1,12 +1,10 @@
 'use client';
 "use strict";
 exports.__esModule = true;
-var Sidebar_1 = require("@/components/Sidebar");
 var link_1 = require("next/link");
 require("./home.css");
 function HomePage() {
     return (React.createElement("div", { className: "home-container" },
-        React.createElement(Sidebar_1["default"], null),
         React.createElement("main", { className: "home-main" },
             React.createElement("h1", { className: "home-title" }, "Bem-vindo \uD83D\uDC4B"),
             React.createElement("p", { className: "home-subtitle" }, "Gerencie seus clientes, equipamentos e or\u00E7amentos de forma r\u00E1pida e eficiente."),

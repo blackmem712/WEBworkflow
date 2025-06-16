@@ -1,0 +1,101 @@
+/* components/tabelaClientes.css */
+/* Container geral */
+.tabela-container {
+  margin-top: 2rem;
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Título */
+.tabela-container h2 {
+  margin: 0 0 1rem;
+  font-size: 1.75rem;
+  color: #1e293b;
+}
+
+/* Controles: busca + botão */
+.tabela-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Campo de busca estilizado */
+.tabela-busca {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  padding-left: 3rem;
+  border: none;
+  border-radius: 9999px;
+  background-color: #f1f5f9;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  font-size: 1rem;
+  transition: box-shadow 0.2s ease, background-color 0.2s ease;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='16' height='16' fill='%2394a3b8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11.742 10.344l3.853 3.853-1.398 1.398-3.853-3.853a6.5 6.5 0 1 1 1.398-1.398zM6.5 11a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 1rem center;
+}
+
+.tabela-busca::placeholder {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.tabela-busca:focus {
+  outline: none;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+}
+
+/* Tabela */
+.tabela-clientes {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.95rem;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+/* Cabeçalho */
+.tabela-clientes thead {
+  background-color: #3b82f6;
+}
+.tabela-clientes thead th {
+  color: #ffffff;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+}
+
+/* Linhas */
+.tabela-clientes tbody tr {
+  background-color: #ffffff;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.tabela-clientes tbody tr:nth-child(even) {
+  background-color: #f1f5f9;
+}
+
+/* Células */
+.tabela-clientes th,
+.tabela-clientes td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+/* Hover nas linhas */
+.tabela-clientes tbody tr:hover {
+  background-color: #e0f2fe;
+  transform: translateX(4px);
+  cursor: pointer;
+}
+
+/* Última linha sem border-bottom */
+.tabela-clientes tbody tr:last-child td {
+  border-bottom: none;
+}
