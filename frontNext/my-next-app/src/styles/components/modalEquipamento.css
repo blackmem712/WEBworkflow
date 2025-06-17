@@ -1,0 +1,100 @@
+/* modalEquipamento.css */
+
+/* Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+}
+
+/* Janela ampliada: use a classe .wide */
+.modal-equip {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;   /* aumentamos aqui */
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+.modal-equip.wide h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #1e293b;
+}
+
+/* Grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(12,1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.grid-col-6 { grid-column: span 6; }
+
+/* Busca de cliente */
+.search-wrap {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
+}
+
+/* Lista de sugestões */
+.suggestions {
+  position: absolute;
+  margin-top: 0.25rem;
+  width: calc(50% - 0.5rem); /* metade do modal menos gap */
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  list-style: none;
+  padding: 0;
+  z-index: 400;
+}
+
+.suggestions li {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.suggestions li:hover {
+  background: #f1f5f9;
+}
+
+.no-sug {
+  color: #888;
+  cursor: default;
+}
+
+/* Botões */
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}

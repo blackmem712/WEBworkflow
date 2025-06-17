@@ -1,0 +1,74 @@
+/* tabelaEquipamentos.css */
+.tabela-equip-container {
+  margin-left: 60px;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.tabela-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.tabela-busca {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  padding-left: 3rem;
+  border: none;
+  border-radius: 9999px;
+  background-color: #f1f5f9;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: box-shadow 0.2s;
+  background-image: url("data:image/svg+xml;..."); /* ícone lupa */
+  background-repeat: no-repeat;
+  background-position: 1rem center;
+}
+
+.tabela-equip {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.95rem;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.tabela-equip thead {
+  background-color: #3b82f6;
+}
+
+.tabela-equip thead th {
+  color: #fff;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+}
+
+.tabela-equip tbody tr {
+  background: #fff;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.tabela-equip tbody tr:nth-child(even) {
+  background: #f1f5f9;
+}
+
+.tabela-equip tbody tr:hover {
+  background: #e0f2fe;
+  transform: translateX(4px);
+  cursor: pointer;
+}
+
+.tabela-equip th,
+.tabela-equip td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tabela-equip tbody tr:last-child td {
+  border-bottom: none;
+}

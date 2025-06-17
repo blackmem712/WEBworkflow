@@ -1,0 +1,16 @@
+/* equipamentos.css */
+.equip-page {
+  margin-top: 2rem;
+}
+
+.equip-header {
+  margin-left: 60px; /* espaço para sidebar */
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.equip-header h1 {
+  font-size: 2rem;
+  color: #1e293b;
+}

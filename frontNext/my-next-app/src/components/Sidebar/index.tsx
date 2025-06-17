@@ -11,7 +11,7 @@ export default function Sidebar() {
   const links = [
     { href: '/', label: '🏠 Home' },
     { href: '/Clientes', label: '👤 Clientes' },
-    { href: '/equipamentos', label: '🧰 Equipamentos' },
+    { href: '/Equipamentos', label: '🧰 Equipamentos' },
     { href: '/orcamentos', label: '💰 Orçamentos' }
   ]
 
