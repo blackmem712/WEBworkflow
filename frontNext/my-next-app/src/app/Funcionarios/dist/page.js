@@ -13,13 +13,13 @@ function FuncionariosPage() {
     var _d = react_1.useState(null), selFunc = _d[0], setSelFunc = _d[1];
     var _e = react_1.useState(false), showNovo = _e[0], setShowNovo = _e[1];
     react_1.useEffect(function () {
-        fetch('/funcionarios/api/v1/')
+        fetch('http://127.0.0.1:8000/funcionarios/api/v1/')
             .then(function (r) { return r.json(); })
             .then(function (data) { return setFuncionarios(data); })["catch"](console.error);
-        fetch('/cargos/api/v1/')
+        fetch('http://127.0.0.1:8000/cargos/api/v1/')
             .then(function (r) { return r.json(); })
             .then(function (data) { return setCargos(data); })["catch"](console.error);
-        fetch('/setores/api/v1/')
+        fetch('http://127.0.0.1:8000/setores/api/v1/')
             .then(function (r) { return r.json(); })
             .then(function (data) { return setSetores(data); })["catch"](console.error);
     }, []);

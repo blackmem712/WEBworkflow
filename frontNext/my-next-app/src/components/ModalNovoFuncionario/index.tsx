@@ -84,7 +84,7 @@ export default function ModalNovoFuncionario({
   }
 
   const handleSalvar = () => {
-    fetch('/funcionarios/api/v1/', {
+    fetch('http://127.0.0.1:8000/funcionarios/api/v1/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),

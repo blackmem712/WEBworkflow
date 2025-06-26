@@ -25,17 +25,17 @@ export default function FuncionariosPage() {
   const [showNovo, setShowNovo]         = useState(false)
 
   useEffect(() => {
-    fetch('/funcionarios/api/v1/')
+    fetch('http://127.0.0.1:8000/funcionarios/api/v1/')
       .then(r => r.json())
       .then((data: Funcionario[]) => setFuncionarios(data))
       .catch(console.error)
 
-    fetch('/cargos/api/v1/')
+    fetch('http://127.0.0.1:8000/cargos/api/v1/')
       .then(r => r.json())
       .then((data: Cargo[]) => setCargos(data))
       .catch(console.error)
 
-    fetch('/setores/api/v1/')
+    fetch('http://127.0.0.1:8000/setores/api/v1/')
       .then(r => r.json())
       .then((data: Setor[]) => setSetores(data))
       .catch(console.error)

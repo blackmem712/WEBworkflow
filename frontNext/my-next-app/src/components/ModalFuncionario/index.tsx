@@ -69,7 +69,7 @@ export default function ModalFuncionario({
   }
 
   const handleSalvar = () => {
-    fetch(`/funcionarios/api/v1/${funcionario.id}/`, {
+    fetch("http://127.0.0.1:8000/funcionarios/api/v1/" + funcionario.id + "/", {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
