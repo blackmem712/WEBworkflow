@@ -2,13 +2,11 @@
 'use client'
 
 import React, { useState,ChangeEvent } from 'react'
-import { Funcionario } from '@/types/funcionario/funcionario'
+import { Funcionario, Cargo, Setor } from '@/types/funcionario/funcionario'
 import InputCampo from '@/components/InputCampo'
 import Button from '@/components/buton'
 import '@/styles/components/modalFuncionario.css'
 
-interface Cargo { id: number; cargo: string }
-interface Setor { id: number; setor: string }
 
 interface ModalFuncionarioProps {
   funcionario: Funcionario
