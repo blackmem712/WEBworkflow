@@ -25,7 +25,7 @@ export interface Funcionario {
   cidade: string | null
   estado: string | null
   telefone: string | null
-  cargo_funcionario: CargoFuncionario
+  cargo_funcionario: CargoFuncionario | null
 }
 
 /** Novo tipo para formular */

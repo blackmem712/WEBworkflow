@@ -29,8 +29,8 @@ export default function TabelaFuncionarios({
   const filtrados = funcionarios.filter(f =>
     (f.nome ?? '').toLowerCase().includes(filtro.toLowerCase()) ||
     (f.email ?? '').toLowerCase().includes(filtro.toLowerCase()) ||
-    CARGO_LABELS[f.cargo_funcionario.cargo ?? '']?.toLowerCase().includes(filtro.toLowerCase()) ||
-    SETOR_LABELS[f.cargo_funcionario.setor ?? '']?.toLowerCase().includes(filtro.toLowerCase())
+    CARGO_LABELS[f.cargo_funcionario?.cargo ?? '']?.toLowerCase().includes(filtro.toLowerCase()) ||
+    SETOR_LABELS[f.cargo_funcionario?.setor ?? '']?.toLowerCase().includes(filtro.toLowerCase())
   )
 
   return (
@@ -62,8 +62,8 @@ export default function TabelaFuncionarios({
               <td>{f.nome}</td>
               <td>{f.email}</td>
               <td>{f.telefone}</td>
-              <td>{CARGO_LABELS[f.cargo_funcionario.cargo ?? '']}</td>
-              <td>{SETOR_LABELS[f.cargo_funcionario.setor ?? '']}</td>
+              <td>{CARGO_LABELS[f.cargo_funcionario?.cargo ?? '']}</td>
+              <td>{SETOR_LABELS[f.cargo_funcionario?.setor ?? '']}</td>
             </tr>
           ))}
         </tbody>
