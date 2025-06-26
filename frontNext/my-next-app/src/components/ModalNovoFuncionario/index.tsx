@@ -2,19 +2,11 @@
 
 
 import React, { useState,ChangeEvent  } from 'react'
-import { Funcionario, FuncionarioForm } from '@/types/funcionario/funcionario'
+import { Funcionario, FuncionarioForm, Cargo, Setor } from '@/types/funcionario/funcionario'
 import InputCampo from '@/components/InputCampo'
 import Button from '@/components/buton'
 import '@/styles/components/modalFuncionario.css'
 
-interface Cargo {
-  id: number
-  cargo: 'TC' | 'GE' | 'RC'
-}
-interface Setor {
-  id: number
-  setor: 'RE' | 'OF' | 'ES'
-}
 
 interface ModalNovoFuncionarioProps {
   onClose: () => void

@@ -1,19 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Funcionario } from '@/types/funcionario/funcionario'
+import { Funcionario, Cargo, Setor } from '@/types/funcionario/funcionario'
 import Button from '@/components/buton' 
 import '@/styles/components/tabelaFuncionario.css'
 
-interface Cargo {
-  id: number
-  cargo: string
-}
-
-interface Setor {
-  id: number
-  setor: string
-}
 
 interface Props {
   funcionarios: Funcionario[]
