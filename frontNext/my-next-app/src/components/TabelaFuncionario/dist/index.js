@@ -16,7 +16,7 @@ function TabelaFuncionarios(_a) {
     var filtrados = funcionarios.filter(function (f) {
         var _a, _b, _c, _d, _e, _f;
         return ((_a = f.nome) !== null && _a !== void 0 ? _a : '').toLowerCase().includes(filtro.toLowerCase()) ||
-            ((_b = f.email) !== null && _b !== void 0 ? _b : '').toLowerCase().includes(filtro.toLowerCase()) || ((_d = CARGO_LABELS[(_c = f.cargo_funcionario.cargo) !== null && _c !== void 0 ? _c : '']) === null || _d === void 0 ? void 0 : _d.toLowerCase().includes(filtro.toLowerCase())) || ((_f = SETOR_LABELS[(_e = f.cargo_funcionario.setor) !== null && _e !== void 0 ? _e : '']) === null || _f === void 0 ? void 0 : _f.toLowerCase().includes(filtro.toLowerCase()));
+            ((_b = f.email) !== null && _b !== void 0 ? _b : '').toLowerCase().includes(filtro.toLowerCase()) || ((_d = CARGO_LABELS[(_c = (_c = f.cargo_funcionario) === null || _c === void 0 ? void 0 : _c.cargo) !== null && _c !== void 0 ? _c : '']) === null || _d === void 0 ? void 0 : _d.toLowerCase().includes(filtro.toLowerCase())) || ((_f = SETOR_LABELS[(_e = (_e = f.cargo_funcionario) === null || _e === void 0 ? void 0 : _e.setor) !== null && _e !== void 0 ? _e : '']) === null || _f === void 0 ? void 0 : _f.toLowerCase().includes(filtro.toLowerCase()));
     });
     return (React.createElement("div", { className: "tabela-func-container" },
         React.createElement("div", { className: "tabela-controls" },
@@ -36,8 +36,8 @@ function TabelaFuncionarios(_a) {
                     React.createElement("td", null, f.nome),
                     React.createElement("td", null, f.email),
                     React.createElement("td", null, f.telefone),
-                    React.createElement("td", null, CARGO_LABELS[(_a = f.cargo_funcionario.cargo) !== null && _a !== void 0 ? _a : '']),
-                    React.createElement("td", null, SETOR_LABELS[(_b = f.cargo_funcionario.setor) !== null && _b !== void 0 ? _b : ''])));
+                    React.createElement("td", null, CARGO_LABELS[(_a = (_a = f.cargo_funcionario) === null || _a === void 0 ? void 0 : _a.cargo) !== null && _a !== void 0 ? _a : '']),
+                    React.createElement("td", null, SETOR_LABELS[(_b = (_b = f.cargo_funcionario) === null || _b === void 0 ? void 0 : _b.setor) !== null && _b !== void 0 ? _b : ''])));
             })))));
 }
 exports["default"] = TabelaFuncionarios;
