@@ -72,3 +72,18 @@
 .tabela-equip tbody tr:last-child td {
   border-bottom: none;
 }
+/* Status card dentro da tabela */
+.status-card {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Quando status = EN (Entrada) */
+.status-EN {
+  background-color: #d1fae5;
+  color: #065f46;
+}

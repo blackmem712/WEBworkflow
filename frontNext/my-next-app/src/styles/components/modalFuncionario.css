@@ -1,0 +1,101 @@
+/* modalFuncionario.css */
+
+/* Overlay escuro */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+}
+
+/* Janela do modal — bem ampla */
+.modal-func {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 900px;        /* largura aumentada */
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+.modal-func.wide h2,
+.modal-func h2 {
+  margin-top: 0;
+  font-size: 2rem;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+}
+
+/* Grid para organizar todos os campos */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 2rem;   /* espaço horizontal entre colunas */
+  row-gap: 0.70rem; /* espaço vertical entre linhas */             /* espaçamento maior */
+  margin-bottom: 2rem;
+}
+
+/* Helpers de largura de coluna */
+.grid-col-12 { grid-column: span 12; }
+.grid-col-8  { grid-column: span 8; }
+.grid-col-6  { grid-column: span 6; }
+.grid-col-4  { grid-column: span 4; }
+
+/* Inputs e selects — garantem espaçamento interno e bordas arredondadas */
+input, select {
+  width: 100%;
+  padding: 1rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Foco atraente */
+input:focus, select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59,130,246,0.3);
+}
+
+/* Espaçamento extra abaixo de cada campo (para quem usar selects via grid) */
+.form-grid > div {
+  /* cada grid cell já tem gap, este margin-bottom garante que painéis altos
+     fiquem com separação adicional quando quebram linha */
+  margin-bottom: 0; /* gap já lida verticalmente */
+}
+
+/* Botões do modal */
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.btn-salvar,
+.btn-cancelar {
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-salvar {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.btn-salvar:hover {
+  background-color: #2563eb;
+}
+
+.btn-cancelar {
+  background-color: #e2e8f0;
+  color: #333;
+}

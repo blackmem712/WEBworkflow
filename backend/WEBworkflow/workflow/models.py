@@ -71,7 +71,7 @@ class Setor(models.Model):
                                  ('RE','Recepção'),
                                  ('OF','Oficina'),
                                  ('ES','Estoque')))
-    status = models.ForeignKey(Status, on_delete = models.CASCADE)
+    
     
     def __str__(self) -> str:
        return f'{self.setor}'

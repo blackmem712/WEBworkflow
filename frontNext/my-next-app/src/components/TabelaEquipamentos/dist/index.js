@@ -27,16 +27,22 @@ function TabelaEquipamentos(_a) {
                     React.createElement("th", null, "Modelo"),
                     React.createElement("th", null, "Cor"),
                     React.createElement("th", null, "S\u00E9rie"),
-                    React.createElement("th", null, "Cliente"))),
+                    React.createElement("th", null, "Cliente"),
+                    React.createElement("th", null, "Entrada"),
+                    React.createElement("th", null, "Status"))),
             React.createElement("tbody", null, filtrados.map(function (e) {
-                var _a;
+                var cliente = clientes.find(function (c) { return c.id === e.cliente; });
+                var dtEnt = new Date(e.status.date_entrada).toLocaleDateString();
                 return (React.createElement("tr", { key: e.id, onClick: function () { return onSelecionar(e); } },
                     React.createElement("td", null, e.equipamento),
                     React.createElement("td", null, e.marca),
                     React.createElement("td", null, e.modelo),
                     React.createElement("td", null, e.cor),
                     React.createElement("td", null, e.nun_serie),
-                    React.createElement("td", null, (_a = clientes.find(function (c) { return c.id === e.cliente; })) === null || _a === void 0 ? void 0 : _a.nome)));
+                    React.createElement("td", null, cliente === null || cliente === void 0 ? void 0 : cliente.nome),
+                    React.createElement("td", null, dtEnt),
+                    React.createElement("td", null,
+                        React.createElement("span", { className: "status-card status-" + e.status.status }, e.status.status === 'EN' ? 'Entrada' : e.status.status))));
             })))));
 }
 exports["default"] = TabelaEquipamentos;

@@ -12,7 +12,8 @@ export default function Sidebar() {
     { href: '/', label: '🏠 Home' },
     { href: '/Clientes', label: '👤 Clientes' },
     { href: '/Equipamentos', label: '🧰 Equipamentos' },
-    { href: '/orcamentos', label: '💰 Orçamentos' }
+    { href: '/orcamentos', label: '💰 Orçamentos' },
+    { href: '/Funcionarios', label: '👔 Funcionarios' }
   ]
 
   return (

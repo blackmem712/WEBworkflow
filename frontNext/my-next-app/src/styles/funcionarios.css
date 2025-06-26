@@ -1,0 +1,11 @@
+.func-page {
+  margin-top: 2rem;
+}
+.func-header {
+  margin-left: 60px;
+  padding: 0 1.5rem;
+}
+.func-header h1 {
+  font-size: 2rem;
+  color: #1e293b;
+}

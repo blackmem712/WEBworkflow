@@ -5,8 +5,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from .serializers import ClienteSerializer, EquipamentoSerializer
-from .models import Cliente, Equipamento, Status, Historico
+from .serializers import ClienteSerializer, EquipamentoSerializer, FuncionarioSerializer,CargoSerializer, SetorSerializer
+from .models import Cliente, Equipamento, Status, Historico, Funcionario,Cargo,Setor
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -133,3 +133,20 @@ class WorkflowEquipamentoAPIv1ViewSet(ModelViewSet):
        print('Query Strings:', self.request.query_params)
 
        return qs
+
+class WorkflowFuncionarioAPIv1ViewSet(ModelViewSet):
+    queryset = Funcionario.objects.all()
+    serializer_class = FuncionarioSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['cpf', 'nome']
+    http_method_names = ['get', 'post', 'patch', 'delete', 'options', 'head']
+
+class WorkflowCargoAPIv1ViewSet(ModelViewSet):
+    queryset = Cargo.objects.all()
+    serializer_class = CargoSerializer
+    http_method_names = ['get', 'options', 'head']
+
+class WorkflowSetorAPIv1ViewSet(ModelViewSet):
+    queryset = Setor.objects.all()
+    serializer_class = SetorSerializer
+    http_method_names = ['get', 'options', 'head']

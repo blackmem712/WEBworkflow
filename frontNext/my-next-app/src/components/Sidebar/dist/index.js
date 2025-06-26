@@ -10,7 +10,8 @@ function Sidebar() {
         { href: '/', label: '🏠 Home' },
         { href: '/Clientes', label: '👤 Clientes' },
         { href: '/Equipamentos', label: '🧰 Equipamentos' },
-        { href: '/orcamentos', label: '💰 Orçamentos' }
+        { href: '/orcamentos', label: '💰 Orçamentos' },
+        { href: '/Funcionarios', label: '👔 Funcionarios' }
     ];
     return (React.createElement("aside", { className: "sidebar-hover" },
         React.createElement("div", { className: "sidebar-header" }, "\uD83D\uDCCA"),
