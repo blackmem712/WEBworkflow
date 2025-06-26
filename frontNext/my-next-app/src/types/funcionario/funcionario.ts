@@ -3,6 +3,16 @@ export interface CargoFuncionario {
   setor: string | null
 }
 
+export interface Cargo {
+  id: number
+  cargo: 'TC' | 'GE' | 'RC'
+}
+
+export interface Setor {
+  id: number
+  setor: 'RE' | 'OF' | 'ES'
+}
+
 export interface Funcionario {
   id: number
   nome: string | null

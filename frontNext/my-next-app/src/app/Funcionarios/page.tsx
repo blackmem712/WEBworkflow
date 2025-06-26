@@ -1,21 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Funcionario } from '@/types/funcionario/funcionario'
+import { Funcionario, Cargo, Setor } from '@/types/funcionario/funcionario'
 import TabelaFuncionarios from '@/components/TabelaFuncionario'
 import ModalFuncionario   from '@/components/ModalFuncionario'
 import ModalNovoFuncionario from '@/components/ModalNovoFuncionario'
 import '@/styles/funcionarios.css'
 
-interface Cargo {
-  id: number
-  cargo: string    // 'RC','TC','GE'
-}
-
-interface Setor {
-  id: number
-  setor: string    // 'RE','OF','ES'
-}
 
 export default function FuncionariosPage() {
   const [funcionarios, setFuncionarios] = useState<Funcionario[]>([])
