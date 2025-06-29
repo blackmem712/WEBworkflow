@@ -128,7 +128,7 @@ class Orcamento(models.Model):
     equipamento = models.ForeignKey(Equipamento, on_delete=models.CASCADE)
     servico = models.ManyToManyField(Servico)
     produto = models.ManyToManyField(Produto, blank=False)
-    Cargo_funcionario = models.ForeignKey(Cargo_funcionario, on_delete= models.CASCADE)
+    cargo_funcionario = models.ForeignKey(Cargo_funcionario, on_delete= models.CASCADE)
 
     def __str__(self) -> str:
        return f'{self.id}'

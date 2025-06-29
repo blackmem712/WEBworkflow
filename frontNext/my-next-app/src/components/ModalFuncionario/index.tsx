@@ -27,8 +27,8 @@ interface FormState {
   cidade:   string | null
   estado:   string | null
   telefone: string | null
-  cargo:    string| null
-  setor:    string | null
+  cargo:    number| null
+  setor:    number| null
 }
 
 export default function ModalFuncionario({
@@ -52,19 +52,19 @@ export default function ModalFuncionario({
     cidade:   base.cidade,
     estado:   base.estado,
     telefone: base.telefone,
-    cargo:    cargo_funcionario?.cargo  ?? null,
-    setor:    cargo_funcionario?.setor  ?? null
+    cargo:    cargo_funcionario?.cargo ? Number(cargo_funcionario.cargo) : null,
+    setor:    cargo_funcionario?.setor ? Number(cargo_funcionario.setor) : null
   })
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setForm((prev: FormState) => ({
-      ...prev,
-      [name]: ['cep','numero','cargo','setor'].includes(name)
-        ? (value === '' ? null : Number(value))
-        : (value || null)
-    }))
-  }
+  const { name, value } = e.target
+  setForm(prev => ({
+    ...prev,
+    [name]: ['cep','numero','cargo','setor'].includes(name)
+      ? (value === '' ? null : Number(value))
+      : (value || null)
+  }))
+}
 
   const handleSalvar = () => {
     fetch("http://127.0.0.1:8000/funcionarios/api/v1/" + funcionario.id + "/", {

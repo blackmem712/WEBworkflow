@@ -94,4 +94,76 @@ urlpatterns = [
       views.WorkflowSetorAPIv1ViewSet.as_view({'get':'retrieve'}),
       name='setores_detail'
     ),
+    path(
+      'servicos/api/v1/',
+      views.WorkflowServicoAPIv1ViewSet.as_view({
+        'get':  'list',
+        'post': 'create'
+      }),
+      name='servicos_api_v1'
+    ),
+    # Recupera, atualiza parcialmente e deleta um Serviço
+    path(
+      'servicos/api/v1/<int:pk>/',
+      views.WorkflowServicoAPIv1ViewSet.as_view({
+        'get':    'retrieve',
+        'patch':  'partial_update',
+        'delete': 'destroy'
+      }),
+      name='servicos_api_v1_detail'
+    ),
+    path(
+      'produtos/api/v1/',
+      views.WorkflowProdutoAPIv1ViewSet.as_view({
+        'get':  'list',
+        'post': 'create'
+      }),
+      name='produtos_api_v1'
+    ),
+    # Recupera, atualiza parcialmente e deleta um Produto
+    path(
+      'produtos/api/v1/<int:pk>/',
+      views.WorkflowProdutoAPIv1ViewSet.as_view({
+        'get':    'retrieve',
+        'patch':  'partial_update',
+        'delete': 'destroy'
+      }),
+      name='produtos_api_v1_detail'
+    ),
+    path(
+      'fornecedores/api/v1/',
+      views.WorkflowFornecedorAPIv1ViewSet.as_view({
+        'get':  'list',
+        'post': 'create'
+      }),
+      name='fornecedores_api_v1'
+    ),
+    # Recupera, atualiza parcialmente e deleta um Fornecedor
+    path(
+      'fornecedores/api/v1/<int:pk>/',
+      views.WorkflowFornecedorAPIv1ViewSet.as_view({
+        'get':    'retrieve',
+        'patch':  'partial_update',
+        'delete': 'destroy'
+      }),
+      name='fornecedores_api_v1_detail'
+    ),
+     path(
+      'orcamentos/api/v1/',
+      views.WorkflowOrcamentoAPIv1ViewSet.as_view({
+        'get':  'list',
+        'post': 'create'
+      }),
+      name='orcamentos_api_v1'
+    ),
+    # Recuperar, atualizar parcialmente e deletar
+    path(
+      'orcamentos/api/v1/<int:pk>/',
+      views.WorkflowOrcamentoAPIv1ViewSet.as_view({
+        'get':    'retrieve',
+        'patch':  'partial_update',
+        'delete': 'destroy'
+      }),
+      name='orcamentos_api_v1_detail'
+    ),
 ]

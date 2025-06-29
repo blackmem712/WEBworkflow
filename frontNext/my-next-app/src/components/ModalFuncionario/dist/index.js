@@ -29,11 +29,10 @@ var InputCampo_1 = require("@/components/InputCampo");
 var buton_1 = require("@/components/buton");
 require("@/styles/components/modalFuncionario.css");
 function ModalFuncionario(_a) {
-    var _b, _c;
     var funcionario = _a.funcionario, onClose = _a.onClose, setFuncionarios = _a.setFuncionarios, cargos = _a.cargos, setores = _a.setores;
     // separa o vínculo de cargo/​setor do restante
     var cargo_funcionario = funcionario.cargo_funcionario, base = __rest(funcionario, ["cargo_funcionario"]);
-    var _d = react_1.useState({
+    var _b = react_1.useState({
         nome: base.nome,
         cpf: base.cpf,
         email: base.email,
@@ -44,9 +43,9 @@ function ModalFuncionario(_a) {
         cidade: base.cidade,
         estado: base.estado,
         telefone: base.telefone,
-        cargo: (_b = cargo_funcionario === null || cargo_funcionario === void 0 ? void 0 : cargo_funcionario.cargo) !== null && _b !== void 0 ? _b : null,
-        setor: (_c = cargo_funcionario === null || cargo_funcionario === void 0 ? void 0 : cargo_funcionario.setor) !== null && _c !== void 0 ? _c : null
-    }), form = _d[0], setForm = _d[1];
+        cargo: (cargo_funcionario === null || cargo_funcionario === void 0 ? void 0 : cargo_funcionario.cargo) ? Number(cargo_funcionario.cargo) : null,
+        setor: (cargo_funcionario === null || cargo_funcionario === void 0 ? void 0 : cargo_funcionario.setor) ? Number(cargo_funcionario.setor) : null
+    }), form = _b[0], setForm = _b[1];
     var handleChange = function (e) {
         var _a = e.target, name = _a.name, value = _a.value;
         setForm(function (prev) {

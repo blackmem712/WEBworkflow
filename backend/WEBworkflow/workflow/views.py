@@ -5,8 +5,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from .serializers import ClienteSerializer, EquipamentoSerializer, FuncionarioSerializer,CargoSerializer, SetorSerializer
-from .models import Cliente, Equipamento, Status, Historico, Funcionario,Cargo,Setor
+from .serializers import ClienteSerializer, EquipamentoSerializer, FuncionarioSerializer,CargoSerializer, SetorSerializer, ServicoSerializer, ProdutoSerializer, FornecedorSerializer, OrcamentoSerializer
+from .models import Cliente, Equipamento, Status, Historico, Funcionario,Cargo,Setor, Servico, Produto, Fornecedor, Orcamento
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -150,3 +150,25 @@ class WorkflowSetorAPIv1ViewSet(ModelViewSet):
     queryset = Setor.objects.all()
     serializer_class = SetorSerializer
     http_method_names = ['get', 'options', 'head']
+
+class WorkflowServicoAPIv1ViewSet(ModelViewSet):
+    queryset = Servico.objects.all()
+    serializer_class = ServicoSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete', 'options', 'head']
+
+class WorkflowProdutoAPIv1ViewSet(ModelViewSet):
+    queryset = Produto.objects.all()
+    serializer_class = ProdutoSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete', 'options', 'head']
+
+class WorkflowFornecedorAPIv1ViewSet(ModelViewSet):
+    queryset = Fornecedor.objects.all()
+    serializer_class = FornecedorSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete', 'options', 'head']
+
+class WorkflowOrcamentoAPIv1ViewSet(ModelViewSet):
+    queryset = Orcamento.objects.all()
+    serializer_class = OrcamentoSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['equipamento', 'cargo_funcionario']
+    http_method_names = ['get', 'post', 'patch', 'delete', 'options', 'head']

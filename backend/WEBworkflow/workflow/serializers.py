@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Cliente, Equipamento, Historico, Status,Funcionario,Cargo_funcionario,Cargo,Setor
+from .models import Cliente, Equipamento, Historico, Status,Funcionario,Cargo_funcionario,Cargo,Setor,Servico, Produto, Fornecedor, Orcamento
 
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -116,3 +116,64 @@ class FuncionarioSerializer(serializers.ModelSerializer):
                 vinculo.setor = setor
                 vinculo.save()
         return func
+
+class ServicoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Servico
+        fields = ['id', 'nome', 'valor', 'descricao']
+
+class ProdutoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Produto
+        fields = ['id', 'nome', 'marca', 'modelo', 'preco', 'descricao']
+
+
+class FornecedorSerializer(serializers.ModelSerializer):
+    # Para escrever/ler as relações M2M via lista de IDs
+    produtos = serializers.PrimaryKeyRelatedField(
+        queryset=Produto.objects.all(),
+        many=True
+    )
+
+    class Meta:
+        model = Fornecedor
+        fields = [
+            'id',
+            'nome',
+            'cnpj',
+            'telefone',
+            'descricao',
+            'produtos',   # lista de IDs de Produto
+        ]
+
+class OrcamentoSerializer(serializers.ModelSerializer):
+    equipamento = serializers.PrimaryKeyRelatedField(
+        queryset=Equipamento.objects.all(),
+        help_text="ID do Equipamento"
+    )
+    servico = serializers.PrimaryKeyRelatedField(
+        queryset=Servico.objects.all(),
+        many=True,
+        help_text="IDs dos Serviços (array)"
+    )
+    produto = serializers.PrimaryKeyRelatedField(
+        queryset=Produto.objects.all(),
+        many=True,
+        help_text="IDs dos Produtos (array)"
+    )
+    cargo_funcionario = serializers.PrimaryKeyRelatedField(
+        # só técnicos e gerentes
+        queryset=Cargo_funcionario.objects.filter(cargo__cargo__in=['TC','GE']),
+        help_text="ID do vínculo funcionário-cargo_setor (só TC/GE)"
+    )
+
+    class Meta:
+        model = Orcamento
+        fields = [
+            'id',
+            'observacao',
+            'equipamento',
+            'servico',
+            'produto',
+            'cargo_funcionario',
+        ]

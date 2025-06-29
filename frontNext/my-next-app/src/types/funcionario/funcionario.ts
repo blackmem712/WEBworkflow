@@ -2,7 +2,6 @@ export interface CargoFuncionario {
   cargo: string | null
   setor: string | null
 }
-
 export interface Cargo {
   id: number
   cargo: 'TC' | 'GE' | 'RC'
@@ -30,6 +29,6 @@ export interface Funcionario {
 
 /** Novo tipo para formular */
 export type FuncionarioForm = Omit<Funcionario, 'cargo_funcionario'> & {
-  cargo: string | null
-  setor: string | null
+ cargo: number | null
+ setor: number | null
 }
