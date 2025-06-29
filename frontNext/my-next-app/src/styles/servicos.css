@@ -1,0 +1,11 @@
+.serv-page {
+  margin-top: 2rem;
+}
+.serv-header {
+  margin-left: 60px;
+  padding: 0 1.5rem;
+}
+.serv-header h1 {
+  font-size: 2rem;
+  color: #1e293b;
+}

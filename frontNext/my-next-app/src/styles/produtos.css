@@ -1,0 +1,11 @@
+.prod-page {
+  margin-top: 2rem;
+}
+.prod-header {
+  margin-left: 60px;
+  padding: 0 1.5rem;
+}
+.prod-header h1 {
+  font-size: 2rem;
+  color: #1e293b;
+}

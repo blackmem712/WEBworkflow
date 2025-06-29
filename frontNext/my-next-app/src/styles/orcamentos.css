@@ -1,0 +1,11 @@
+.orc-page {
+  margin-top: 2rem;
+}
+.orc-header {
+  margin-left: 60px;
+  padding: 0 1.5rem;
+}
+.orc-header h1 {
+  font-size: 2rem;
+  color: #1e293b;
+}

@@ -10,8 +10,11 @@ function Sidebar() {
         { href: '/', label: '🏠 Home' },
         { href: '/Clientes', label: '👤 Clientes' },
         { href: '/Equipamentos', label: '🧰 Equipamentos' },
-        { href: '/orcamentos', label: '💰 Orçamentos' },
-        { href: '/Funcionarios', label: '👔 Funcionarios' }
+        { href: '/Orcamentos', label: '💰 Orçamentos' },
+        { href: '/Funcionarios', label: '👔 Funcionarios' },
+        { href: '/Servicos', label: '🛠️ Servicos' },
+        { href: '/Produtos', label: '📦 Produtos' },
+        { href: '/Fornecedores', label: '🏭 Fornecedores' },
     ];
     return (React.createElement("aside", { className: "sidebar-hover" },
         React.createElement("div", { className: "sidebar-header" }, "\uD83D\uDCCA"),

@@ -1,4 +1,5 @@
 export interface CargoFuncionario {
+  id:number
   cargo: string | null
   setor: string | null
 }
