@@ -95,9 +95,18 @@ WSGI_APPLICATION = 'WEBworkflow.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+   'default': {
+        'ENGINE': 'django.db.backends.mysql',  # mysqlclient (MySQLdb)
+        'NAME': env('DB_NAME', default='webworkflow'),
+        'USER': env('DB_USER', default='web_user'),
+        'PASSWORD': env('DB_PASSWORD', default='SENHA_FORTE_AQUI'),
+        'HOST': env('DB_HOST', default='127.0.0.1'),  # se o MySQL é local
+        'PORT': env('DB_PORT', default='3306'),
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
+        # conexões persistentes (evita overhead de abrir/fechar)
+        'CONN_MAX_AGE': env.int('DB_CONN_MAX_AGE', default=60),
     }
 }
 

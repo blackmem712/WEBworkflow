@@ -1,3 +1,4 @@
+// src/components/ModalNovoFuncionario/index.tsx
 'use client';
 "use strict";
 var __assign = (this && this.__assign) || function () {
@@ -46,24 +47,61 @@ function ModalNovoFuncionario(_a) {
         bairro: null,
         cidade: null,
         estado: null,
-        telefone: null,
-        cargo: null,
-        setor: null
+        telefone: null
     }), form = _b[0], setForm = _b[1];
+    // ⚠️ controla selects como string; converte para number no salvar
+    var _c = react_1.useState(''), cargoId = _c[0], setCargoId = _c[1]; // '' = não selecionado
+    var _d = react_1.useState(''), setorId = _d[0], setSetorId = _d[1];
+    // Fallback/local cache das listas (caso venham vazias por props)
+    var _e = react_1.useState(cargos !== null && cargos !== void 0 ? cargos : []), cargosData = _e[0], setCargosData = _e[1];
+    var _f = react_1.useState(setores !== null && setores !== void 0 ? setores : []), setoresData = _f[0], setSetoresData = _f[1];
+    var _g = react_1.useState(false), loadingCargos = _g[0], setLoadingCargos = _g[1];
+    var _h = react_1.useState(false), loadingSetores = _h[0], setLoadingSetores = _h[1];
+    // Sincroniza quando o pai carregar depois de abrir o modal
+    react_1.useEffect(function () { setCargosData(cargos !== null && cargos !== void 0 ? cargos : []); }, [cargos]);
+    react_1.useEffect(function () { setSetoresData(setores !== null && setores !== void 0 ? setores : []); }, [setores]);
+    // Busca fallback se abrir o modal antes do carregamento do pai
+    react_1.useEffect(function () {
+        if (!cargos || cargos.length === 0) {
+            setLoadingCargos(true);
+            fetch('http://127.0.0.1:8000/cargos/api/v1/')
+                .then(function (r) { return r.json(); })
+                .then(function (data) { return setCargosData(data); })["catch"](console.error)["finally"](function () { return setLoadingCargos(false); });
+        }
+        if (!setores || setores.length === 0) {
+            setLoadingSetores(true);
+            fetch('http://127.0.0.1:8000/setores/api/v1/')
+                .then(function (r) { return r.json(); })
+                .then(function (data) { return setSetoresData(data); })["catch"](console.error)["finally"](function () { return setLoadingSetores(false); });
+        }
+        // só dispara na montagem
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     var handleChange = function (e) {
         var _a = e.target, name = _a.name, value = _a.value;
-        setForm(function (prev) {
-            var _a;
-            return (__assign(__assign({}, prev), (_a = {}, _a[name] = ['cep', 'numero', 'cargo', 'setor'].includes(name)
-                ? (value === '' ? null : Number(value))
-                : (value || null), _a)));
-        });
+        if (name === 'cep' || name === 'numero') {
+            setForm(function (prev) {
+                var _a;
+                return (__assign(__assign({}, prev), (_a = {}, _a[name] = value === '' ? null : Number(value), _a)));
+            });
+        }
+        else {
+            setForm(function (prev) {
+                var _a;
+                return (__assign(__assign({}, prev), (_a = {}, _a[name] = value || null, _a)));
+            });
+        }
     };
     var handleSalvar = function () {
+        if (!cargoId || !setorId) {
+            alert('Selecione um Cargo e um Setor.');
+            return;
+        }
+        var payload = __assign(__assign({}, form), { cargo: Number(cargoId), setor: Number(setorId) });
         fetch('http://127.0.0.1:8000/funcionarios/api/v1/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(form)
+            body: JSON.stringify(payload)
         })
             .then(function (res) {
             if (!res.ok)
@@ -73,7 +111,10 @@ function ModalNovoFuncionario(_a) {
             .then(function (novo) {
             setFuncionarios(function (prev) { return __spreadArrays(prev, [novo]); });
             onClose();
-        })["catch"](console.error);
+        })["catch"](function (err) {
+            console.error(err);
+            alert('Não foi possível salvar. Verifique os campos.');
+        });
     };
     return (react_1["default"].createElement("div", { className: "modal-overlay" },
         react_1["default"].createElement("div", { className: "modal-func wide" },
@@ -101,14 +142,22 @@ function ModalNovoFuncionario(_a) {
                     react_1["default"].createElement(InputCampo_1["default"], { label: "Estado", name: "estado", value: form.estado, onChange: handleChange, placeholder: "Seu estado" })),
                 react_1["default"].createElement("div", { className: "grid-col-6" },
                     react_1["default"].createElement("label", { htmlFor: "cargo" }, "Cargo"),
-                    react_1["default"].createElement("select", { id: "cargo", name: "cargo", value: form.cargo != null ? form.cargo.toString() : '', onChange: handleChange },
-                        react_1["default"].createElement("option", { value: "" }, "Selecione..."),
-                        cargos.map(function (c) { return (react_1["default"].createElement("option", { key: c.id, value: c.id.toString() }, CARGO_LABELS[c.cargo])); }))),
+                    react_1["default"].createElement("select", { id: "cargo", value: cargoId, onChange: function (e) { return setCargoId(e.target.value); }, disabled: loadingCargos },
+                        react_1["default"].createElement("option", { value: "" }, loadingCargos ? 'Carregando...' : 'Selecione...'),
+                        cargosData.map(function (c) {
+                            var _a;
+                            return (react_1["default"].createElement("option", { key: c.id, value: String(c.id) }, (_a = CARGO_LABELS[c.cargo]) !== null && _a !== void 0 ? _a : c.cargo));
+                        })),
+                    (!loadingCargos && cargosData.length === 0) && (react_1["default"].createElement("small", { className: "hint" }, "Nenhum cargo encontrado."))),
                 react_1["default"].createElement("div", { className: "grid-col-6" },
                     react_1["default"].createElement("label", { htmlFor: "setor" }, "Setor"),
-                    react_1["default"].createElement("select", { id: "setor", name: "setor", value: form.setor != null ? form.setor.toString() : '', onChange: handleChange },
-                        react_1["default"].createElement("option", { value: "" }, "Selecione..."),
-                        setores.map(function (s) { return (react_1["default"].createElement("option", { key: s.id, value: s.id.toString() }, SETOR_LABELS[s.setor])); })))),
+                    react_1["default"].createElement("select", { id: "setor", value: setorId, onChange: function (e) { return setSetorId(e.target.value); }, disabled: loadingSetores },
+                        react_1["default"].createElement("option", { value: "" }, loadingSetores ? 'Carregando...' : 'Selecione...'),
+                        setoresData.map(function (s) {
+                            var _a;
+                            return (react_1["default"].createElement("option", { key: s.id, value: String(s.id) }, (_a = SETOR_LABELS[s.setor]) !== null && _a !== void 0 ? _a : s.setor));
+                        })),
+                    (!loadingSetores && setoresData.length === 0) && (react_1["default"].createElement("small", { className: "hint" }, "Nenhum setor encontrado.")))),
             react_1["default"].createElement("div", { className: "modal-buttons" },
                 react_1["default"].createElement(buton_1["default"], { variant: "primary", onClick: handleSalvar }, "Salvar"),
                 react_1["default"].createElement(buton_1["default"], { variant: "danger", onClick: onClose }, "Cancelar")))));

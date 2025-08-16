@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+
 import { Orcamento }      from '@/types/orcamento/orcamento'
 import { Equipamento }    from '@/types/equipamento/equipamento'
 import { Servico }        from '@/types/servico/servico'
 import { Produto }        from '@/types/produto/produto'
 import { Funcionario }    from '@/types/funcionario/funcionario'
+import { Cliente }        from '@/types/cliente/cliente'
 import TabelaOrcamentos   from '@/components/TabelaOrcamentos'
 import ModalOrcamento     from '@/components/ModalOrcamento'
 import ModalNovoOrcamento from '@/components/ModalNovoOrcamento'
@@ -17,6 +19,7 @@ export default function OrcamentosPage() {
   const [servicos, setServicos]             = useState<Servico[]>([])
   const [produtos, setProdutos]             = useState<Produto[]>([])
   const [funcionarios, setFuncionarios]     = useState<Funcionario[]>([])
+  const [clientes, setClientes]         = useState<Cliente[]>([])
   const [selOrc, setSelOrc]                 = useState<Orcamento | null>(null)
   const [showNovo, setShowNovo]             = useState(false)
 
@@ -63,6 +66,7 @@ export default function OrcamentosPage() {
 
       {showNovo && (
         <ModalNovoOrcamento
+          clientes={clientes} 
           equipamentos={equipamentos}
           servicos={servicos}
           produtos={produtos}

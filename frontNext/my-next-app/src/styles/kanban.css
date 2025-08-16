@@ -1,0 +1,80 @@
+/* Container geral com overflow horizontal */
+.kanban-board {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+/* Cada coluna */
+.kanban-column {
+  flex: 0 0 300px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+}
+
+/* Cabeçalho da coluna */
+.column-header {
+  background-color: #3b82f6;
+  color: #fff;
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+/* Corpo arrastável */
+.column-body {
+  flex: 1;
+  padding: 0.5rem;
+  overflow-y: auto;
+}
+.column-body.dragging-over {
+  background-color: #e0f2fe;
+}
+
+/* Cartão */
+.kanban-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  cursor: grab;
+}
+.kanban-card.dragging {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: scale(1.02);
+  cursor: grabbing;
+}
+
+/* Títulos e textos internos */
+.card-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  color: #1e293b;
+}
+.card-client,
+.card-date,
+.card-series {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+/* Responsivo: colunas mais estreitas em telas pequenas */
+@media (max-width: 768px) {
+  .kanban-board {
+    gap: 0.5rem;
+  }
+  .kanban-column {
+    flex: 0 0 80vw;
+  }
+}

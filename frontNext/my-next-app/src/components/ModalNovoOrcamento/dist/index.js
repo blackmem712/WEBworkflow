@@ -24,39 +24,62 @@ var react_1 = require("react");
 var buton_1 = require("@/components/buton");
 require("@/styles/components/modalOrcamento.css");
 function ModalNovoOrcamento(_a) {
-    var _b, _c;
-    var equipamentos = _a.equipamentos, servicos = _a.servicos, produtos = _a.produtos, funcionarios = _a.funcionarios, onClose = _a.onClose, setOrcamentos = _a.setOrcamentos;
-    var _d = react_1.useState({
-        observacao: '',
-        equipamento: null,
-        servico: [],
-        produto: [],
-        cargo_funcionario: null
-    }), form = _d[0], setForm = _d[1];
-    var handleChange = function (e) {
-        var _a = e.target, name = _a.name, value = _a.value, selectedOptions = _a.selectedOptions;
-        if (name === 'servico' || name === 'produto') {
-            var vals_1 = Array.from(selectedOptions).map(function (o) { return Number(o.value); });
-            setForm(function (prev) {
-                var _a;
-                return (__assign(__assign({}, prev), (_a = {}, _a[name] = vals_1, _a)));
-            });
+    var clientes = _a.clientes, initialEquip = _a.initialEquip, initialClienteName = _a.initialClienteName, equipamentos = _a.equipamentos, servicos = _a.servicos, produtos = _a.produtos, funcionarios = _a.funcionarios, onClose = _a.onClose, setOrcamentos = _a.setOrcamentos, setEquipamentos = _a.setEquipamentos;
+    // ==== FALLBACKS SEGUROS (evitam .filter em undefined) ====
+    var clientesList = Array.isArray(clientes) ? clientes : [];
+    var equipamentosList = Array.isArray(equipamentos) ? equipamentos : [];
+    var servicosList = Array.isArray(servicos) ? servicos : [];
+    var produtosList = Array.isArray(produtos) ? produtos : [];
+    var funcionariosList = Array.isArray(funcionarios) ? funcionarios : [];
+    // Estados básicos (pré-preenchidos quando vem do card EN)
+    var _b = react_1.useState(initialEquip ? initialEquip.cliente : null), clienteId = _b[0], setClienteId = _b[1];
+    var _c = react_1.useState(initialEquip ? initialEquip.id : null), equipId = _c[0], setEquipId = _c[1];
+    var clienteNome = react_1.useState(initialClienteName || '')[0];
+    var _d = react_1.useState(''), observacao = _d[0], setObservacao = _d[1];
+    // Responsável (deve ser um vínculo Cargo_funcionario com cargo TC/GE)
+    var _e = react_1.useState(null), respId = _e[0], setRespId = _e[1];
+    // Linhas dinâmicas
+    var _f = react_1.useState([]), services = _f[0], setServices = _f[1];
+    var _g = react_1.useState([]), products = _g[0], setProducts = _g[1];
+    react_1.useEffect(function () {
+        if (initialEquip) {
+            setClienteId(initialEquip.cliente);
+            setEquipId(initialEquip.id);
         }
-        else if (name === 'observacao') {
-            setForm(function (prev) { return (__assign(__assign({}, prev), { observação: value })); });
-        }
-        else {
-            setForm(function (prev) {
-                var _a;
-                return (__assign(__assign({}, prev), (_a = {}, _a[name] = value === '' ? null : Number(value), _a)));
-            });
-        }
+    }, [initialEquip]);
+    // Handlers de linhas (serviços)
+    var addServiceRow = function () { return setServices(function (prev) { return __spreadArrays(prev, [0]); }); };
+    var removeServiceRow = function (i) { return setServices(function (prev) { return prev.filter(function (_, idx) { return idx !== i; }); }); };
+    var changeService = function (i, val) {
+        return setServices(function (prev) { return prev.map(function (v, idx) { return (idx === i ? val : v); }); });
     };
+    // Handlers de linhas (produtos)
+    var addProductRow = function () { return setProducts(function (prev) { return __spreadArrays(prev, [0]); }); };
+    var removeProductRow = function (i) { return setProducts(function (prev) { return prev.filter(function (_, idx) { return idx !== i; }); }); };
+    var changeProduct = function (i, val) {
+        return setProducts(function (prev) { return prev.map(function (v, idx) { return (idx === i ? val : v); }); });
+    };
+    // Salvar (POST) — agora COM cargo_funcionario (obrigatório)
     var handleSalvar = function () {
+        if (!equipId) {
+            alert('Selecione um equipamento.');
+            return;
+        }
+        if (respId == null) {
+            alert('Selecione o responsável pelo orçamento.');
+            return;
+        }
+        var body = {
+            observacao: observacao,
+            equipamento: equipId,
+            servico: services.filter(function (id) { return id !== 0; }),
+            produto: products.filter(function (id) { return id !== 0; }),
+            cargo_funcionario: respId
+        };
         fetch('http://127.0.0.1:8000/orcamentos/api/v1/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(form)
+            body: JSON.stringify(body)
         })
             .then(function (res) {
             if (!res.ok)
@@ -65,36 +88,94 @@ function ModalNovoOrcamento(_a) {
         })
             .then(function (novo) {
             setOrcamentos(function (prev) { return __spreadArrays(prev, [novo]); });
+            // move equipamento para "OR" imediatamente
+            setEquipamentos(function (prev) {
+                return prev.map(function (e) {
+                    return e.id === equipId ? __assign(__assign({}, e), { status: __assign(__assign({}, e.status), { status: 'OR' }) }) : e;
+                });
+            });
+            // persiste no backend o status OR
+            fetch("http://127.0.0.1:8000/equipamentos/api/v1/" + equipId + "/", {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'OR' })
+            })["catch"](console.error);
             onClose();
-        })["catch"](console.error);
+        })["catch"](function (err) {
+            console.error(err);
+            alert('Não foi possível salvar o orçamento.');
+        });
     };
-    // Filtra apenas funcionários que têm cargo_funcionario != null
-    var funcionariosComCargo = funcionarios.filter(function (f) { return f.cargo_funcionario != null && f.cargo_funcionario.id != null; });
-    return (React.createElement("div", { className: "modal-overlay" },
-        React.createElement("div", { className: "modal-orc wide" },
-            React.createElement("h2", null, "Novo Or\u00E7amento"),
-            React.createElement("div", { className: "form-grid" },
-                React.createElement("div", { className: "grid-col-12" },
-                    React.createElement("label", null, "Observa\u00E7\u00E3o"),
-                    React.createElement("textarea", { name: "observacao", value: form.observacao, onChange: handleChange, rows: 3 })),
-                React.createElement("div", { className: "grid-col-6" },
-                    React.createElement("label", null, "Equipamento"),
-                    React.createElement("select", { name: "equipamento", value: ((_b = form.equipamento) === null || _b === void 0 ? void 0 : _b.toString()) || '', onChange: handleChange },
-                        React.createElement("option", { value: "" }, "Selecione..."),
-                        equipamentos.map(function (e) { return (React.createElement("option", { key: e.id, value: e.id.toString() }, e.equipamento)); }))),
-                React.createElement("div", { className: "grid-col-6" },
-                    React.createElement("label", null, "Respons\u00E1vel"),
-                    React.createElement("select", { name: "cargo_funcionario", value: ((_c = form.cargo_funcionario) === null || _c === void 0 ? void 0 : _c.toString()) || '', onChange: handleChange },
-                        React.createElement("option", { value: "" }, "Selecione..."),
-                        funcionariosComCargo.map(function (f) { return (React.createElement("option", { key: f.cargo_funcionario.id, value: f.cargo_funcionario.id.toString() }, f.nome)); }))),
-                React.createElement("div", { className: "grid-col-6" },
-                    React.createElement("label", null, "Servi\u00E7os"),
-                    React.createElement("select", { multiple: true, name: "servico", value: form.servico.map(function (v) { return v.toString(); }), onChange: handleChange }, servicos.map(function (s) { return (React.createElement("option", { key: s.id, value: s.id.toString() }, s.nome)); }))),
-                React.createElement("div", { className: "grid-col-6" },
-                    React.createElement("label", null, "Produtos"),
-                    React.createElement("select", { multiple: true, name: "produto", value: form.produto.map(function (v) { return v.toString(); }), onChange: handleChange }, produtos.map(function (p) { return (React.createElement("option", { key: p.id, value: p.id.toString() }, p.nome)); })))),
-            React.createElement("div", { className: "modal-buttons" },
-                React.createElement(buton_1["default"], { variant: "primary", onClick: handleSalvar }, "Salvar"),
-                React.createElement(buton_1["default"], { variant: "danger", onClick: onClose }, "Cancelar")))));
+    return (react_1["default"].createElement("div", { className: "modal-overlay" },
+        react_1["default"].createElement("div", { className: "modal-orc wide" },
+            react_1["default"].createElement("h2", null, "Novo Or\u00E7amento"),
+            react_1["default"].createElement("div", { className: "form-grid" },
+                react_1["default"].createElement("div", { className: "grid-col-6" },
+                    react_1["default"].createElement("label", null, "Cliente"),
+                    react_1["default"].createElement("select", { value: clienteId !== null && clienteId !== void 0 ? clienteId : '', disabled: !!initialEquip, onChange: function (e) { return setClienteId(e.target.value ? Number(e.target.value) : null); } },
+                        react_1["default"].createElement("option", { value: "" }, initialEquip ? clienteNome : 'Selecione...'),
+                        clientesList.map(function (c) { return (react_1["default"].createElement("option", { key: c.id, value: c.id }, c.nome)); }))),
+                react_1["default"].createElement("div", { className: "grid-col-6" },
+                    react_1["default"].createElement("label", null, "Equipamento"),
+                    react_1["default"].createElement("select", { value: equipId !== null && equipId !== void 0 ? equipId : '', disabled: !!initialEquip, onChange: function (e) { return setEquipId(e.target.value ? Number(e.target.value) : null); } },
+                        react_1["default"].createElement("option", { value: "" }, initialEquip ? initialEquip.equipamento : 'Selecione...'),
+                        equipamentosList
+                            .filter(function (e) { return e.cliente === clienteId; })
+                            .map(function (e) { return (react_1["default"].createElement("option", { key: e.id, value: e.id }, e.equipamento)); }))),
+                react_1["default"].createElement("div", { className: "grid-col-6" },
+                    react_1["default"].createElement("label", null, "Respons\u00E1vel"),
+                    react_1["default"].createElement("select", { value: respId !== null && respId !== void 0 ? respId : '', onChange: function (e) { return setRespId(e.target.value ? Number(e.target.value) : null); } },
+                        react_1["default"].createElement("option", { value: "" }, funcionariosList.length ? 'Selecione o responsável...' : 'Carregando responsáveis...'),
+                        funcionariosList
+                            .filter(function (f) { var _a; return ((_a = f === null || f === void 0 ? void 0 : f.cargo_funcionario) === null || _a === void 0 ? void 0 : _a.id) != null && (f.cargo_funcionario.cargo === 'TC' || f.cargo_funcionario.cargo === 'GE'); })
+                            .map(function (f) { return (react_1["default"].createElement("option", { key: f.cargo_funcionario.id, value: f.cargo_funcionario.id }, f.nome)); }))),
+                react_1["default"].createElement("div", { className: "grid-col-12" },
+                    react_1["default"].createElement("label", null, "Observa\u00E7\u00E3o"),
+                    react_1["default"].createElement("textarea", { rows: 3, value: observacao, onChange: function (e) { return setObservacao(e.target.value); }, placeholder: "Detalhes do or\u00E7amento..." }))),
+            react_1["default"].createElement("div", { className: "entries-section" },
+                react_1["default"].createElement("h3", null, "Servi\u00E7os"),
+                react_1["default"].createElement("table", { className: "entries-table" },
+                    react_1["default"].createElement("thead", null,
+                        react_1["default"].createElement("tr", null,
+                            react_1["default"].createElement("th", null, "Servi\u00E7o"),
+                            react_1["default"].createElement("th", { style: { width: '1rem' } }))),
+                    react_1["default"].createElement("tbody", null, services.map(function (srvId, i) { return (react_1["default"].createElement("tr", { key: i },
+                        react_1["default"].createElement("td", null,
+                            react_1["default"].createElement("select", { value: srvId !== null && srvId !== void 0 ? srvId : '', onChange: function (e) { return changeService(i, Number(e.target.value)); } },
+                                react_1["default"].createElement("option", { value: "" }, "Selecione..."),
+                                servicosList.map(function (s) {
+                                    var _a;
+                                    return (react_1["default"].createElement("option", { key: s.id, value: s.id },
+                                        s.nome,
+                                        " \u2014 R$ ",
+                                        Number((_a = s.valor) !== null && _a !== void 0 ? _a : 0).toFixed(2)));
+                                }))),
+                        react_1["default"].createElement("td", null,
+                            react_1["default"].createElement("button", { type: "button", onClick: function () { return removeServiceRow(i); }, className: "btn-remove-row" }, "\u00D7")))); }))),
+                react_1["default"].createElement(buton_1["default"], { variant: "secondary", onClick: addServiceRow }, "+ Adicionar Servi\u00E7o")),
+            react_1["default"].createElement("div", { className: "entries-section" },
+                react_1["default"].createElement("h3", null, "Produtos"),
+                react_1["default"].createElement("table", { className: "entries-table" },
+                    react_1["default"].createElement("thead", null,
+                        react_1["default"].createElement("tr", null,
+                            react_1["default"].createElement("th", null, "Produto"),
+                            react_1["default"].createElement("th", { style: { width: '1rem' } }))),
+                    react_1["default"].createElement("tbody", null, products.map(function (prdId, i) { return (react_1["default"].createElement("tr", { key: i },
+                        react_1["default"].createElement("td", null,
+                            react_1["default"].createElement("select", { value: prdId !== null && prdId !== void 0 ? prdId : '', onChange: function (e) { return changeProduct(i, Number(e.target.value)); } },
+                                react_1["default"].createElement("option", { value: "" }, "Selecione..."),
+                                produtosList.map(function (p) {
+                                    var _a;
+                                    return (react_1["default"].createElement("option", { key: p.id, value: p.id },
+                                        p.nome,
+                                        " \u2014 R$ ",
+                                        Number((_a = p.preco) !== null && _a !== void 0 ? _a : 0).toFixed(2)));
+                                }))),
+                        react_1["default"].createElement("td", null,
+                            react_1["default"].createElement("button", { type: "button", onClick: function () { return removeProductRow(i); }, className: "btn-remove-row" }, "\u00D7")))); }))),
+                react_1["default"].createElement(buton_1["default"], { variant: "secondary", onClick: addProductRow }, "+ Adicionar Produto")),
+            react_1["default"].createElement("div", { className: "modal-buttons" },
+                react_1["default"].createElement(buton_1["default"], { variant: "primary", onClick: handleSalvar }, "Salvar"),
+                react_1["default"].createElement(buton_1["default"], { variant: "danger", onClick: onClose }, "Cancelar")))));
 }
 exports["default"] = ModalNovoOrcamento;
