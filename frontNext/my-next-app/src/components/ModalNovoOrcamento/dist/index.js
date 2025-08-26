@@ -31,6 +31,22 @@ function ModalNovoOrcamento(_a) {
     var servicosList = Array.isArray(servicos) ? servicos : [];
     var produtosList = Array.isArray(produtos) ? produtos : [];
     var funcionariosList = Array.isArray(funcionarios) ? funcionarios : [];
+    // helpers no topo do componente (ModalNovoOrcamento e ModalVisualizarOrcamento)
+    var cargoIsTCorGE = function (cargo) {
+        if (cargo == null)
+            return false;
+        if (typeof cargo === 'number')
+            return cargo === 2 || cargo === 3; // 2=TC, 3=GE
+        return cargo === 'TC' || cargo === 'GE';
+    };
+    var cargoLabel = function (cargo) {
+        var _a;
+        if (cargo == null)
+            return '';
+        if (typeof cargo === 'number')
+            return (_a = { 1: 'RC', 2: 'TC', 3: 'GE' }[cargo]) !== null && _a !== void 0 ? _a : String(cargo);
+        return cargo;
+    };
     // Estados básicos (pré-preenchidos quando vem do card EN)
     var _b = react_1.useState(initialEquip ? initialEquip.cliente : null), clienteId = _b[0], setClienteId = _b[1];
     var _c = react_1.useState(initialEquip ? initialEquip.id : null), equipId = _c[0], setEquipId = _c[1];
@@ -127,8 +143,14 @@ function ModalNovoOrcamento(_a) {
                     react_1["default"].createElement("select", { value: respId !== null && respId !== void 0 ? respId : '', onChange: function (e) { return setRespId(e.target.value ? Number(e.target.value) : null); } },
                         react_1["default"].createElement("option", { value: "" }, funcionariosList.length ? 'Selecione o responsável...' : 'Carregando responsáveis...'),
                         funcionariosList
-                            .filter(function (f) { var _a; return ((_a = f === null || f === void 0 ? void 0 : f.cargo_funcionario) === null || _a === void 0 ? void 0 : _a.id) != null && (f.cargo_funcionario.cargo === 'TC' || f.cargo_funcionario.cargo === 'GE'); })
-                            .map(function (f) { return (react_1["default"].createElement("option", { key: f.cargo_funcionario.id, value: f.cargo_funcionario.id }, f.nome)); }))),
+                            .filter(function (f) { return f.cargo_funcionario && cargoIsTCorGE(f.cargo_funcionario.cargo); })
+                            .map(function (f) {
+                            var _a, _b;
+                            return (react_1["default"].createElement("option", { key: f.id, value: f.cargo_funcionario.id },
+                                f.nome,
+                                " \u2014 ",
+                                cargoLabel((_b = (_a = f.cargo_funcionario) === null || _a === void 0 ? void 0 : _a.cargo) !== null && _b !== void 0 ? _b : null)));
+                        }))),
                 react_1["default"].createElement("div", { className: "grid-col-12" },
                     react_1["default"].createElement("label", null, "Observa\u00E7\u00E3o"),
                     react_1["default"].createElement("textarea", { rows: 3, value: observacao, onChange: function (e) { return setObservacao(e.target.value); }, placeholder: "Detalhes do or\u00E7amento..." }))),

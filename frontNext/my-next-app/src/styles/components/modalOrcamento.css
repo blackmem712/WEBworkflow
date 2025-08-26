@@ -76,3 +76,66 @@ input:focus, textarea:focus, select:focus {
   color: #e11d48;
   cursor: pointer;
 }
+
+
+/* === CSS ESCOPADO para ModalVisualizarOrcamento (classe raiz .mvo) === */
+.mvo.modal-overlay{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.35);
+  display:flex; align-items:center; justify-content:center;
+  padding:16px; z-index:50;
+}
+
+.mvo.modal-window{
+  background:#fff;
+  width:min(920px, 100%);
+  border-radius:14px;
+  border:1px solid #e5e7eb;
+  box-shadow:0 10px 30px rgba(0,0,0,.12);
+  padding:16px 20px;
+}
+
+.mvo.title{ margin:0 0 8px; }
+
+.mvo.summary p{ margin:4px 0; }
+
+.mvo.form-grid{
+  display:grid; grid-template-columns:repeat(12, 1fr);
+  gap:12px; margin-top:12px;
+}
+.mvo.grid-col-12{ grid-column:span 12; }
+.mvo.grid-col-8{  grid-column:span 8; }
+.mvo.grid-col-6{  grid-column:span 6; }
+.mvo.grid-col-4{  grid-column:span 4; }
+
+.mvo.entries-section{ margin-top:16px; }
+
+.mvo.entries-table{ width:100%; border-collapse:collapse; }
+.mvo.entries-table th, .mvo.entries-table td{
+  padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;
+}
+
+.mvo select, .mvo input, .mvo textarea{
+  width:100%; border:1px solid #d1d5db; border-radius:8px;
+  padding:8px 10px; outline:none; background:#fff;
+}
+.mvo select:disabled, .mvo input:disabled, .mvo textarea:disabled{
+  background:#f3f4f6; color:#6b7280; cursor:not-allowed;
+}
+
+.mvo.modal-buttons{
+  display:flex; gap:8px; justify-content:flex-end; margin-top:16px;
+}
+
+@media (max-width:640px){
+  .mvo.modal-window{ padding:12px; }
+  .mvo.form-grid{ grid-template-columns:1fr; }
+  .mvo.grid-col-12, .mvo.grid-col-8, .mvo.grid-col-6, .mvo.grid-col-4{ grid-column:1 / -1; }
+}
+
+/* Optional dark scheme */
+@media (prefers-color-scheme: dark){
+  .mvo.modal-window{ background:#111827; border-color:#374151; }
+  .mvo select, .mvo input, .mvo textarea{ background:#0f172a; border-color:#374151; color:#e5e7eb; }
+  .mvo.entries-table th, .mvo.entries-table td{ border-color:#374151; }
+}

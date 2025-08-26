@@ -55,6 +55,11 @@ urlpatterns = [
       name='equipamentos_api_v1_detail',
     ),
     path(
+      'equipamentos/api/v1/<int:pk>/historico/',
+      views.WorkflowEquipamentoAPIv1ViewSet.as_view({'get': 'historico'}),
+      name='equipamentos_api_v1_historico',
+    ),
+    path(
       'funcionarios/api/v1/',
       views.WorkflowFuncionarioAPIv1ViewSet.as_view({
         'get':  'list',

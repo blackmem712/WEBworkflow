@@ -1,7 +1,7 @@
 export interface CargoFuncionario {
-  id:number
-  cargo: string | null
-  setor: string | null
+  id: number
+  cargo: number | 'TC' | 'GE' | 'RC' | null
+  setor: number | 'RE' | 'OF' | 'ES' | null
 }
 export interface Cargo {
   id: number

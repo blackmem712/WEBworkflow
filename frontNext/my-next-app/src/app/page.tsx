@@ -60,6 +60,8 @@ export default function HomePage() {
   // flags de carregamento para aplicar overrides 1x
   const overridesAppliedRef = useRef(false)
 
+  const [viewMode, setViewMode] = useState<'assign' | 'maintenance'>('assign')
+  
   useEffect(() => {
     // fetch inicial
     fetch('http://127.0.0.1:8000/equipamentos/api/v1/')
@@ -167,20 +169,29 @@ export default function HomePage() {
     }).catch(console.error)
   }
 
-  // Clique do card: EN → abre NOVO orçamento | OR → abre VISUALIZAR
-  const onCardClick = (code: StatusCode, eq: Equipamento) => {
-    if (code === 'EN') {
-      setNewOrcEquip(eq)
-      setShowOrcModal(true)
-      return
-    }
-    if (code === 'OR') {
-      const orc = orcamentos.find(o => o.equipamento === eq.id) || null
-      if (!orc) return
-      setSelOrcamento(orc)
-      setShowViewModal(true)
-    }
+ const onCardClick = (code: StatusCode, eq: Equipamento) => {
+  if (code === 'EN') {
+    setNewOrcEquip(eq)
+    setShowOrcModal(true)
+    return
   }
+  if (code === 'OR') {
+    const orc = orcamentos.find(o => o.equipamento === eq.id) || null
+    if (!orc) return
+    setSelOrcamento(orc)
+    setViewMode('assign')          // atribuir técnico + enviar p/ MA
+    setShowViewModal(true)
+    return
+  }
+  if (code === 'MA') {
+    const orc = orcamentos.find(o => o.equipamento === eq.id) || null
+    if (!orc) return
+    setSelOrcamento(orc)
+    setViewMode('maintenance')     // concluir manutenção (vai p/ GA)
+    setShowViewModal(true)
+    return
+  }
+}
 
   return (
     <>
@@ -241,6 +252,7 @@ export default function HomePage() {
           equipamentos={equipamentos}
           servicos={servicos}
           produtos={produtos}
+          funcionarios={funcionarios}   // <- ADICIONE ESTA LINHA
           onClose={() => {
             setShowOrcModal(false)
             setNewOrcEquip(null)
@@ -268,6 +280,7 @@ export default function HomePage() {
         if (!cli) return null
         return (
           <ModalVisualizarOrcamento
+            mode={viewMode}
             orcamento={selOrcamento}
             cliente={cli}
             equipamento={eq}
@@ -279,12 +292,14 @@ export default function HomePage() {
               setSelOrcamento(null)
             }}
             setOrcamentos={setOrcamentos}
+            readOnlyTech={viewMode === 'maintenance'}
             setEquipamentos={(updater) => {
               // intercepta para gravar no LS quando virar MA
               setEquipamentos(prev => {
                 const next = typeof updater === 'function' ? (updater as any)(prev) : (updater as Equipamento[])
                 next.forEach(e => {
                   if (e.status.status === 'MA') saveOverride(e.id, 'MA')
+                  if (e.status.status === 'GA') saveOverride(e.id, 'GA')
                 })
                 return next
               })

@@ -34,24 +34,41 @@ class Funcionario(Pessoa):  # Herança de Pessoa
  
 
 
+class Historico(models.Model):
+    status_id = models.ForeignKey(
+        'Status',                      # <- string
+        on_delete=models.CASCADE,
+        null=True,
+        related_name='historicos_vigentes',
+        related_query_name='historico_vigente',
+    )
+    def __str__(self) -> str:
+        return f'{self.id}'
+
+
 class Status(models.Model):
+    historico = models.ForeignKey(
+        'Historico',                   # <- string
+        on_delete=models.CASCADE,
+        related_name='statuses',
+        related_query_name='status',
+        null=True, blank=True,
+    )
     date_entrada = models.DateTimeField(default=timezone.now)
-    date_saida = models.DateTimeField(null=True, blank=True)
-    status = models.CharField(max_length=2,default='EN',choices=(
-                                 ('EN','Entrada'),
-                                 ('OR','Orçamento'),
-                                 ('MA','manutenção'),
-                                 ('GA','entrega'),
-                                 ('SA','Saida')))
-    
+    date_saida   = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(
+        max_length=2,
+        default='EN',
+        choices=(
+            ('EN','Entrada'),
+            ('OR','Orçamento'),
+            ('MA','manutenção'),
+            ('GA','entrega'),
+            ('SA','Saida'),
+        )
+    )
     def __str__(self) -> str:
         return f'{self.status}'
-
-class Historico(models.Model): 
-   status_id = models.ForeignKey(Status, on_delete= models.CASCADE,null=True)
-   
-   def __str__(self) -> str:
-        return f'{self.id}'
 
 class Equipamento(models.Model):
     equipamento = models.CharField(max_length=200) 

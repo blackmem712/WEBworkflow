@@ -55,6 +55,7 @@ function HomePage() {
     var _k = react_1.useState(false), showViewModal = _k[0], setShowViewModal = _k[1];
     // flags de carregamento para aplicar overrides 1x
     var overridesAppliedRef = react_1.useRef(false);
+    var _l = react_1.useState('assign'), viewMode = _l[0], setViewMode = _l[1];
     react_1.useEffect(function () {
         // fetch inicial
         fetch('http://127.0.0.1:8000/equipamentos/api/v1/')
@@ -150,7 +151,6 @@ function HomePage() {
             body: JSON.stringify({ status: newStatus })
         })["catch"](console.error);
     };
-    // Clique do card: EN → abre NOVO orçamento | OR → abre VISUALIZAR
     var onCardClick = function (code, eq) {
         if (code === 'EN') {
             setNewOrcEquip(eq);
@@ -162,7 +162,18 @@ function HomePage() {
             if (!orc)
                 return;
             setSelOrcamento(orc);
+            setViewMode('assign'); // atribuir técnico + enviar p/ MA
             setShowViewModal(true);
+            return;
+        }
+        if (code === 'MA') {
+            var orc = orcamentos.find(function (o) { return o.equipamento === eq.id; }) || null;
+            if (!orc)
+                return;
+            setSelOrcamento(orc);
+            setViewMode('maintenance'); // concluir manutenção (vai p/ GA)
+            setShowViewModal(true);
+            return;
         }
     };
     return (React.createElement(React.Fragment, null,
@@ -190,7 +201,7 @@ function HomePage() {
                         })); }),
                         provDrop.placeholder))); }));
             }))),
-        showOrcModal && newOrcEquip && (React.createElement(ModalNovoOrcamento_1["default"], { clientes: clientes, initialEquip: newOrcEquip, initialClienteName: clientMap.get(newOrcEquip.cliente), equipamentos: equipamentos, servicos: servicos, produtos: produtos, onClose: function () {
+        showOrcModal && newOrcEquip && (React.createElement(ModalNovoOrcamento_1["default"], { clientes: clientes, initialEquip: newOrcEquip, initialClienteName: clientMap.get(newOrcEquip.cliente), equipamentos: equipamentos, servicos: servicos, produtos: produtos, funcionarios: funcionarios, onClose: function () {
                 setShowOrcModal(false);
                 setNewOrcEquip(null);
             }, setOrcamentos: setOrcamentos, setEquipamentos: function (updater) {
@@ -212,16 +223,18 @@ function HomePage() {
             var cli = clientes.find(function (c) { return c.id === eq.cliente; });
             if (!cli)
                 return null;
-            return (React.createElement(ModalVisualizarOrcamento_1["default"], { orcamento: selOrcamento, cliente: cli, equipamento: eq, servicos: servicos, produtos: produtos, funcionarios: funcionarios, onClose: function () {
+            return (React.createElement(ModalVisualizarOrcamento_1["default"], { mode: viewMode, orcamento: selOrcamento, cliente: cli, equipamento: eq, servicos: servicos, produtos: produtos, funcionarios: funcionarios, onClose: function () {
                     setShowViewModal(false);
                     setSelOrcamento(null);
-                }, setOrcamentos: setOrcamentos, setEquipamentos: function (updater) {
+                }, setOrcamentos: setOrcamentos, readOnlyTech: viewMode === 'maintenance', setEquipamentos: function (updater) {
                     // intercepta para gravar no LS quando virar MA
                     setEquipamentos(function (prev) {
                         var next = typeof updater === 'function' ? updater(prev) : updater;
                         next.forEach(function (e) {
                             if (e.status.status === 'MA')
                                 saveOverride(e.id, 'MA');
+                            if (e.status.status === 'GA')
+                                saveOverride(e.id, 'GA');
                         });
                         return next;
                     });

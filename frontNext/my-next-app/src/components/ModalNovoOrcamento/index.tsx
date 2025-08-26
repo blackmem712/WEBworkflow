@@ -42,7 +42,18 @@ export default function ModalNovoOrcamento({
   const servicosList      = Array.isArray(servicos)      ? servicos      : []
   const produtosList      = Array.isArray(produtos)      ? produtos      : []
   const funcionariosList  = Array.isArray(funcionarios)  ? funcionarios  : []
+  // helpers no topo do componente (ModalNovoOrcamento e ModalVisualizarOrcamento)
+  const cargoIsTCorGE = (cargo: number | string | null) => {
+    if (cargo == null) return false
+    if (typeof cargo === 'number') return cargo === 2 || cargo === 3   // 2=TC, 3=GE
+    return cargo === 'TC' || cargo === 'GE'
+  }
 
+  const cargoLabel = (cargo: number | string | null) => {
+    if (cargo == null) return ''
+    if (typeof cargo === 'number') return ({ 1:'RC', 2:'TC', 3:'GE' } as const)[cargo] ?? String(cargo)
+    return cargo
+  }
   // Estados básicos (pré-preenchidos quando vem do card EN)
   const [clienteId, setClienteId] = useState<number | null>(initialEquip ? initialEquip.cliente : null)
   const [equipId, setEquipId]     = useState<number | null>(initialEquip ? initialEquip.id      : null)
@@ -62,7 +73,7 @@ export default function ModalNovoOrcamento({
       setEquipId(initialEquip.id)
     }
   }, [initialEquip])
-
+ 
   // Handlers de linhas (serviços)
   const addServiceRow = () => setServices(prev => [...prev, 0])
   const removeServiceRow = (i: number) => setServices(prev => prev.filter((_, idx) => idx !== i))
@@ -176,15 +187,18 @@ export default function ModalNovoOrcamento({
               <option value="">
                 {funcionariosList.length ? 'Selecione o responsável...' : 'Carregando responsáveis...'}
               </option>
+
               {funcionariosList
-                .filter(f => f?.cargo_funcionario?.id != null && (f.cargo_funcionario.cargo === 'TC' || f.cargo_funcionario.cargo === 'GE'))
+                .filter(f => f.cargo_funcionario && cargoIsTCorGE(f.cargo_funcionario.cargo))
                 .map(f => (
-                  <option key={f.cargo_funcionario!.id} value={f.cargo_funcionario!.id}>
-                    {f.nome}
+                  <option key={f.id} value={f.cargo_funcionario!.id}>
+                    {f.nome} — {cargoLabel(f.cargo_funcionario?.cargo ?? null)}
                   </option>
                 ))}
             </select>
           </div>
+
+
 
           {/* Observação */}
           <div className="grid-col-12">
