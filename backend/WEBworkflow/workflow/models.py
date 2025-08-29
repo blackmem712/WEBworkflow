@@ -1,5 +1,11 @@
 from django.db import models
 from django.utils import timezone
+from django.conf import settings
+from django.utils.crypto import get_random_string
+
+def generate_qr_slug():
+    return get_random_string(12)
+
 
 class Pessoa(models.Model):
     nome = models.CharField(max_length=200,null=True) 
@@ -27,12 +33,17 @@ class Cliente(Pessoa):  # Herança de Pessoa
 
 
 class Funcionario(Pessoa):  # Herança de Pessoa
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='funcionario'
+    )
     def __str__(self):
         return self.nome
 
 
  
-
 
 class Historico(models.Model):
     status_id = models.ForeignKey(
@@ -67,6 +78,17 @@ class Status(models.Model):
             ('SA','Saida'),
         )
     )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='statuses_created'
+    )
+    source = models.CharField(
+        max_length=3,
+        choices=(('web','web'),('qr','qr')),
+        default='web'
+    )
     def __str__(self) -> str:
         return f'{self.status}'
 
@@ -78,6 +100,7 @@ class Equipamento(models.Model):
     nun_serie = models.CharField(max_length=50)
     cliente = models.ForeignKey(Cliente, on_delete= models.CASCADE)
     historico_id = models.OneToOneField(Historico, on_delete=models.CASCADE,null=True)
+    qr_slug = models.SlugField(max_length=32, unique=True, null=False, blank=False, default=generate_qr_slug)
     
     def __str__(self) -> str:
        return f'{self.equipamento}'
@@ -103,6 +126,7 @@ class Cargo(models.Model):
  def __str__(self) -> str:
        return f'{self.cargo}'
  
+
 class Cargo_funcionario(models.Model):
    funcionario = models.ForeignKey(Funcionario, on_delete=models.CASCADE)
    setor = models.ForeignKey(Setor, on_delete=models.CASCADE)
@@ -112,6 +136,7 @@ class Cargo_funcionario(models.Model):
    def __str__(self) -> str:
        return f'{self.id}'
    
+
 class Servico(models.Model):
     nome = models.CharField(max_length=200) 
     valor= models.IntegerField(50)
@@ -119,6 +144,7 @@ class Servico(models.Model):
 
     def __str__(self) -> str:
        return f'{self.nome}'
+
 
 class Produto(models.Model):
     nome = models.CharField(max_length=50) 
@@ -130,6 +156,7 @@ class Produto(models.Model):
     def __str__(self) -> str:
        return f'{self.nome}'
 
+
 class Fornecedor(models.Model):
     produtos = models.ManyToManyField(Produto) 
     nome = models.CharField(max_length=50)   
@@ -139,6 +166,7 @@ class Fornecedor(models.Model):
     
     def __str__(self) -> str:
        return f'{self.nome}'
+
 
 class Orcamento(models.Model):
     observacao = models.TextField()

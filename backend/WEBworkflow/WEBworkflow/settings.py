@@ -62,12 +62,37 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOWED_HEADERS = list(default_headers) + ['content-type',]
 
+# --- DRF AUTH + JWT ---
 REST_FRAMEWORK = {
-  'DEFAULT_PERMISSION_CLASSES':[
-    'rest_framework.permissions.AllowAny',
-  ],
-   'DEFAULT_FILTER_BACKENDS': [
-       'django_filters.rest_framework.DjangoFilterBackend'],
+    # mantenha o que já existe (filters etc.)
+    'DEFAULT_PERMISSION_CLASSES': [
+        # Mantemos AllowAny por padrão para não quebrar suas APIs atuais.
+        # Vamos proteger endpoints críticos individualmente.
+        'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.ScopedRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        # escopo usado nas rotas de QR (GET+POST)
+        'qr': '10/min',
+    },
+}
+
+# --- SIMPLE_JWT ---
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 ROOT_URLCONF = 'WEBworkflow.urls'

@@ -171,4 +171,8 @@ urlpatterns = [
       }),
       name='orcamentos_api_v1_detail'
     ),
+    path('q/<slug:slug>/', views.qr_get, name='qr_get'),
+    path('q/<slug:slug>/',
+         views.qr_post, name='qr_post'),  # mesmo path; método POST
+    path('q/<slug:slug>/rotate/', views.qr_rotate, name='qr_rotate'),
 ]
