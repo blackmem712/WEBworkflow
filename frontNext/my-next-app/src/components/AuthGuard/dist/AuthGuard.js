@@ -1,3 +1,4 @@
+// src/components/AuthGuard.tsx
 'use client';
 "use strict";
 exports.__esModule = true;
@@ -9,8 +10,9 @@ function AuthGuard(_a) {
     var router = navigation_1.useRouter();
     var _b = react_1.useState(false), ready = _b[0], setReady = _b[1];
     react_1.useEffect(function () {
-        var token = api_1.getAccessToken();
-        if (!token) {
+        var hasCookie = typeof document !== 'undefined' && document.cookie.includes('auth=1');
+        var hasToken = !!api_1.getAccessToken();
+        if (!hasCookie || !hasToken) {
             router.replace('/login');
         }
         else {

@@ -1,3 +1,4 @@
+// src/components/AuthGuard.tsx
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -9,8 +10,9 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    const token = getAccessToken()
-    if (!token) {
+    const hasCookie = typeof document !== 'undefined' && document.cookie.includes('auth=1')
+    const hasToken  = !!getAccessToken()
+    if (!hasCookie || !hasToken) {
       router.replace('/login')
     } else {
       setReady(true)

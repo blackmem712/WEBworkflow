@@ -1,5 +1,4 @@
 import { redirect } from 'next/navigation'
-
 export default function Home() {
-  redirect('/(protected)')
+  redirect('/login') // middleware troca pra /(protected) se já tiver cookie
 }

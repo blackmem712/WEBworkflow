@@ -38,14 +38,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 var react_1 = require("react");
-var api_1 = require("@/services/api");
 var navigation_1 = require("next/navigation");
+var api_1 = require("@/services/api");
+var login_module_css_1 = require("@/app/login/login.module.css");
 function LoginPage() {
     var _a = react_1.useState(''), username = _a[0], setUsername = _a[1];
     var _b = react_1.useState(''), password = _b[0], setPassword = _b[1];
-    var _c = react_1.useState(false), loading = _c[0], setLoading = _c[1];
-    var _d = react_1.useState(null), error = _d[0], setError = _d[1];
+    var _c = react_1.useState(false), showPass = _c[0], setShowPass = _c[1];
+    var _d = react_1.useState(false), loading = _d[0], setLoading = _d[1];
+    var _e = react_1.useState(null), error = _e[0], setError = _e[1];
     var router = navigation_1.useRouter();
+    var search = navigation_1.useSearchParams();
+    var next = search.get('next');
     function handleSubmit(e) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
@@ -64,11 +68,13 @@ function LoginPage() {
                         resp = _d.sent();
                         _c = resp.data, access = _c.access, refresh = _c.refresh;
                         api_1.setTokens(access, refresh);
-                        router.push('/'); // volta pra home (ou dashboard)
+                        // cookie leve para o middleware decidir (não é segurança, é UX)
+                        document.cookie = 'auth=1; path=/; max-age=604800; samesite=lax'; // 7 dias
+                        router.push(next && next.startsWith('/') ? next : '/');
                         return [3 /*break*/, 5];
                     case 3:
                         err_1 = _d.sent();
-                        setError(((_b = (_a = err_1 === null || err_1 === void 0 ? void 0 : err_1.response) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.detail) || 'Falha no login');
+                        setError(((_b = (_a = err_1 === null || err_1 === void 0 ? void 0 : err_1.response) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.detail) || 'Usuário ou senha inválidos');
                         return [3 /*break*/, 5];
                     case 4:
                         setLoading(false);
@@ -78,12 +84,24 @@ function LoginPage() {
             });
         });
     }
-    return (React.createElement("div", { style: { maxWidth: 420, margin: '80px auto', padding: 24 } },
-        React.createElement("h1", null, "Entrar"),
-        React.createElement("form", { onSubmit: handleSubmit, style: { display: 'grid', gap: 12 } },
-            React.createElement("input", { placeholder: "Usu\u00E1rio", value: username, onChange: function (e) { return setUsername(e.target.value); } }),
-            React.createElement("input", { placeholder: "Senha", type: "password", value: password, onChange: function (e) { return setPassword(e.target.value); } }),
-            error && React.createElement("div", { style: { color: 'crimson' } }, error),
-            React.createElement("button", { type: "submit", disabled: loading }, loading ? 'Entrando...' : 'Entrar'))));
+    return (React.createElement("div", { className: login_module_css_1["default"].page },
+        React.createElement("div", { className: login_module_css_1["default"].card },
+            React.createElement("div", { className: login_module_css_1["default"].brand },
+                React.createElement("div", { className: login_module_css_1["default"].logo }, "\uD83D\uDD12"),
+                React.createElement("h1", null, "Entrar"),
+                React.createElement("p", { className: login_module_css_1["default"].sub }, "Acesse sua conta para continuar")),
+            React.createElement("form", { onSubmit: handleSubmit, className: login_module_css_1["default"].form },
+                React.createElement("label", { className: login_module_css_1["default"].label },
+                    "Usu\u00E1rio",
+                    React.createElement("input", { className: login_module_css_1["default"].input, placeholder: "seu usu\u00E1rio", autoComplete: "username", value: username, onChange: function (e) { return setUsername(e.target.value); } })),
+                React.createElement("label", { className: login_module_css_1["default"].label },
+                    "Senha",
+                    React.createElement("div", { className: login_module_css_1["default"].passWrap },
+                        React.createElement("input", { className: login_module_css_1["default"].input, placeholder: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022", type: showPass ? 'text' : 'password', autoComplete: "current-password", value: password, onChange: function (e) { return setPassword(e.target.value); } }),
+                        React.createElement("button", { type: "button", className: login_module_css_1["default"].toggle, onClick: function () { return setShowPass(function (v) { return !v; }); }, "aria-label": showPass ? 'Ocultar senha' : 'Mostrar senha' }, showPass ? '🙈' : '👁️'))),
+                error && React.createElement("div", { className: login_module_css_1["default"].error }, error),
+                React.createElement("button", { type: "submit", className: login_module_css_1["default"].submit, disabled: loading }, loading ? 'Entrando…' : 'Entrar')),
+            React.createElement("div", { className: login_module_css_1["default"].tips },
+                React.createElement("span", null, "Dica: use o usu\u00E1rio/grupo correto (TC, GE ou RC) conforme seu perfil.")))));
 }
 exports["default"] = LoginPage;

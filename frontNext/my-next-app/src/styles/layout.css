@@ -92,3 +92,23 @@ body {
 .sidebar-hover:hover ~ .layout-content {
   margin-left: 220px; /* Largura da sidebar expandida */
 }
+/* A nave ocupa toda a coluna para o botão ficar no rodapé */
+.nav-links {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* já existia no seu CSS */
+}
+
+/* Botão de logout com destaque */
+.nav-item.logout {
+  color: #fecaca; /* vermelho clarinho no texto */
+}
+.sidebar-hover:hover .nav-item.logout {
+  opacity: 1;
+  transform: translateX(0);
+}
+.nav-item.logout:hover {
+  background-color: #ef4444 !important; /* vermelho */
+  color: #fff;
+}
