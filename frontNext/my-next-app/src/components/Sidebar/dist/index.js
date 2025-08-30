@@ -8,7 +8,7 @@ var items = [
     { href: '/Home', label: 'Início', icon: '🏠' },
     { href: '/Clientes', label: 'Clientes', icon: '👤' },
     { href: '/Equipamentos', label: 'Equipamentos', icon: '🧰' },
-    { href: '/Funcionarios', label: 'Funcionários', icon: '🧑‍🔧' },
+    { href: '/Funcionarios', label: 'Funcionários', icon: '🔧' },
     { href: '/Servicos', label: 'Serviços', icon: '🧾' },
     { href: '/Produtos', label: 'Produtos', icon: '📦' },
     { href: '/Fornecedores', label: 'Fornecedores', icon: '🏭' },
