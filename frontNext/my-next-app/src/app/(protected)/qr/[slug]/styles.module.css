@@ -1,0 +1,20 @@
+.wrap{min-height:100svh;display:grid;place-items:center;background:#0f172a;padding:16px}
+.card{width:100%;max-width:520px;background:#0b1224;border:1px solid #1f2a44;border-radius:16px;padding:16px;color:#e5e7eb;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.header{margin-bottom:10px}.title{margin:0;font-size:1.25rem}
+.sub{margin:4px 0 0;color:#94a3b8;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.statusHeader{display:flex;align-items:center;gap:10px;margin:12px 0 6px}
+.badge{border:1px solid #334155;padding:4px 8px;border-radius:6px;font-weight:600;font-size:.85rem}
+.statusLabel{color:#e2e8f0;font-weight:600}.idMuted{margin-left:auto;color:#64748b;font-size:.85rem}
+.content{margin-top:8px}.bullets{margin:8px 0 0;padding-left:18px;color:#cbd5e1}
+.muted{color:#94a3b8}.err{color:#fecaca;background:#7f1d1d;padding:8px;border-radius:8px;margin-top:8px}
+.ok{color:#a7f3d0;background:#064e3b;padding:8px;border-radius:8px;margin-top:8px}
+.footer{margin-top:16px;display:flex;gap:8px}
+.btnPrimary{flex:1;padding:10px 12px;border-radius:10px;color:#0b1224;background:#22d3ee;border:none;font-weight:700}
+.btnPrimary:disabled{opacity:.5}
+.btnGhost{padding:10px 12px;border-radius:10px;color:#cbd5e1;background:transparent;border:1px solid #334155}
+/* estilos locais, sem :global */
+.sEn { color:#38bdf8 }  /* entrada */
+.sOr { color:#f59e0b }  /* orçamento */
+.sMa { color:#a78bfa }  /* manutenção */
+.sGa { color:#10b981 }  /* garantia/revisão */
+.sSa { color:#22d3ee }  /* pronto para entrega */

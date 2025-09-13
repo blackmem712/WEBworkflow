@@ -1,4 +1,3 @@
-// src/components/ModalNovoEquipamento/index.tsx
 'use client'
 
 import { useState, useRef, useEffect, KeyboardEvent, ChangeEvent } from 'react'
@@ -7,6 +6,7 @@ import { Cliente }     from '@/types/cliente/cliente'
 import InputCampo      from '@/components/InputCampo'
 import Button          from '@/components/buton'
 import ModalNovoCliente from '@/components/ModalNovoCliente'
+import EtiquetaQRModal, { EtiquetaData } from '@/app/(protected)/Equipamentos/[id]/etiqueta/etiquetaQRModal'
 import '@/styles/components/modalEquipamento.css'
 
 interface Props {
@@ -32,6 +32,7 @@ export default function ModalNovoEquipamento({
   const [form, setForm] = useState<Omit<EquipamentoCreate, 'cliente'>>({
     equipamento: '', marca: '', modelo: '', cor: '', nun_serie: ''
   })
+
   // Auto-complete
   const [search, setSearch]                 = useState('')
   const [selectedClienteId, setSelectedId]  = useState<number | null>(null)
@@ -41,6 +42,10 @@ export default function ModalNovoEquipamento({
 
   // Modal novo cliente
   const [showCliente, setShowCliente] = useState(false)
+
+  // === NOVO: controle do modal de etiqueta ===
+  const [showEtiqueta, setShowEtiqueta] = useState(false)
+  const [etiquetaData, setEtiquetaData] = useState<EtiquetaData | null>(null)
 
   // Fecha sugestões clicando fora de todo o combobox
   useEffect(() => {
@@ -93,7 +98,6 @@ export default function ModalNovoEquipamento({
     setSearch(val)
     setShowSug(true)
     setActiveIndex(0)
-    // Limpamos o ID selecionado se o usuário voltar a digitar
     setSelectedId(null)
   }
 
@@ -105,173 +109,194 @@ export default function ModalNovoEquipamento({
 
   // (Opcional) Se seu ModalNovoCliente suportar callback onCreated
   const handleClienteCriado = (novo: Cliente) => {
-    // Atualiza lista externa
     setClientes((prev) => [...prev, novo])
-    // Já seleciona esse cliente no combobox
     setSelectedId(novo.id)
     setSearch(novo.nome ?? '')
     setShowCliente(false)
   }
 
-  const handleSalvar = () => {
+  const handleSalvar = async () => {
     let clienteId = selectedClienteId
 
-    // Se o usuário só digitou, tenta casar:
+    // Se o usuário só digitou, tenta casar
     if (!clienteId) {
-      // 1) match exato (case-insensitive)
       const exato = clientes.find(
         c => (c.nome ?? '').toLowerCase().trim() === search.toLowerCase().trim()
       )
-      // 2) se não houver exato, se houver só 1 filtrado, assume-o
       const unico = filtrados.length === 1 ? filtrados[0] : undefined
 
-      if (exato) {
-        clienteId = exato.id
-      } else if (unico) {
-        clienteId = unico.id
-      } else {
+      if (exato) clienteId = exato.id
+      else if (unico) clienteId = unico.id
+      else {
         alert('Selecione um cliente válido na lista de sugestões.')
         return
       }
     }
 
-    const body: EquipamentoCreate = {
-      ...form,
-      cliente: clienteId
-    }
+    const body: EquipamentoCreate = { ...form, cliente: clienteId }
 
-    fetch('http://127.0.0.1:8000/equipamentos/api/v1/', {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify(body),
-    })
-      .then(r => {
-        if (!r.ok) throw new Error('Erro ao criar equipamento')
-        return r.json()
+    try {
+      const r = await fetch('http://127.0.0.1:8000/equipamentos/api/v1/', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify(body),
       })
-      .then((novo: Equipamento) => {
-        setEquipamentos(prev => [...prev, novo])
-        onClose()
-      })
-      .catch((err) => {
-        console.error(err)
-        alert('Não foi possível salvar. Verifique os campos e tente novamente.')
-      })
+
+      if (!r.ok) throw new Error('Erro ao criar equipamento')
+      const novo: any = await r.json()
+
+      // Atualiza listagem externa
+      setEquipamentos(prev => [...prev, novo])
+
+      // === NOVO: abrir modal de etiqueta imediatamente ===
+      let id: number | undefined = novo?.id
+      let qr_slug: string | undefined = novo?.qr_slug
+      let nome: string | undefined = novo?.equipamento
+
+      // Fallback: se o serializer ainda não expõe qr_slug, busca por GET /id/
+      if ((!qr_slug || !id) && id) {
+        const r2 = await fetch(`http://127.0.0.1:8000/equipamentos/api/v1/${id}/`)
+        if (r2.ok) {
+          const d2: any = await r2.json()
+          qr_slug = qr_slug || d2?.qr_slug
+          nome    = nome    || d2?.equipamento
+        }
+      }
+
+      if (!id || !qr_slug) {
+        alert('Equipamento criado, mas não foi possível obter o QR. Verifique o serializer (qr_slug).')
+        return
+      }
+
+      setEtiquetaData({ id, qr_slug, equipamento: nome })
+      setShowEtiqueta(true)
+
+      // Obs.: NÃO fechamos o modal principal agora; o usuário imprime e fecha quando quiser.
+      // Se quiser fechar automaticamente após abrir a etiqueta:
+      // onClose()
+
+    } catch (err) {
+      console.error(err)
+      alert('Não foi possível salvar. Verifique os campos e tente novamente.')
+    }
   }
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-equip wide">
-        <h2>Novo Equipamento</h2>
+    <>
+      <div className="modal-overlay">
+        <div className="modal-equip wide">
+          <h2>Novo Equipamento</h2>
 
-        <div className="form-grid">
-          <div className="grid-col-6">
-            <InputCampo
-              label="Equipamento"
-              name="equipamento"
-              value={form.equipamento}
-              onChange={e=>setForm({...form, equipamento: e.target.value})}
-            />
-          </div>
-          <div className="grid-col-6">
-            <InputCampo
-              label="Marca"
-              name="marca"
-              value={form.marca}
-              onChange={e=>setForm({...form, marca: e.target.value})}
-            />
-          </div>
-          <div className="grid-col-6">
-            <InputCampo
-              label="Modelo"
-              name="modelo"
-              value={form.modelo}
-              onChange={e=>setForm({...form, modelo: e.target.value})}
-            />
-          </div>
-          <div className="grid-col-6">
-            <InputCampo
-              label="Cor"
-              name="cor"
-              value={form.cor}
-              onChange={e=>setForm({...form, cor: e.target.value})}
-            />
-          </div>
-          <div className="grid-col-6">
-            <InputCampo
-              label="Nº Série"
-              name="nun_serie"
-              value={form.nun_serie}
-              onChange={e=>setForm({...form, nun_serie: e.target.value})}
-            />
-          </div>
-
-          {/* Combobox de Cliente */}
-          <div className="grid-col-6">
-            <label htmlFor="cliente-search" className="input-label">Cliente</label>
-
-            <div className="search-wrap" ref={comboRef}>
-              <input
-                id="cliente-search"
-                className="search-input"
-                type="text"
-                placeholder="Buscar cliente..."
-                autoComplete="off"
-                value={search}
-                onChange={handleSearchChange}
-                onFocus={() => setShowSug(true)}
-                onKeyDown={handleKey}
-                aria-autocomplete="list"
-                aria-expanded={showSug}
-                aria-controls="cliente-suggestions"
-                role="combobox"
+          <div className="form-grid">
+            <div className="grid-col-6">
+              <InputCampo
+                label="Equipamento"
+                name="equipamento"
+                value={form.equipamento}
+                onChange={e=>setForm({...form, equipamento: e.target.value})}
               />
+            </div>
+            <div className="grid-col-6">
+              <InputCampo
+                label="Marca"
+                name="marca"
+                value={form.marca}
+                onChange={e=>setForm({...form, marca: e.target.value})}
+              />
+            </div>
+            <div className="grid-col-6">
+              <InputCampo
+                label="Modelo"
+                name="modelo"
+                value={form.modelo}
+                onChange={e=>setForm({...form, modelo: e.target.value})}
+              />
+            </div>
+            <div className="grid-col-6">
+              <InputCampo
+                label="Cor"
+                name="cor"
+                value={form.cor}
+                onChange={e=>setForm({...form, cor: e.target.value})}
+              />
+            </div>
+            <div className="grid-col-6">
+              <InputCampo
+                label="Nº Série"
+                name="nun_serie"
+                value={form.nun_serie}
+                onChange={e=>setForm({...form, nun_serie: e.target.value})}
+              />
+            </div>
 
-              <Button variant="secondary" onClick={() => setShowCliente(true)}>
-                + Cliente
-              </Button>
+            {/* Combobox de Cliente */}
+            <div className="grid-col-6">
+              <label htmlFor="cliente-search" className="input-label">Cliente</label>
 
-              {showSug && (
-                <ul
-                  id="cliente-suggestions"
-                  className="suggestions"
-                  role="listbox"
-                >
-                  {filtrados.slice(0, 8).map((c, i) => (
-                    <li
-                      key={c.id}
-                      role="option"
-                      aria-selected={i === activeIndex}
-                      className={i === activeIndex ? 'active' : ''}
-                      onMouseDown={(e) => e.preventDefault()} // evita blur antes do click
-                      onClick={() => handleSelect(c)}
-                    >
-                      {c.nome}
-                    </li>
-                  ))}
-                  {filtrados.length === 0 && (
-                    <li className="no-sug">Nenhum cliente</li>
-                  )}
-                </ul>
-              )}
+              <div className="search-wrap" ref={comboRef}>
+                <input
+                  id="cliente-search"
+                  className="search-input"
+                  type="text"
+                  placeholder="Buscar cliente..."
+                  autoComplete="off"
+                  value={search}
+                  onChange={handleSearchChange}
+                  onFocus={() => setShowSug(true)}
+                  onKeyDown={handleKey}
+                  aria-autocomplete="list"
+                  aria-expanded={showSug}
+                  aria-controls="cliente-suggestions"
+                  role="combobox"
+                />
+
+                <Button variant="secondary" onClick={() => setShowCliente(true)}>
+                  + Cliente
+                </Button>
+
+                {showSug && (
+                  <ul id="cliente-suggestions" className="suggestions" role="listbox">
+                    {filtrados.slice(0, 8).map((c, i) => (
+                      <li
+                        key={c.id}
+                        role="option"
+                        aria-selected={i === activeIndex}
+                        className={i === activeIndex ? 'active' : ''}
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => handleSelect(c)}
+                      >
+                        {c.nome}
+                      </li>
+                    ))}
+                    {filtrados.length === 0 && <li className="no-sug">Nenhum cliente</li>}
+                  </ul>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="modal-buttons">
-          <Button variant="primary" onClick={handleSalvar}>Salvar</Button>
-          <Button variant="danger"  onClick={onClose}>Cancelar</Button>
-        </div>
+          <div className="modal-buttons">
+            <Button variant="primary" onClick={handleSalvar}>Salvar e imprimir QR</Button>
+            <Button variant="danger"  onClick={onClose}>Cancelar</Button>
+          </div>
 
-        {showCliente && (
-          // Se seu ModalNovoCliente expõe onCreated, passe o callback; caso não, remova a prop.
-          <ModalNovoCliente
-            onClose={()=>setShowCliente(false)}
-            setClientes={setClientes}
-            onCreated={handleClienteCriado as any}
-          />
-        )}
+          {showCliente && (
+            <ModalNovoCliente
+              onClose={()=>setShowCliente(false)}
+              setClientes={setClientes}
+              onCreated={handleClienteCriado as any}
+            />
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* Modal da etiqueta (QR) */}
+      <EtiquetaQRModal
+        open={showEtiqueta}
+        onClose={() => setShowEtiqueta(false)}
+        data={etiquetaData}
+        autoPrint={false}  /* coloque true se quiser imprimir automaticamente */
+      />
+    </>
   )
 }

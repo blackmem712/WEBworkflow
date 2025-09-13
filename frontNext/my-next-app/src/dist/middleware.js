@@ -17,6 +17,9 @@ var PROTECTED = [
 function middleware(req) {
     var _a;
     var _b = req.nextUrl, pathname = _b.pathname, searchParams = _b.searchParams;
+    //liberar leitura pública do QR
+    if (pathname.startsWith("/qr/"))
+        return server_1.NextResponse.next();
     var hasAuth = ((_a = req.cookies.get('auth')) === null || _a === void 0 ? void 0 : _a.value) === '1';
     var isProtected = PROTECTED.some(function (p) { return pathname === p || pathname.startsWith(p + '/'); });
     // Já logado em /login -> manda pra HOME "/"

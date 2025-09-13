@@ -16,6 +16,8 @@ const PROTECTED = [
 
 export function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl
+  //liberar leitura pública do QR
+  if (pathname.startsWith("/qr/")) return NextResponse.next()
   const hasAuth = req.cookies.get('auth')?.value === '1'
   const isProtected = PROTECTED.some(p => pathname === p || pathname.startsWith(p + '/'))
 

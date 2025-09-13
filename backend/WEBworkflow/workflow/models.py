@@ -4,7 +4,7 @@ from django.conf import settings
 from django.utils.crypto import get_random_string
 
 def generate_qr_slug():
-    return get_random_string(12)
+    return get_random_string(20)
 
 
 class Pessoa(models.Model):
@@ -100,7 +100,7 @@ class Equipamento(models.Model):
     nun_serie = models.CharField(max_length=50)
     cliente = models.ForeignKey(Cliente, on_delete= models.CASCADE)
     historico_id = models.OneToOneField(Historico, on_delete=models.CASCADE,null=True)
-    qr_slug = models.SlugField(max_length=32, unique=True, null=False, blank=False, default=generate_qr_slug)
+    qr_slug = models.SlugField(max_length=64, unique=True, null=False, blank=False, default=generate_qr_slug)
     
     def __str__(self) -> str:
        return f'{self.equipamento}'

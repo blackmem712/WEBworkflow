@@ -337,12 +337,16 @@ def qr_get(request, slug: str):
     vigente = eq.historico_id.status_id if getattr(eq, 'historico_id', None) else None
     status_code = vigente.status if vigente else None
     status_label = dict(Status._meta.get_field('status').choices).get(status_code) if status_code else None
-    return Response({
+
+    resp = Response({
         'equipamento_id': eq.id,
-        'equipamento': getattr(eq, 'equipamento', None),
+        'equipamento': getattr(eq, 'equipamento', None),  # remova esta linha se quiser anonimizar 100%
         'status': status_code,
         'status_label': status_label,
     })
+    # Evitar indexação do link do QR
+    resp['X-Robots-Tag'] = 'noindex, nofollow'
+    return resp
 
 
 @api_view(['POST'])

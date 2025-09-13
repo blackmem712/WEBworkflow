@@ -31,6 +31,7 @@ class EquipamentoSerializer(serializers.ModelSerializer):
             'historico_id',
             # expõe o status desejado
             'status',
+            'qr_slug', 
         ]
 
     def get_status(self, obj):
@@ -177,3 +178,13 @@ class OrcamentoSerializer(serializers.ModelSerializer):
             'produto',
             'cargo_funcionario',
         ]
+
+class EquipamentoQRPublicSerializer(serializers.ModelSerializer):
+    status = serializers.SerializerMethodField()
+    class Meta:
+        model = Equipamento
+        fields = ["id", "qr_slug", "status"]  # nada de PII aqui
+
+    def get_status(self, obj):
+        # devolva o código e um label amigável
+        return {"code": obj.status, "label": obj.get_status_display()}

@@ -1,72 +1,105 @@
-'use client'
+"use client"
 
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
-import { api } from '@/services/api'
+import { useEffect, useMemo, useState } from "react"
+import { useParams, useRouter } from "next/navigation"
+import Head from "next/head"
+import styles from "./styles.module.css"
+import { api } from "@/services/api"
 
-type QRResp = {
-  equipamento_id: number
-  equipamento: string | null
-  status: 'EN' | 'OR' | 'MA' | 'GA' | 'SA' | null
-  status_label: string | null
-}
+type StatusCode = "EN" | "OR" | "MA" | "GA" | "SA" | null
+type QRData = { equipamento_id: number; equipamento: string | null; status: StatusCode; status_label: string | null }
+const ADVANCEABLE: StatusCode[] = ["OR","MA","GA"] // adicione "EN" se liberar EN→OR
 
-export default function QRPage() {
-  const params = useParams() as { slug: string }
-  const [data, setData] = useState<QRResp | null>(null)
-  const [msg, setMsg]   = useState<string | null>(null)
-  const [err, setErr]   = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+export default function QRSlugPage() {
+  const { slug } = useParams() as { slug: string }
+  const router = useRouter()
+  const [data, setData] = useState<QRData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [err, setErr] = useState<string | null>(null)
+  const [msg, setMsg] = useState<string | null>(null)
+  const [posting, setPosting] = useState(false)
 
   async function load() {
-    setErr(null)
-    try {
-      const resp = await api.get(`/q/${params.slug}/`)
-      setData(resp.data)
-    } catch (e: any) {
-      setErr(e?.response?.data?.detail || 'Falha ao carregar QR')
-    }
+    setErr(null); setMsg(null); setLoading(true)
+    try { const r = await api.get(`/q/${slug}/`); setData(r.data as QRData) }
+    catch (e: any) { setErr(e?.response?.data?.detail ?? "QR inválido ou indisponível.") }
+    finally { setLoading(false) }
   }
-
-  useEffect(() => { load() }, [params.slug])
 
   async function avancar() {
-    setMsg(null); setErr(null); setLoading(true)
+    if (!data) return
+    setPosting(true); setErr(null); setMsg(null)
     try {
-      const resp = await api.post(`/q/${params.slug}/`)
-      setMsg(`Avançou de ${resp.data.from} → ${resp.data.to}`)
-      await load()
+      const r = await api.post(`/q/${slug}/`)
+      if (r.data?.ok) { setMsg("Status avançado com sucesso."); await load() }
+      else setErr("Não foi possível avançar o status.")
     } catch (e: any) {
-      const status = e?.response?.status
-      const detail = e?.response?.data?.detail
-      if (status === 401) setErr('Faça login para avançar o status.')
-      else if (status === 403) setErr('Você não tem permissão para esta transição.')
-      else setErr(detail || 'Não foi possível avançar.')
-    } finally {
-      setLoading(false)
-    }
+      if (e?.response?.status === 401) { router.push(`/login?redirect=${encodeURIComponent(`/qr/${slug}`)}`); return }
+      setErr(e?.response?.data?.detail ?? "Falha ao avançar o status.")
+    } finally { setPosting(false) }
   }
 
-  return (
-    <div style={{ maxWidth: 720, margin: '40px auto', padding: 24 }}>
-      <h1>QR • Equipamento</h1>
-      {!data && !err && <div>Carregando...</div>}
-      {err && <div style={{ color: 'crimson' }}>{err}</div>}
-      {data && (
-        <div style={{ border: '1px solid #333', borderRadius: 8, padding: 16 }}>
-          <p><b>ID:</b> {data.equipamento_id}</p>
-          <p><b>Equipamento:</b> {data.equipamento || '-'}</p>
-          <p><b>Status atual:</b> {data.status} {data.status_label ? `(${data.status_label})` : ''}</p>
+  useEffect(() => { load() }, [slug])
 
-          <div style={{ marginTop: 16, display: 'flex', gap: 12 }}>
-            <button onClick={avancar} disabled={loading}>
-              {loading ? 'Avançando...' : 'Avançar'}
-            </button>
-            <a href="/login">Entrar</a>
-          </div>
-          {msg && <div style={{ marginTop: 12, color: 'seagreen' }}>{msg}</div>}
+  const canAdvance = useMemo(() => !!data?.status && ADVANCEABLE.includes(data.status), [data?.status])
+
+  const Card = useMemo(() => {
+    switch (data?.status) {
+      case "EN": return Entrada
+      case "OR": return Orcamento
+      case "MA": return Manutencao
+      case "GA": return ProntoGarantia
+      case "SA": return ProntoEntrega
+      default:   return Desconhecido
+    }
+  }, [data?.status])
+
+  return (
+    <>
+      <Head><meta name="robots" content="noindex,nofollow" /></Head>
+      <main className={styles.wrap}>
+        <div className={styles.card}>
+          <header className={styles.header}>
+            <h1 className={styles.title}>Status do Equipamento</h1>
+            {data?.equipamento && <p className={styles.sub} title={data.equipamento}>{data.equipamento}</p>}
+          </header>
+
+          {loading && <p className={styles.muted}>Carregando…</p>}
+          {err && <p className={styles.err}>{err}</p>}
+
+          {!loading && !err && data && (
+            <>
+              <div className={styles.statusHeader}>
+                <span className={styles.badge}>{data.status ?? "-"}</span>
+                <span className={styles.statusLabel}>{data.status_label ?? "Indefinido"}</span>
+                <span className={styles.idMuted}>ID #{data.equipamento_id}</span>
+              </div>
+
+              <section className={styles.content}><Card /></section>
+
+              <footer className={styles.footer}>
+                <button className={styles.btnPrimary} onClick={avancar} disabled={!canAdvance || posting}
+                  title={!canAdvance ? "Sem transição automática a partir deste status." : ""}>
+                  {posting ? "Processando…" : "Avançar status"}
+                </button>
+                <button className={styles.btnGhost}
+                  onClick={() => router.push(`/login?redirect=${encodeURIComponent(`/qr/${slug}`)}`)}>
+                  Entrar para ações
+                </button>
+              </footer>
+
+              {msg && <p className={styles.ok}>{msg}</p>}
+            </>
+          )}
         </div>
-      )}
-    </div>
+      </main>
+    </>
   )
 }
+
+function Entrada(){return(<div><h2 className="s-en">Recebido na recepção</h2><ul className="bullets"><li>Aguardando triagem</li><li>Sem orçamento ainda</li></ul></div>)}
+function Orcamento(){return(<div><h2 className="s-or">Em orçamento</h2><ul className="bullets"><li>Diagnóstico feito</li><li>Aguardando aprovação</li></ul></div>)}
+function Manutencao(){return(<div><h2 className="s-ma">Em manutenção</h2><ul className="bullets"><li>Peças reservadas</li><li>Execução em andamento</li></ul></div>)}
+function ProntoGarantia(){return(<div><h2 className="s-ga">Pronto (garantia/revisão)</h2><ul className="bullets"><li>Testes concluídos</li><li>Verificação final</li></ul></div>)}
+function ProntoEntrega(){return(<div><h2 className="s-sa">Pronto para entrega</h2><ul className="bullets"><li>Disponível para retirada</li><li>Levar documento</li></ul></div>)}
+function Desconhecido(){return(<div><h2>Status indisponível</h2><p>Não foi possível identificar o status atual.</p></div>)}
