@@ -24,7 +24,10 @@ class WorkflowAdmin(admin.ModelAdmin):
 class WorkflowAdmin(admin.ModelAdmin):
     ...
 
-
+@admin.register(models.Cargo)
+class WorkflowAdmin(admin.ModelAdmin):
+    ...
+    
 @admin.register(models.Cargo_funcionario)
 class WorkflowAdmin(admin.ModelAdmin):
     ...

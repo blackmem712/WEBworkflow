@@ -2,9 +2,8 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// Rotas que exigem login
 const PROTECTED = [
-  '/Home',                // A home verdadeira é "/"
+  '/Home',
   '/Clientes',
   '/Equipamentos',
   '/Fornecedores',
@@ -15,34 +14,39 @@ const PROTECTED = [
 ]
 
 export function middleware(req: NextRequest) {
-  const { pathname, searchParams } = req.nextUrl
-  //liberar leitura pública do QR
-  if (pathname.startsWith("/qr/")) return NextResponse.next()
+  const url = req.nextUrl
+  const { pathname } = url
+
+  // liberar leitura pública do QR
+  if (pathname.startsWith('/qr/')) return NextResponse.next()
+
   const hasAuth = req.cookies.get('auth')?.value === '1'
   const isProtected = PROTECTED.some(p => pathname === p || pathname.startsWith(p + '/'))
 
-  // Já logado em /login -> manda pra HOME "/"
+  // já logado em /login -> manda pra Home (ou para redirect se existir)
   if (pathname === '/login' && hasAuth) {
-    const url = req.nextUrl.clone()
-    url.pathname = '/Home'  // Redireciona para a home protegida
-    return NextResponse.redirect(url)
+    const dest = url.searchParams.get('redirect') || '/Home'
+    const redir = url.clone(); redir.pathname = dest; redir.search = ''
+    return NextResponse.redirect(redir)
   }
 
-  // Rota protegida sem login => manda para /login?next=...
+  // Rota protegida sem login => /login?redirect=<rota>
   if (isProtected && !hasAuth) {
-    const url = req.nextUrl.clone()
-    url.pathname = '/login'
-    url.searchParams.set('next', pathname + (searchParams.toString() ? `?${searchParams.toString()}` : ''))
-    return NextResponse.redirect(url)
+    const redir = url.clone()
+    redir.pathname = '/login'
+    redir.searchParams.set('redirect', pathname + (url.search ? url.search : ''))
+    return NextResponse.redirect(redir)
   }
 
   return NextResponse.next()
 }
 
+// 🔧 garantir que o middleware rode em /Home também
 export const config = {
   matcher: [
-    '/', '/login',
+    '/', '/login', '/Home',
     '/Clientes/:path*', '/Equipamentos/:path*', '/Fornecedores/:path*',
     '/Funcionarios/:path*', '/Orcamentos/:path*', '/Produtos/:path*', '/Servicos/:path*',
+    // não precisa incluir /qr aqui; mas se incluir, mantém o early return acima
   ],
 }
