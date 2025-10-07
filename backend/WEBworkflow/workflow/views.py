@@ -1,21 +1,18 @@
 # workflow/views.py
 
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.urls import path
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.db import transaction
+from django.utils.crypto import get_random_string
+from django.utils.timezone import is_naive, make_naive
 
 from rest_framework import status
-from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.throttling import ScopedRateThrottle
-from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view, permission_classes, throttle_classes, action
 from django.contrib.auth.models import Group
-from django.utils.crypto import get_random_string
-
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import (
@@ -90,13 +87,12 @@ def registrar_status(equipamento: Equipamento, novo_status: str, user=None, sour
     # Idempotência: mesmo status e ainda aberto -> não duplica
     if ultimo and ultimo.status == novo_status and ultimo.date_saida is None:
         # assegura que historico aponta para o vigente
-        if historico.status_id_id != ultimo.id:
+        if getattr(historico, 'status_id_id', None) != ultimo.id:
             historico.status_id = ultimo
             historico.save(update_fields=['status_id'])
         # complementa auditoria se faltar
         changed = False
         try:
-            # campos só existem após a migração; por isso getattr/hasattr defensivo
             if user and getattr(ultimo, 'created_by_id', None) in (None, 0):
                 ultimo.created_by = user
                 changed = True
@@ -114,7 +110,7 @@ def registrar_status(equipamento: Equipamento, novo_status: str, user=None, sour
         ultimo.date_saida = timezone.now()
         ultimo.save(update_fields=['date_saida'])
 
-    # Cria o novo status (com auditoria defensiva para compatibilidade com modelos antigos)
+    # Cria o novo status (com auditoria defensiva)
     novo = Status.objects.create(
         historico=historico,
         status=novo_status,
@@ -122,14 +118,13 @@ def registrar_status(equipamento: Equipamento, novo_status: str, user=None, sour
         date_saida=None,
     )
 
-    # tenta auditar se o modelo já possuir os campos
     try:
         if user is not None and hasattr(novo, 'created_by'):
             novo.created_by = user
         if hasattr(novo, 'source'):
             novo.source = source
         if hasattr(novo, 'created_by') or hasattr(novo, 'source'):
-            novo.save(update_fields=[fld for fld in ['created_by','source'] if hasattr(novo, fld)])
+            novo.save(update_fields=[fld for fld in ['created_by', 'source'] if hasattr(novo, fld)])
     except Exception:
         pass
 
@@ -194,19 +189,35 @@ class WorkflowEquipamentoAPIv1ViewSet(ModelViewSet):
                 equipamento.historico_id = historico
                 equipamento.save(update_fields=['historico_id'])
             # Registra EN como status inicial (vigente)
-            registrar_status(equipamento, 'EN', user=(request.user if request.user.is_authenticated else None), source='web')
+            registrar_status(
+                equipamento,
+                'EN',
+                user=(request.user if request.user.is_authenticated else None),
+                source='web'
+            )
 
         # Retorna o equipamento já com status vigente
         return Response(EquipamentoSerializer(equipamento).data, status=status.HTTP_201_CREATED)
 
     def partial_update(self, request, *args, **kwargs):
+        """
+        PATCH /equipamentos/api/v1/<id>/
+        Aceita campos normais do equipamento e, opcionalmente, "novo_status" (EN|OR|MA|GA|SA).
+        Quando "novo_status" vier, REGISTRA a transição no histórico (registrar_status)
+        e garante que o ponteiro historico_id.status_id aponte para o vigente.
+        """
         pk = kwargs.get('pk')
         equipamento = self.get_queryset().filter(pk=pk).first()
-        novo_status = request.data.get('novo_status')
+        if not equipamento:
+            return Response({'detail': 'Equipamento não encontrado.'}, status=404)
+
+        # ⚠️ Remover "novo_status" do payload antes de validar no serializer
+        data = request.data.copy()
+        novo_status = data.pop('novo_status', None)
 
         serializer = EquipamentoSerializer(
             instance=equipamento,
-            data=request.data,
+            data=data,
             many=False,
             context={'request': request},
             partial=True
@@ -215,9 +226,18 @@ class WorkflowEquipamentoAPIv1ViewSet(ModelViewSet):
 
         with transaction.atomic():
             equipamento = serializer.save()
+
             if novo_status:
+                code = str(novo_status).strip().upper()
+                if code not in {'EN', 'OR', 'MA', 'GA', 'SA'}:
+                    return Response({'detail': 'Status inválido.'}, status=400)
                 try:
-                    registrar_status(equipamento, str(novo_status), user=(request.user if request.user.is_authenticated else None), source='web')
+                    registrar_status(
+                        equipamento,
+                        code,
+                        user=(request.user if request.user.is_authenticated else None),
+                        source='web'
+                    )
                 except ValueError as e:
                     return Response({'detail': str(e)}, status=400)
 
@@ -251,6 +271,32 @@ class WorkflowEquipamentoAPIv1ViewSet(ModelViewSet):
             for s in statuses
         ]
         return Response(data)
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def set_status(self, request, pk=None):
+        """
+        POST /equipamentos/api/v1/<id>/set_status/
+        body: { "status": "MA" }
+        Alternativa explícita ao PATCH com "novo_status".
+        """
+        equipamento = self.get_queryset().filter(pk=pk).first()
+        if not equipamento:
+            return Response({'detail': 'Equipamento não encontrado.'}, status=404)
+
+        status_code = str(request.data.get('status', '')).strip().upper()
+        if status_code not in {'EN', 'OR', 'MA', 'GA', 'SA'}:
+            return Response({'detail': 'Status inválido.'}, status=400)
+
+        with transaction.atomic():
+            registrar_status(
+                equipamento,
+                status_code,
+                user=(request.user if request.user.is_authenticated else None),
+                source='web'
+            )
+
+        equipamento.refresh_from_db()
+        return Response(EquipamentoSerializer(equipamento).data)
 
 
 # ------------------------------------------------------------
@@ -319,7 +365,12 @@ class WorkflowOrcamentoAPIv1ViewSet(ModelViewSet):
 
         with transaction.atomic():
             orcamento = serializer.save()
-            registrar_status(orcamento.equipamento, 'OR', user=(request.user if request.user.is_authenticated else None), source='web')
+            registrar_status(
+                orcamento.equipamento,
+                'OR',
+                user=(request.user if request.user.is_authenticated else None),
+                source='web'
+            )
 
         return Response(OrcamentoSerializer(orcamento).data, status=status.HTTP_201_CREATED)
 
@@ -327,24 +378,142 @@ class WorkflowOrcamentoAPIv1ViewSet(ModelViewSet):
 # ------------------------------------------------------------
 # Endpoints de QR (GET público, POST protegido)
 # ------------------------------------------------------------
-from rest_framework.decorators import permission_classes, throttle_classes
-
 @api_view(['GET'])
 @permission_classes([AllowAny])
 @throttle_classes([QRThrottle])
 def qr_get(request, slug: str):
-    eq = get_object_or_404(Equipamento, qr_slug=slug)
-    vigente = eq.historico_id.status_id if getattr(eq, 'historico_id', None) else None
-    status_code = vigente.status if vigente else None
-    status_label = dict(Status._meta.get_field('status').choices).get(status_code) if status_code else None
+    """
+    QR público (somente leitura) — sempre reflete o status VIGENTE:
+    1) tenta historico_id.status_id (objeto ou PK)
+    2) se faltar, pega status aberto (date_saida IS NULL)
+    3) se ainda faltar, pega o último por data e id
+    """
+    from .models import Equipamento, Historico, Status, Orcamento
 
-    resp = Response({
+    eq = get_object_or_404(Equipamento, qr_slug=slug)
+
+    # --- histórico do equipamento (seu FK chama "historico_id" e é um OBJETO) ---
+    hist = getattr(eq, 'historico_id', None)
+    if hist is None or isinstance(hist, int):
+        # se por acaso vier um int (pk), resolve o objeto
+        hist = (
+            Historico.objects.filter(pk=hist if isinstance(hist, int) else None, equipamento=eq).first()
+            or Historico.objects.filter(equipamento=eq).order_by('-id').first()
+        )
+
+    vigente = None
+    vigente_pk = None
+    ultimo = None
+
+    if hist is not None:
+        # 1) ponteiro vigente (no seu modelo o campo se chama "status_id" MESMO sendo um FK)
+        raw = getattr(hist, 'status_id', None)  # pode vir objeto ou pk
+        if raw is not None:
+            if hasattr(raw, 'status'):
+                vigente = raw
+                vigente_pk = getattr(raw, 'pk', None)
+            else:
+                vigente_pk = raw
+                vigente = Status.objects.filter(pk=raw).first()
+
+        # 2) se o ponteiro faltar ou estiver inconsistente, tenta o status ABERTO
+        if not vigente:
+            try:
+                vigente = hist.statuses.filter(date_saida__isnull=True).order_by('-date_entrada', '-id').first()
+            except Exception:
+                vigente = None
+
+        # 3) se ainda não houver, usa o ÚLTIMO do histórico
+        if not vigente:
+            try:
+                ultimo = hist.statuses.order_by('-date_entrada', '-id').first()
+            except Exception:
+                ultimo = None
+
+    use_status = vigente or ultimo
+    status_code = getattr(use_status, 'status', None) or 'EN'
+    try:
+        status_label = dict(Status._meta.get_field('status').choices).get(status_code, 'Recepção')
+    except Exception:
+        status_label = None
+
+    # date_entrada do status usado
+    dt = getattr(use_status, 'date_entrada', None)
+    if dt is not None and is_naive(dt):
+        try:
+            dt = make_naive(dt)
+        except Exception:
+            pass
+    date_entrada_iso = dt.isoformat() if dt else None
+
+    # Orçamento mais recente (para OR/MA/GA renderizarem técnico/itens)
+    orc = Orcamento.objects.filter(equipamento=eq).order_by('-id').first()
+    orcamento_payload = None
+    if orc:
+        # técnico via cargo_funcionario -> funcionario (serializado)
+        tecnico = None
+        try:
+            cf = getattr(orc, 'cargo_funcionario', None)
+            func = getattr(cf, 'funcionario', None) if cf else None
+            cargo_obj = getattr(cf, 'cargo', None) if cf else None
+            cargo_code = None
+            cargo_label = None
+            if cargo_obj is not None:
+                cargo_code = (
+                    getattr(cargo_obj, 'cargo', None)
+                    or getattr(cargo_obj, 'sigla', None)
+                    or getattr(cargo_obj, 'codigo', None)
+                    or getattr(cargo_obj, 'id', None)
+                )
+                cargo_label = (
+                    getattr(cargo_obj, 'nome', None)
+                    or getattr(cargo_obj, 'descricao', None)
+                    or getattr(cargo_obj, 'label', None)
+                )
+            tecnico = {
+                'id': getattr(cf, 'id', None),
+                'nome': getattr(func, 'nome', None),
+                'cargo': cargo_code,
+                'cargo_label': cargo_label,
+            }
+        except Exception:
+            tecnico = None
+
+        try:
+            servicos = [{'id': s.id, 'nome': s.nome, 'valor': getattr(s, 'valor', None)} for s in orc.servico.all()]
+        except Exception:
+            servicos = []
+
+        try:
+            produtos = [{'id': p.id, 'nome': p.nome, 'preco': getattr(p, 'preco', None)} for p in orc.produto.all()]
+        except Exception:
+            produtos = []
+
+        orcamento_payload = {
+            'id': orc.id,
+            'tecnico': tecnico,
+            'servicos': servicos,
+            'produtos': produtos,
+        }
+
+    payload = {
         'equipamento_id': eq.id,
-        'equipamento': getattr(eq, 'equipamento', None),  # remova esta linha se quiser anonimizar 100%
-        'status': status_code,
+        'equipamento': getattr(eq, 'equipamento', None),
+        'cliente_nome': getattr(getattr(eq, 'cliente', None), 'nome', None),
+        'status': status_code,          # EN | OR | MA | GA | SA
         'status_label': status_label,
-    })
-    # Evitar indexação do link do QR
+        'date_entrada': date_entrada_iso,
+        'orcamento': orcamento_payload,
+    }
+
+    resp = Response(payload)
+    # headers de debug (olhe em Network > Headers na chamada /q/<slug>/)
+    if vigente_pk:
+        resp['X-Debug-Vigente-PK'] = str(vigente_pk)
+    if vigente:
+        resp['X-Debug-Vigente-Code'] = getattr(vigente, 'status', '') or ''
+    if ultimo:
+        resp['X-Debug-Ultimo-Code'] = getattr(ultimo, 'status', '') or ''
     resp['X-Robots-Tag'] = 'noindex, nofollow'
     return resp
 

@@ -21,7 +21,7 @@ interface Props {
   funcionarios: Funcionario[]  // para listar responsáveis
   onClose: () => void
   setOrcamentos: React.Dispatch<React.SetStateAction<Orcamento[]>>
-  setEquipamentos: React.Dispatch<React.SetStateAction<Equipamento[]>>
+  setEquipamentos?: React.Dispatch<React.SetStateAction<Equipamento[]>>
 }
 
 export default function ModalNovoOrcamento({
@@ -72,7 +72,12 @@ export default function ModalNovoOrcamento({
       setClienteId(initialEquip.cliente)
       setEquipId(initialEquip.id)
     }
-  }, [initialEquip])
+    const tcs = funcionariosList.filter(f => f.cargo_funcionario && cargoIsTCorGE(f.cargo_funcionario.cargo))
+    if (tcs.length === 1) {
+    setRespId(tcs[0].cargo_funcionario!.id)
+    }
+    setServices(prev => (prev.length === 0 ? [0] : prev))
+  }, [initialEquip,])
  
   // Handlers de linhas (serviços)
   const addServiceRow = () => setServices(prev => [...prev, 0])
@@ -117,12 +122,13 @@ export default function ModalNovoOrcamento({
       .then((novo: Orcamento) => {
         setOrcamentos(prev => [...prev, novo])
 
-        // move equipamento para "OR" imediatamente
-        setEquipamentos(prev =>
-          prev.map(e =>
-            e.id === equipId ? { ...e, status: { ...(e.status as any), status: 'OR' as any } } : e
+        if (typeof setEquipamentos === 'function') {
+          setEquipamentos(prev =>
+            prev.map(e =>
+              e.id === equipId ? { ...e, status: { ...(e.status as any), status: 'OR' as any } } : e
+            )
           )
-        )
+        }
 
         // persiste no backend o status OR
         fetch(`http://127.0.0.1:8000/equipamentos/api/v1/${equipId}/`, {
@@ -153,7 +159,7 @@ export default function ModalNovoOrcamento({
               disabled={!!initialEquip}
               onChange={e => setClienteId(e.target.value ? Number(e.target.value) : null)}
             >
-              <option value="">{initialEquip ? clienteNome : 'Selecione...'}</option>
+              <option value="">{initialEquip ? initialClienteName : 'Selecione...'}</option>
               {clientesList.map(c => (
                 <option key={c.id} value={c.id}>{c.nome}</option>
               ))}

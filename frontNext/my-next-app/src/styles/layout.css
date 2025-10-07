@@ -1,7 +1,43 @@
 /* Reset básico */
+:root{
+  --bg-app: #f6f7f9;
+  --panel: #ffffff;
+  --text-primary: #111318;
+  --text-muted: #5b616e;
+  --border-soft: #e7e9ee;
+  --shadow-soft: 0 1px 2px rgba(16,24,40,.08), 0 1px 1px rgba(16,24,40,.05);
+  --shadow-medium: 0 12px 30px rgba(15,23,42,.12);
+
+  --brand-1: #0b1a3a; /* navy profundo */
+  --brand-2: #0f2a6e; /* azul escuro */
+  --brand-3: #1d4ed8; /* azul destaque */
+  --brand-4: #24578e; /* azul forte */
+}
+
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg-app);
+  color: var(--text-primary);
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  color: inherit;
+}
+
+input[type="text"], input[type="email"], input[type="number"], input[type="password"], input[type="date"], textarea, select {
+  border-radius:12px;
+  border:1px solid var(--border-soft);
+  padding:10px 14px;
+  font-size:14px;
+  background:#fff;
+  transition:border-color .2s ease, box-shadow .2s ease;
+}
+input:focus, textarea:focus, select:focus {
+  outline:none;
+  border-color: var(--text-primary);
+  box-shadow:0 0 0 3px rgba(29,78,216,.15);
 }
 
 /* Sidebar recolhida por padrão */
@@ -11,13 +47,16 @@ body {
   left: 0;
   height: 100vh;
   width: 60px;
-  background-color: #1e293b;
+  background: linear-gradient(180deg, var(--brand-2) 0%, var(--brand-1) 100%);
   overflow: hidden;
   transition: width 0.3s ease;
   z-index: 100;
   display: flex;
   flex-direction: column;
   align-items: center;
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+  box-shadow: 0 10px 30px rgba(2,6,23,.18);
 }
 
 /* Expande ao passar o mouse */
@@ -28,12 +67,12 @@ body {
 /* Cabeçalho da Sidebar (logo ou ícone) */
 .sidebar-header {
   width: 100%;
-  color: white;
-  font-size: 1.8rem;
+  color: #e7f4ff;
+  font-size: 1.6rem;
   text-align: center;
   padding: 1rem 0;
-  border-bottom: 1px solid #475569;
-  background-color: #0f172a;
+  border-bottom: 1px solid rgba(255,255,255,.2);
+  background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.03));
 }
 
 /* Container de links */
@@ -49,7 +88,7 @@ body {
 .nav-item {
   width: 100%;
   padding: 0.75rem 1.5rem;
-  color: white;
+  color: #e6f4ff;
   text-decoration: none;
   font-size: 0.95rem;
   white-space: nowrap;
@@ -66,14 +105,14 @@ body {
 
 /* Hover nos links */
 .nav-item:hover {
-  background-color: #475569;
+  background: linear-gradient(90deg, rgba(255,255,255,.18), rgba(255,255,255,.04));
 }
 
 /* Link ativo (página atual) */
 .nav-item.active {
-  background-color: #3b82f6;
-  font-weight: bold;
-  color: white;
+  background: linear-gradient(90deg, rgba(255,255,255,.28), rgba(255,255,255,.08));
+  font-weight: 700;
+  color: #fff;
 }
 /* layout.css */
 .layout-container {
@@ -112,3 +151,40 @@ body {
   background-color: #ef4444 !important; /* vermelho */
   color: #fff;
 }
+
+/* Responsividade geral do layout */
+@media (max-width: 1024px){
+  .layout-content{ padding: 1.25rem; }
+}
+@media (max-width: 768px){
+  .layout-content{ padding: 1rem; }
+}
+/* Em telas muito pequenas, evita expandir overlay enorme */
+@media (max-width: 640px){
+  .sidebar-hover:hover { width: 60px; }
+  .layout-content{ margin-left: 60px; padding: 0.75rem; }
+}
+
+/* Botões padrão globais */
+.btn {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:40px;
+  padding:0 16px;
+  border-radius:12px;
+  border:1px solid var(--brand-3);
+  background:var(--brand-3);
+  color:#fff;
+  font-weight:600;
+  text-decoration:none;
+  cursor:pointer;
+  transition:background .2s ease, transform .05s ease;
+  box-shadow:var(--shadow-soft);
+}
+.btn:hover{ background:var(--brand-4); transform:translateY(-1px); }
+.btn:active{ transform:translateY(0); }
+.btn.ghost{ background:#fff; color:var(--text-primary); border-color:var(--border-soft); box-shadow:var(--shadow-soft); }
+.btn.small{ height:32px; padding:0 12px; font-size:13px; }
+
+

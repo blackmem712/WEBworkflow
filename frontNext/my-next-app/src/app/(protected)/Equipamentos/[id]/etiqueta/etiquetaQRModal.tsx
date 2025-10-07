@@ -17,7 +17,7 @@ type Props = {
 }
 
 export default function EtiquetaQRModal({ open, onClose, data, autoPrint = false }: Props) {
-  const base = "http://192.168.1.106:3000"
+  const base = "http://localhost:3000"
   const qrUrl = useMemo(() => (data ? `${base}/qr/${data.qr_slug}` : ''), [base, data])
 
   useEffect(() => {

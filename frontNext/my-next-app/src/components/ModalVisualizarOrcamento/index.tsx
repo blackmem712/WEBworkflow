@@ -7,8 +7,8 @@ import { Cliente }     from '@/types/cliente/cliente'
 import { Servico }     from '@/types/servico/servico'
 import { Produto }     from '@/types/produto/produto'
 import { Funcionario } from '@/types/funcionario/funcionario'
-import Button          from '@/components/buton'
-import '@/styles/components/modalOrcamento.css' // <- CSS escopado para este modal
+import { api }         from '@/services/api'     // axios com Bearer/refresh
+import '@/styles/components/modalOrcamento.css'  // CSS escopado para este modal
 
 interface Props {
   orcamento: Orcamento
@@ -20,8 +20,7 @@ interface Props {
   onClose: () => void
   setOrcamentos: React.Dispatch<React.SetStateAction<Orcamento[]>>
   setEquipamentos: React.Dispatch<React.SetStateAction<Equipamento[]>>
-  /** 'assign' (atribuir técnico e enviar p/ MA) ou 'maintenance' (concluir e ir p/ GA).
-   *  Quando não informado, deduz pelo status do equipamento. */
+  /** 'assign' (atribuir técnico e enviar p/ MA) ou 'maintenance' (concluir e ir p/ GA). */
   mode?: 'assign' | 'maintenance'
   /** Desabilita o select do técnico (somente leitura). */
   readOnlyTech?: boolean
@@ -61,73 +60,75 @@ export default function ModalVisualizarOrcamento({
   const isReadOnlyTech = readOnlyTech ?? isMaintenance
 
   const [techId, setTechId] = useState<number | null>(orcamento.cargo_funcionario ?? null)
+  const [loading, setLoading] = useState(false)
 
   const handleTechChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setTechId(e.target.value ? Number(e.target.value) : null)
   }
 
-  // Atribui técnico e envia p/ MA
-  const handleSalvar = () => {
-    if (techId == null) return
+  // Atribui técnico e envia p/ MA (REGISTRA no banco!)
+  const handleSalvar = async () => {
+    if (loading) return
+    if (techId == null) {
+      alert('Selecione o técnico responsável.')
+      return
+    }
+    try {
+      setLoading(true)
 
-    // 1) Atribui técnico ao orçamento
-    fetch(`http://127.0.0.1:8000/orcamentos/api/v1/${orcamento.id}/`, {
-      method: 'PATCH',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ cargo_funcionario: techId })
-    })
-      .then(res => {
-        if (!res.ok) throw new Error('Erro ao atribuir técnico')
-        return res.json()
+      // 1) Atualiza o orçamento com o técnico selecionado
+      const orcResp = await api.patch(`/orcamentos/api/v1/${orcamento.id}/`, {
+        cargo_funcionario: techId,
       })
-      .then((updated: Orcamento) => {
-        // 2) Atualiza store de orçamentos
-        setOrcamentos(prev => prev.map(o => o.id === updated.id ? updated : o))
+      const updated: Orcamento = orcResp.data
+      setOrcamentos(prev => prev.map(o => (o.id === updated.id ? updated : o)))
 
-        // 3) Atualiza equipamento p/ MA
-        return fetch(`http://127.0.0.1:8000/equipamentos/api/v1/${equipamento.id}/`, {
-          method: 'PATCH',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ status: 'MA' })
-        })
-      })
-      .then(res => {
-        if (!res || !res.ok) throw new Error('Erro ao mudar equipamento para MA')
-        // 4) Reflita no front
-        setEquipamentos(prev =>
-          prev.map(e =>
-            e.id === equipamento.id ? { ...e, status: { ...e.status, status: 'MA' } } : e
-          )
+      // 2) REGISTRA status MA no backend (action dedicada)
+      await api.post(`/equipamentos/api/v1/${equipamento.id}/set_status/`, { status: 'MA' })
+      const nowIso = new Date().toISOString()
+
+      // 3) Reflete no estado local do Kanban
+      setEquipamentos(prev =>
+        prev.map(e =>
+          e.id === equipamento.id
+            ? { ...e, status: { ...e.status, status: 'MA' as any, date_entrada: nowIso } }
+            : e
         )
-        onClose()
-      })
-      .catch(err => {
-        console.error(err)
-        alert('Não foi possível atribuir técnico/enviar para manutenção.')
-      })
+      )
+
+      onClose()
+    } catch (err: any) {
+      console.error(err)
+      alert(err?.response?.data?.detail || 'Não foi possível atribuir técnico/enviar para manutenção.')
+    } finally {
+      setLoading(false)
+    }
   }
 
-  // Conclui manutenção e envia p/ GA (Entrega)
-  const handleConcluir = () => {
-    fetch(`http://127.0.0.1:8000/equipamentos/api/v1/${equipamento.id}/`, {
-      method: 'PATCH',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ status: 'GA' })
-    })
-      .then(res => {
-        if (!res.ok) throw new Error('Erro ao concluir manutenção')
-        // Atualiza front
-        setEquipamentos(prev =>
-          prev.map(e =>
-            e.id === equipamento.id ? { ...e, status: { ...e.status, status: 'GA' } } : e
-          )
+  // Conclui manutenção e envia p/ GA (Entrega) — REGISTRA no banco
+  const handleConcluir = async () => {
+    if (loading) return
+    try {
+      setLoading(true)
+
+      await api.post(`/equipamentos/api/v1/${equipamento.id}/set_status/`, { status: 'GA' })
+      const nowIso = new Date().toISOString()
+
+      setEquipamentos(prev =>
+        prev.map(e =>
+          e.id === equipamento.id
+            ? { ...e, status: { ...e.status, status: 'GA' as any, date_entrada: nowIso } }
+            : e
         )
-        onClose()
-      })
-      .catch(err => {
-        console.error(err)
-        alert('Não foi possível concluir a manutenção.')
-      })
+      )
+
+      onClose()
+    } catch (err: any) {
+      console.error(err)
+      alert(err?.response?.data?.detail || 'Não foi possível concluir a manutenção.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -175,7 +176,7 @@ export default function ModalVisualizarOrcamento({
                 return p ? (
                   <tr key={pid}>
                     <td>{p.nome}</td>
-                    <td>{Number(p.valor ?? 0).toFixed(2)}</td>
+                    <td>{Number((p as any).preco ?? 0).toFixed(2)}</td>
                   </tr>
                 ) : null
               })}
@@ -190,7 +191,7 @@ export default function ModalVisualizarOrcamento({
             <select
               value={techId ?? ''}
               onChange={handleTechChange}
-              disabled={isReadOnlyTech}
+              disabled={isReadOnlyTech || loading}
             >
               <option value="">Selecione o técnico...</option>
               {funcionarios
@@ -206,15 +207,29 @@ export default function ModalVisualizarOrcamento({
 
         <div className="mvo modal-buttons">
           {isMaintenance ? (
-            <Button variant="success" onClick={handleConcluir}>
-              Concluir Manutenção
-            </Button>
+            <button
+              className="btn btn-success"
+              onClick={handleConcluir}
+              disabled={loading}
+            >
+              {loading ? 'Concluindo…' : 'Concluir Manutenção'}
+            </button>
           ) : (
-            <Button variant="primary" onClick={handleSalvar}>
-              Atribuir e Enviar p/ Manutenção
-            </Button>
+            <button
+              className="btn btn-primary"
+              onClick={handleSalvar}
+              disabled={loading || techId == null}
+            >
+              {loading ? 'Enviando…' : 'Atribuir e Enviar p/ Manutenção'}
+            </button>
           )}
-          <Button variant="danger" onClick={onClose}>Fechar</Button>
+          <button
+            className="btn btn-danger"
+            onClick={onClose}
+            disabled={loading}
+          >
+            Fechar
+          </button>
         </div>
       </div>
     </div>

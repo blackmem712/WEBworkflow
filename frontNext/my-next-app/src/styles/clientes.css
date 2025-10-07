@@ -1,60 +1,68 @@
-/* clientes.css */
+/* Clientes - visão em cards seguindo o novo tema */
 .clientes-container {
-  margin-left: 60px;
-  padding: 2rem;
+  margin-left: 0;
+  padding: 32px;
   transition: margin-left 0.3s ease;
-}
-
-.sidebar-hover:hover ~ .clientes-container {
-  margin-left: 220px;
+  min-height: 100vh;
+  background: var(--bg-app);
 }
 
 .clientes-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom: 24px;
 }
 
 .clientes-header h1 {
-  font-size: 2rem;
-  color: #1e293b;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--text-primary);
 }
 
 .btn-novo {
-  background-color: #3b82f6;
-  color: white;
-  padding: 0.6rem 1.2rem;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: background-color 0.2s ease;
+  display:inline-flex; align-items:center; gap:6px;
+  background: var(--brand-3);
+  color:#fff;
+  padding: 10px 18px;
+  border-radius: 12px;
+  text-decoration:none;
+  font-weight:600;
+  border: 1px solid var(--brand-3);
+  box-shadow: var(--shadow-soft);
+  transition: background .2s ease, transform .05s ease;
 }
-
-.btn-novo:hover {
-  background-color: #2563eb;
-}
+.btn-novo:hover { background: var(--brand-4); transform: translateY(-1px); }
 
 .clientes-lista {
-  display: grid;
+  display:grid; gap: 18px;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.5rem;
 }
 
 .cliente-card {
-  background-color: white;
-  border: 1px solid #e2e8f0;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  background: var(--panel);
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: var(--shadow-soft);
+  display:grid; gap:8px;
 }
 
 .cliente-card h3 {
-  margin-top: 0;
-  color: #1e293b;
+  margin: 0;
+  font-size: 18px;
+  font-weight:600;
+  color: var(--text-primary);
 }
 
 .cliente-card p {
-  margin: 0.3rem 0;
-  color: #444;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+@media (max-width: 768px){
+  .clientes-container{ padding: 20px 16px; }
+  .clientes-header{ flex-direction:column; align-items:flex-start; gap:12px; }
+  .clientes-lista{ grid-template-columns: 1fr; }
 }

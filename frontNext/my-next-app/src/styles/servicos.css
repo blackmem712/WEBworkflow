@@ -1,11 +1,28 @@
-.serv-page {
-  margin-top: 2rem;
+/* Serviços */
+.serv-page{
+  margin-left:0;
+  padding:32px;
+  background:var(--bg-app);
+  min-height:100vh;
 }
-.serv-header {
-  margin-left: 60px;
-  padding: 0 1.5rem;
-}
-.serv-header h1 {
-  font-size: 2rem;
-  color: #1e293b;
+
+.serv-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+.serv-header h1{ margin:0; font-size:28px; font-weight:700; color:var(--text-primary); }
+
+.serv-actions{ display:flex; gap:10px; }
+.serv-actions .btn{ height:40px; padding:0 16px; border-radius:12px; border:1px solid var(--brand-3); background:var(--brand-3); color:#fff; font-weight:600; box-shadow:var(--shadow-soft); }
+.serv-actions .btn:hover{ background:var(--brand-4); }
+.serv-actions .btn.ghost{ background:#fff; color:var(--brand-3); border-color:var(--border-soft); }
+
+.serv-table-wrapper{ background:var(--panel); border:1px solid var(--border-soft); border-radius:16px; box-shadow:var(--shadow-soft); overflow:auto; }
+.serv-table{ width:100%; border-collapse:collapse; min-width:640px; }
+.serv-table th, .serv-table td{ padding:14px 16px; border-bottom:1px solid var(--border-soft); font-size:0.9rem; color:var(--text-primary); text-align:left; }
+.serv-table th{ background:#f0f4fa; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+.serv-table tbody tr:hover{ background:#f9fbfd; }
+
+@media(max-width:768px){
+  .serv-page{ padding:20px 16px; }
+  .serv-header{ flex-direction:column; align-items:flex-start; gap:12px; }
+  .serv-actions{ width:100%; }
+  .serv-actions .btn{ flex:1; text-align:center; }
 }

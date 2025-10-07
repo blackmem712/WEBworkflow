@@ -1,73 +1,43 @@
-/* src/styles/components/tabelaFornecedores.css */
+/* tabela fornecedores */
 .tabela-forn-container {
-  margin-left: 60px;
-  background: #ffffff;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  background: var(--panel);
+  padding: 24px;
+  border-radius: 18px;
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
 }
 
-.tabela-controls {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
+.tabela-controls { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
 
 .tabela-busca {
-  flex: 1;
-  padding: 0.75rem 1rem;
-  padding-left: 3rem;
-  border: none;
-  border-radius: 9999px;
-  background-color: #f1f5f9;
-  font-size: 1rem;
-  background-image: url("data:image/svg+xml,%3Csvg fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344l3.853 3.853-1.398 1.398-3.853-3.853a6.5 6.5 0 1 1 1.398-1.398zM6.5 11a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: 1rem center;
+  flex:1; height:42px; padding:0 16px 0 42px; border-radius:12px; border:1px solid var(--border-soft);
+  background:#f2f5fa; font-size:0.95rem;
+  transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
+  background-image:url('data:image/svg+xml;charset=UTF-8,%3Csvg width="16" height="16" fill="%2394a3b8" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11.742 10.344l3.853 3.853-1.398 1.398-3.853-3.853a6.5 6.5 0 1 1 1.398-1.398zM6.5 11a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z"/%3E%3C/svg%3E');
+  background-repeat:no-repeat; background-position:16px center;
 }
+.tabela-busca:focus { outline:none; border-color:var(--brand-3); background:#fff; box-shadow:0 0 0 3px rgba(29,78,216,0.12); }
 
 .tabela-forn {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  border-radius: 8px;
-  overflow: hidden;
-  font-size: 0.95rem;
+  width:100%; border-collapse:collapse; border-radius:14px; overflow:hidden; box-shadow:var(--shadow-soft);
 }
-
 .tabela-forn thead {
-  background-color: #3b82f6;
+  background: linear-gradient(180deg, rgba(15,42,110,.8), rgba(11,26,58,.8));
+  color:#fff; text-transform:uppercase; letter-spacing:0.04em; font-size:0.75rem;
 }
-
-.tabela-forn thead th {
-  color: #fff;
-  padding: 0.75rem 1rem;
-  text-align: left;
-  font-weight: 600;
-}
-
-.tabela-forn tbody tr {
-  background-color: #fff;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-.tabela-forn tbody tr:nth-child(even) {
-  background-color: #f1f5f9;
-}
-
+.tabela-forn thead th { padding:14px 18px; font-weight:600; }
+.tabela-forn tbody tr { background:#fff; transition:background .2s ease, transform .1s ease; }
+.tabela-forn tbody tr:nth-child(even){ background:#f7f9fc; }
+.tabela-forn tbody tr:hover{ background:#eef4fb; transform:translateX(4px); cursor:pointer; }
 .tabela-forn th,
-.tabela-forn td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #e2e8f0;
-}
+.tabela-forn td { padding:14px 18px; border-bottom:1px solid var(--border-soft); font-size:0.9rem; color:var(--text-primary); }
+.tabela-forn tbody tr:last-child td { border-bottom:none; }
 
-.tabela-forn tbody tr:hover {
-  background-color: #e0f2fe;
-  transform: translateX(4px);
-  cursor: pointer;
-}
-
-.tabela-forn tbody tr:last-child td {
-  border-bottom: none;
+@media(max-width:768px){
+  .tabela-forn-container{ padding:20px 16px; }
+  .tabela-controls{ flex-direction:column; align-items:stretch; }
+  .tabela-busca{ width:100%; }
+  .tabela-forn{ font-size:0.85rem; }
+  .tabela-forn th,
+  .tabela-forn td{ padding:12px 14px; }
 }

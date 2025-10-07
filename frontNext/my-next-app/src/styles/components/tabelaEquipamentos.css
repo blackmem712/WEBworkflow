@@ -1,89 +1,110 @@
 /* tabelaEquipamentos.css */
 .tabela-equip-container {
-  margin-left: 60px;
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-left: 0;
+  background: var(--panel);
+  padding: 24px;
+  border-radius: 18px;
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+  transition: margin-left 0.3s ease;
 }
+
 
 .tabela-controls {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 12px;
+  margin-bottom: 18px;
 }
 
 .tabela-busca {
   flex: 1;
-  padding: 0.75rem 1rem;
-  padding-left: 3rem;
-  border: none;
-  border-radius: 9999px;
-  background-color: #f1f5f9;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  transition: box-shadow 0.2s;
-  background-image: url("data:image/svg+xml;..."); /* ícone lupa */
+  height: 42px;
+  padding: 0 16px 0 42px;
+  border-radius: 12px;
+  border: 1px solid var(--border-soft);
+  background: #f2f5fa;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='16' height='16' fill='%2394a3b8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11.742 10.344l3.853 3.853-1.398 1.398-3.853-3.853a6.5 6.5 0 1 1 1.398-1.398zM6.5 11a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: 1rem center;
+  background-position: 16px center;
+}
+.tabela-busca:focus {
+  outline: none;
+  border-color: var(--brand-3);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(29,78,216,0.12);
 }
 
 .tabela-equip {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  font-size: 0.95rem;
+  border-collapse: collapse;
+  border-radius: 14px;
   overflow: hidden;
-  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
 }
 
 .tabela-equip thead {
-  background-color: #3b82f6;
-}
-
-.tabela-equip thead th {
+  background: linear-gradient(180deg, rgba(15,42,110,.8), rgba(11,26,58,.8));
   color: #fff;
-  text-align: left;
-  padding: 0.75rem 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.75rem;
+}
+.tabela-equip thead th {
+  padding: 14px 18px;
   font-weight: 600;
 }
 
 .tabela-equip tbody tr {
   background: #fff;
-  transition: background 0.2s, transform 0.1s;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
-
-.tabela-equip tbody tr:nth-child(even) {
-  background: #f1f5f9;
-}
-
+.tabela-equip tbody tr:nth-child(even) { background: #f7f9fc; }
 .tabela-equip tbody tr:hover {
-  background: #e0f2fe;
+  background: #eef4fb;
   transform: translateX(4px);
   cursor: pointer;
 }
 
 .tabela-equip th,
 .tabela-equip td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 0.9rem;
+  color: var(--text-primary);
 }
-
 .tabela-equip tbody tr:last-child td {
   border-bottom: none;
 }
-/* Status card dentro da tabela */
+
 .status-card {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-align: center;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight:600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
-/* Quando status = EN (Entrada) */
-.status-EN {
-  background-color: #d1fae5;
-  color: #065f46;
+.status-EN { background:#d1fae5; color:#065f46; }
+.status-OR { background:#fef3c7; color:#92400e; }
+.status-MA { background:#e0f2fe; color:#1d4ed8; }
+.status-GA { background:#e0e7ff; color:#3730a3; }
+.status-SA { background:#f3f4f6; color:#374151; }
+
+@media (max-width: 768px) {
+  .tabela-equip-container { margin-left: 0; padding: 20px 16px; }
+  .tabela-controls { flex-direction: column; align-items: stretch; }
+  .tabela-busca { width: 100%; }
+  .tabela-equip { font-size: 0.85rem; }
+  .tabela-equip th,
+  .tabela-equip td { padding: 12px 14px; }
 }
+
+
+

@@ -1,97 +1,81 @@
 /* tabelaFuncionarios.css */
-
-/* Container geral */
 .tabela-func-container {
-  margin-left: 60px; /* mantém espaço para a sidebar */
-  background: #ffffff;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  background: var(--panel);
+  padding: 24px;
+  border-radius: 18px;
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
 }
 
-/* Controles: busca + botão */
 .tabela-controls {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:18px;
 }
 
-/* Campo de busca estilizado */
 .tabela-busca {
-  flex: 1;
-  padding: 0.75rem 1rem;
-  padding-left: 3rem;              /* espaço para ícone */
-  border: none;
-  border-radius: 9999px;           /* totalmente arredondado */
-  background-color: #f1f5f9;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  font-size: 1rem;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='16' height='16' fill='%2394a3b8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11.742 10.344l3.853 3.853-1.398 1.398-3.853-3.853a6.5 6.5 0 1 1 1.398-1.398zM6.5 11a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: 1rem center;
+  flex:1;
+  height:42px;
+  padding:0 16px 0 42px;
+  border-radius:12px;
+  border:1px solid var(--border-soft);
+  background:#f2f5fa;
+  font-size:0.95rem;
+  transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
+  background-image:url('data:image/svg+xml;charset=UTF-8,%3Csvg width="16" height="16" fill="%2394a3b8" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11.742 10.344l3.853 3.853-1.398 1.398-3.853-3.853a6.5 6.5 0 1 1 1.398-1.398zM6.5 11a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z"/%3E%3C/svg%3E');
+  background-repeat:no-repeat;
+  background-position:16px center;
 }
-
-.tabela-busca::placeholder {
-  color: #94a3b8;
-  font-style: italic;
-}
-
 .tabela-busca:focus {
-  background-color: #ffffff;
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
-  outline: none;
+  outline:none;
+  border-color:var(--brand-3);
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(29,78,216,0.12);
 }
 
-/* Tabela estilizada */
 .tabela-func {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  overflow: hidden;
-  border-radius: 8px;
-  font-size: 0.95rem;
+  width:100%;
+  border-collapse:collapse;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:var(--shadow-soft);
 }
 
-/* Cabeçalho */
 .tabela-func thead {
-  background-color: #3b82f6;
+  background: linear-gradient(180deg, rgba(15,42,110,.8), rgba(11,26,58,.8));
+  color:#fff;
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+  font-size:0.75rem;
 }
+.tabela-func thead th { padding:14px 18px; font-weight:600; }
 
-.tabela-func thead th {
-  color: #ffffff;
-  text-align: left;
-  padding: 0.75rem 1rem;
-  font-weight: 600;
-}
-
-/* Linhas da tabela */
 .tabela-func tbody tr {
-  background-color: #ffffff;
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  background:#fff;
+  transition:background .2s ease, transform .1s ease;
+}
+.tabela-func tbody tr:nth-child(even) { background:#f7f9fc; }
+.tabela-func tbody tr:hover {
+  background:#eef4fb;
+  transform:translateX(4px);
+  cursor:pointer;
 }
 
-.tabela-func tbody tr:nth-child(even) {
-  background-color: #f1f5f9;
-}
-
-/* Células */
 .tabela-func th,
 .tabela-func td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #e2e8f0;
-  white-space: nowrap;
+  padding:14px 18px;
+  border-bottom:1px solid var(--border-soft);
+  font-size:0.9rem;
+  color:var(--text-primary);
+}
+.tabela-func tbody tr:last-child td { border-bottom:none; }
+
+@media(max-width:768px){
+  .tabela-controls{ flex-direction:column; align-items:stretch; }
+  .tabela-busca{ width:100%; }
+  .tabela-func{ font-size:0.85rem; }
+  .tabela-func th,
+  .tabela-func td{ padding:12px 14px; }
 }
 
-/* Hover nas linhas */
-.tabela-func tbody tr:hover {
-  background-color: #e0f2fe;
-  transform: translateX(4px);
-  cursor: pointer;
-}
-
-/* Remove border-bottom da última linha */
-.tabela-func tbody tr:last-child td {
-  border-bottom: none;
-}

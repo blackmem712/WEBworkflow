@@ -1,10 +1,10 @@
-'use client'
+"use client"
 
-import { useState } from 'react'
-import { Equipamento } from '@/types/equipamento/equipamento'
-import { Cliente } from '@/types/cliente/cliente'
-import Button from '@/components/buton'
-import '@/styles/components/tabelaEquipamentos.css'
+import { useState } from "react"
+import { Equipamento } from "@/types/equipamento/equipamento"
+import { Cliente } from "@/types/cliente/cliente"
+import Button from "@/components/buton"
+import "@/styles/components/tabelaEquipamentos.css"
 
 interface Status {
   status: string
@@ -29,12 +29,20 @@ export default function TabelaEquipamentos({
   onSelecionar,
   onNovo
 }: Props) {
-  const [filtro, setFiltro] = useState('')
+  const [filtro, setFiltro] = useState("")
+
+  const STATUS_LABEL: Record<string, string> = {
+    EN: "Entrada",
+    OR: "Orcamento",
+    MA: "Manutencao",
+    GA: "Entrega",
+    SA: "Saida",
+  }
 
   const filtrados = equipamentos.filter(e =>
     e.equipamento.toLowerCase().includes(filtro.toLowerCase()) ||
     e.marca.toLowerCase().includes(filtro.toLowerCase()) ||
-    (clientes.find(c => c.id === e.cliente)?.nome ?? '')
+    (clientes.find(c => c.id === e.cliente)?.nome ?? "")
       .toLowerCase()
       .includes(filtro.toLowerCase())
   )
@@ -59,7 +67,7 @@ export default function TabelaEquipamentos({
             <th>Marca</th>
             <th>Modelo</th>
             <th>Cor</th>
-            <th>Série</th>
+            <th>Serie</th>
             <th>Cliente</th>
             <th>Entrada</th>
             <th>Status</th>
@@ -80,7 +88,7 @@ export default function TabelaEquipamentos({
                 <td>{dtEnt}</td>
                 <td>
                   <span className={`status-card status-${e.status.status}`}>
-                    {e.status.status === 'EN' ? 'Entrada' : e.status.status}
+                    {STATUS_LABEL[e.status.status] ?? e.status.status}
                   </span>
                 </td>
               </tr>
