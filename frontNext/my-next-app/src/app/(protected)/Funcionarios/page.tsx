@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react'
 import { Funcionario, Cargo, Setor } from '@/types/funcionario/funcionario'
 import TabelaFuncionarios from '@/components/TabelaFuncionario'
-import ModalFuncionario   from '@/components/ModalFuncionario'
+import ModalFuncionario from '@/components/ModalFuncionario'
 import ModalNovoFuncionario from '@/components/ModalNovoFuncionario'
+import { PageTitle } from '@/components/PageTitle'
+import { TeamIcon } from '@/components/icons'
 import '@/styles/funcionarios.css'
 
 
@@ -35,7 +37,7 @@ export default function FuncionariosPage() {
   return (
     <div className="func-page">
       <div className="func-header">
-        <h1>👔 Funcionários</h1>
+        <PageTitle icon={<TeamIcon size={28} />}>Funcionários</PageTitle>
       </div>
 
       <TabelaFuncionarios

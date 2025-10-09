@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { api, setTokens } from '@/services/api'
+import { EyeIcon, EyeOffIcon, LockIcon } from '@/components/icons'
 import styles from '@/app/login/login.module.css'
 
 export default function LoginPage() {
@@ -72,7 +73,9 @@ export default function LoginPage() {
     <div className={styles.page}>
       <div className={styles.card}>
         <div className={styles.brand}>
-          <div className={styles.logo}>🔒</div>
+          <div className={styles.logo} aria-hidden="true">
+            <LockIcon size={34} />
+          </div>
           <h1>Entrar</h1>
           <p className={styles.sub}>Acesse sua conta para continuar</p>
         </div>
@@ -106,7 +109,7 @@ export default function LoginPage() {
                 onClick={() => setShowPass(v => !v)}
                 aria-label={showPass ? 'Ocultar senha' : 'Mostrar senha'}
               >
-                {showPass ? '🙈' : '👁️'}
+                {showPass ? <EyeOffIcon size={20} /> : <EyeIcon size={20} />}
               </button>
             </div>
           </label>

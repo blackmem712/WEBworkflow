@@ -13,6 +13,8 @@ import { Cliente }     from '@/types/cliente/cliente'
 import TabelaOrcamentos   from '@/components/TabelaOrcamentos'
 import ModalOrcamento     from '@/components/ModalOrcamento'
 import ModalNovoOrcamento from '@/components/ModalNovoOrcamento'
+import { PageTitle } from '@/components/PageTitle'
+import { BudgetIcon } from '@/components/icons'
 
 import '@/styles/orcamentos.css'
 
@@ -172,7 +174,7 @@ export default function OrcamentosPage() {
   return (
     <div className="orc-page">
       <div className="orc-header">
-        <h1>🧾 Orçamentos</h1>
+        <PageTitle icon={<BudgetIcon size={28} />}>Orçamentos</PageTitle>
       </div>
 
       <TabelaOrcamentos

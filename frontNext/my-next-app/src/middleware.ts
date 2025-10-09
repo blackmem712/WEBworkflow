@@ -41,7 +41,7 @@ export function middleware(req: NextRequest) {
   return NextResponse.next()
 }
 
-// 🔧 garantir que o middleware rode em /Home também
+// Ajuste: garantir que o middleware rode em /Home também
 export const config = {
   matcher: [
     '/', '/login', '/Home',
