@@ -65,14 +65,40 @@ input:focus, textarea:focus, select:focus {
 }
 
 /* Cabeçalho da Sidebar (logo ou ícone) */
-.sidebar-header {
+.sidebar-brand {
+  position: relative;
   width: 100%;
-  color: #e7f4ff;
-  font-size: 1.6rem;
-  text-align: center;
-  padding: 1rem 0;
-  border-bottom: 1px solid rgba(255,255,255,.2);
-  background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.03));
+  min-height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.18);
+  background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.04));
+}
+
+.sidebar-logo {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.sidebar-logo--expanded {
+  display: none;
+}
+
+.sidebar-hover:hover .sidebar-logo--expanded {
+  display: block;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.sidebar-hover:hover .sidebar-logo--compact {
+  display: none;
 }
 
 /* Container de links */
@@ -81,26 +107,31 @@ input:focus, textarea:focus, select:focus {
   padding-top: 1rem;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
 }
 
-/* Link padrão (sem hover) */
+/* Link padrão */
 .nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
   width: 100%;
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 0;
   color: #e6f4ff;
   text-decoration: none;
   font-size: 0.95rem;
   white-space: nowrap;
-  opacity: 0;
-  transform: translateX(-10px);
-  transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Mostra links quando sidebar está expandida */
+.sidebar-hover:not(:hover) .nav-item {
+  gap: 0;
+}
+
 .sidebar-hover:hover .nav-item {
-  opacity: 1;
-  transform: translateX(0);
+  justify-content: flex-start;
+  padding: 0.75rem 1.5rem;
 }
 
 /* Hover nos links */
@@ -143,10 +174,6 @@ input:focus, textarea:focus, select:focus {
 .nav-item.logout {
   color: #fecaca; /* vermelho clarinho no texto */
 }
-.sidebar-hover:hover .nav-item.logout {
-  opacity: 1;
-  transform: translateX(0);
-}
 .nav-item.logout:hover {
   background-color: #ef4444 !important; /* vermelho */
   color: #fff;
@@ -163,6 +190,60 @@ input:focus, textarea:focus, select:focus {
 @media (max-width: 640px){
   .sidebar-hover:hover { width: 60px; }
   .layout-content{ margin-left: 60px; padding: 0.75rem; }
+}
+
+.nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  color: inherit;
+  transition: margin 0.2s ease;
+}
+
+.sidebar-hover:not(:hover) .nav-icon {
+  margin-right: 0;
+}
+
+.sidebar-hover:hover .nav-icon {
+  margin-right: 0;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0 0 1.5rem;
+}
+
+.page-title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand-3);
+}
+
+.nav-label {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateX(-6px);
+  transition: opacity 0.2s ease, transform 0.2s ease, max-width 0.2s ease;
+}
+
+.sidebar-hover:not(:hover) .nav-label {
+  max-width: 0;
+}
+
+.sidebar-hover:hover .nav-label {
+  opacity: 1;
+  max-width: 240px;
+  transform: translateX(0);
 }
 
 /* Botões padrão globais */
@@ -186,5 +267,4 @@ input:focus, textarea:focus, select:focus {
 .btn:active{ transform:translateY(0); }
 .btn.ghost{ background:#fff; color:var(--text-primary); border-color:var(--border-soft); box-shadow:var(--shadow-soft); }
 .btn.small{ height:32px; padding:0 12px; font-size:13px; }
-
 

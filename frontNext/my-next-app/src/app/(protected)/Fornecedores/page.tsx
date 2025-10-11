@@ -3,10 +3,12 @@
 
 import { useState, useEffect } from 'react'
 import { Fornecedor } from '@/types/fornecedor/fornecedor'
-import { Produto }    from '@/types/produto/produto'
-import TabelaFornecedores   from '@/components/TabelaFornecedor'
-import ModalFornecedor      from '@/components/ModalFornecedor'
-import ModalNovoFornecedor  from '@/components/ModalNovoFornecedor'
+import { Produto } from '@/types/produto/produto'
+import TabelaFornecedores from '@/components/TabelaFornecedor'
+import ModalFornecedor from '@/components/ModalFornecedor'
+import ModalNovoFornecedor from '@/components/ModalNovoFornecedor'
+import { PageTitle } from '@/components/PageTitle'
+import { SuppliersIcon } from '@/components/icons'
 import '@/styles/fornecedores.css'
 
 export default function FornecedoresPage() {
@@ -30,7 +32,7 @@ export default function FornecedoresPage() {
   return (
     <div className="forn-page">
       <div className="forn-header">
-        <h1>🏭 Fornecedores</h1>
+        <PageTitle icon={<SuppliersIcon size={28} />}>Fornecedores</PageTitle>
       </div>
 
       <TabelaFornecedores

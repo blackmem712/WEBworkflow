@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react'
 import { Servico } from '@/types/servico/servico'
 import TabelaServicos from '@/components/TabelaServicos'
-import ModalServico   from '@/components/ModalServico'
+import ModalServico from '@/components/ModalServico'
 import ModalNovoServico from '@/components/ModalNovoServico'
+import { PageTitle } from '@/components/PageTitle'
+import { ServicesIcon } from '@/components/icons'
 import '@/styles/servicos.css'
 
 export default function ServicosPage() {
@@ -22,7 +24,7 @@ export default function ServicosPage() {
   return (
     <div className="serv-page">
       <div className="serv-header">
-        <h1>🛠️ Serviços</h1>
+        <PageTitle icon={<ServicesIcon size={28} />}>Serviços</PageTitle>
       </div>
 
       <TabelaServicos

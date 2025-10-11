@@ -4,8 +4,10 @@
 import { useState, useEffect } from 'react'
 import { Produto } from '@/types/produto/produto'
 import TabelaProdutos from '@/components/TabelaProdutos'
-import ModalProduto   from '@/components/ModalProduto'
+import ModalProduto from '@/components/ModalProduto'
 import ModalNovoProduto from '@/components/ModalNovoProduto'
+import { PageTitle } from '@/components/PageTitle'
+import { ProductsIcon } from '@/components/icons'
 import '@/styles/produtos.css'
 
 export default function ProdutosPage() {
@@ -23,7 +25,7 @@ export default function ProdutosPage() {
   return (
     <div className="prod-page">
       <div className="prod-header">
-        <h1>📦 Produtos</h1>
+        <PageTitle icon={<ProductsIcon size={28} />}>Produtos</PageTitle>
       </div>
 
       <TabelaProdutos

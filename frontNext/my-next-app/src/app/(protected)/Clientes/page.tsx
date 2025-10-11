@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Cliente } from '@/types/cliente/cliente'     
+import { Cliente } from '@/types/cliente/cliente'
 import TabelaClientes from '@/components/TabelaClientes'
 import ModalCliente from '@/components/ModalCliente'
 import ModalNovoCliente from '@/components/ModalNovoCliente'
+import { ClientsIcon } from '@/components/icons'
+import { PageTitle } from '@/components/PageTitle'
 import '@/styles/components/modalNovoCliente.css'
 
 
@@ -22,8 +24,7 @@ export default function ClientesPage() {
   return (
     <div className="clientes-page">
       <div className="clientes-header">
-        <h1>👤 Clientes</h1>
-
+        <PageTitle icon={<ClientsIcon size={28} />}>Clientes</PageTitle>
       </div>
 
       <TabelaClientes

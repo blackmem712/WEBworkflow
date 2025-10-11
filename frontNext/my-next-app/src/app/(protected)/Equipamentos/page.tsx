@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react'
 import { Equipamento } from '@/types/equipamento/equipamento'
 import { Cliente } from '@/types/cliente/cliente'
 import TabelaEquipamentos from '@/components/TabelaEquipamentos/index'
-import ModalEquipamento       from '@/components/ModalEquipamento/index'
-import ModalNovoEquipamento   from '@/components/ModalNovoEquipamento/index'
+import ModalEquipamento from '@/components/ModalEquipamento/index'
+import ModalNovoEquipamento from '@/components/ModalNovoEquipamento/index'
+import { EquipmentIcon } from '@/components/icons'
+import { PageTitle } from '@/components/PageTitle'
 import '@/styles/equipamentos.css'
 
 export default function EquipamentosPage() {
@@ -33,7 +35,7 @@ export default function EquipamentosPage() {
   return (
     <div className="equip-page">
       <div className="equip-header">
-        <h1>🧰 Equipamentos</h1>
+        <PageTitle icon={<EquipmentIcon size={28} />}>Equipamentos</PageTitle>
       </div>
 
       <TabelaEquipamentos

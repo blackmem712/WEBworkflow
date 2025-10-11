@@ -1,20 +1,33 @@
 'use client'
 
+import { ReactNode } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { clearTokens } from '@/services/api'
+import {
+  BudgetIcon,
+  ClientsIcon,
+  EquipmentIcon,
+  HomeIcon,
+  LogoutIcon,
+  ProductsIcon,
+  ServicesIcon,
+  SuppliersIcon,
+  TeamIcon,
+} from '@/components/icons'
 
-type Item = { href: string; label: string; icon?: string }
+type Item = { href: string; label: string; icon: ReactNode }
 
 const items: Item[] = [
-  { href: '/Home',              label: 'Início',        icon: '🏠' },
-  { href: '/Clientes',      label: 'Clientes',      icon: '👤' },
-  { href: '/Equipamentos',  label: 'Equipamentos',  icon: '🧰' },
-  { href: '/Funcionarios',  label: 'Funcionários',  icon: '🔧' },
-  { href: '/Servicos',      label: 'Serviços',      icon: '🧾' },
-  { href: '/Produtos',      label: 'Produtos',      icon: '📦' },
-  { href: '/Fornecedores',  label: 'Fornecedores',  icon: '🏭' },
-  { href: '/Orcamentos',    label: 'Orçamentos',    icon: '💸' },
+  { href: '/Home', label: 'Início', icon: <HomeIcon size={18} /> },
+  { href: '/Clientes', label: 'Clientes', icon: <ClientsIcon size={18} /> },
+  { href: '/Equipamentos', label: 'Equipamentos', icon: <EquipmentIcon size={18} /> },
+  { href: '/Funcionarios', label: 'Funcionários', icon: <TeamIcon size={18} /> },
+  { href: '/Servicos', label: 'Serviços', icon: <ServicesIcon size={18} /> },
+  { href: '/Produtos', label: 'Produtos', icon: <ProductsIcon size={18} /> },
+  { href: '/Fornecedores', label: 'Fornecedores', icon: <SuppliersIcon size={18} /> },
+  { href: '/Orcamentos', label: 'Orçamentos', icon: <BudgetIcon size={18} /> },
 ]
 
 export default function Sidebar() {
@@ -35,8 +48,24 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* opcional: cabeçalho/logo da sidebar */}
-      {/* <div className="sidebar-header">⚙️</div> */}
+      <div className="sidebar-brand" aria-label="SGEE">
+        <Image
+          src="/images/sgee-logomark.png"
+          alt="SGEE"
+          width={44}
+          height={44}
+          className="sidebar-logo sidebar-logo--compact"
+          priority
+        />
+        <Image
+          src="/images/sgee-logo.png"
+          alt="SGEE"
+          width={220}
+          height={70}
+          className="sidebar-logo sidebar-logo--expanded"
+          priority
+        />
+      </div>
 
       <nav
         className="nav-links"
@@ -47,9 +76,12 @@ export default function Sidebar() {
             key={item.href}
             href={item.href}
             className={`nav-item${isActive(item.href) ? ' active' : ''}`}
+            title={item.label}
           >
-            {item.icon && <span style={{ marginRight: 8 }}>{item.icon}</span>}
-            {item.label}
+            <span className="nav-icon" aria-hidden="true">
+              {item.icon}
+            </span>
+            <span className="nav-label">{item.label}</span>
           </Link>
         ))}
 
@@ -69,7 +101,10 @@ export default function Sidebar() {
           aria-label="Sair"
           title="Sair"
         >
-          ⎋ Sair
+          <span className="nav-icon" aria-hidden="true">
+            <LogoutIcon size={18} />
+          </span>
+          <span className="nav-label">Sair</span>
         </button>
       </nav>
     </>
