@@ -7,7 +7,6 @@ import ModalCliente from '@/components/ModalCliente'
 import ModalNovoCliente from '@/components/ModalNovoCliente'
 import { ClientsIcon } from '@/components/icons'
 import { PageTitle } from '@/components/PageTitle'
-import '@/styles/components/modalNovoCliente.css'
 
 
 export default function ClientesPage() {

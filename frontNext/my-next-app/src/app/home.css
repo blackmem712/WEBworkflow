@@ -1,4 +1,4 @@
-/* home.css */
+﻿/* home.css */
 .home-container {
   display: flex;
   min-height: 100vh;
@@ -6,17 +6,17 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* conteúdo ao lado da sidebar */
+/* conteAodo ao lado da sidebar */
 .home-main {
   flex: 1;
   padding: 2rem;
-  margin-left: 60px; /* espaço inicial da sidebar recolhida */
+  margin-left: 60px; /* espaAo inicial da sidebar recolhida */
   transition: margin-left 0.3s ease;
 }
 
 /* quando o mouse passa sobre a sidebar */
 .sidebar-hover:hover ~ .home-main {
-  margin-left: 220px; /* espaço da sidebar expandida */
+  margin-left: 220px; /* espaAo da sidebar expandida */
 }
 
 .home-title {

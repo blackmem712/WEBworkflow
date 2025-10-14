@@ -1,22 +1,26 @@
 /* components/Button.tsx */
 'use client'
 
+import { ButtonHTMLAttributes } from 'react'
 import '@/styles/components/buton.css'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger'
 
-interface ButtonProps {
-  onClick: () => void
+type ButtonBaseProps = ButtonHTMLAttributes<HTMLButtonElement>
+
+interface ButtonProps extends ButtonBaseProps {
   variant?: ButtonVariant
-  children: React.ReactNode
 }
 
-export default function Button({ onClick, variant = 'primary', children }: ButtonProps) {
+export default function Button({
+  variant = 'primary',
+  className = '',
+  children,
+  ...buttonProps
+}: ButtonProps) {
+  const composed = ['btn', `btn-${variant}`, className].filter(Boolean).join(' ')
   return (
-    <button
-      className={`btn btn-${variant}`}
-      onClick={onClick}
-    >
+    <button className={composed} {...buttonProps}>
       {children}
     </button>
   )

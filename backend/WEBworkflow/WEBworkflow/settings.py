@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_filters',      
     'corsheaders',
     'rest_framework',
+    'drf_spectacular',
     'workflow',
 ]
 
@@ -83,6 +84,17 @@ REST_FRAMEWORK = {
         # escopo usado nas rotas de QR (GET+POST)
         'qr': '10/min',
     },
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'WEBworkflow API',
+    'DESCRIPTION': (
+        'Documentação dos serviços REST que alimentam o workflow, '
+        'equipamentos, orçamentos e demais recursos da plataforma WEBworkflow.'
+    ),
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
 
 # --- SIMPLE_JWT ---

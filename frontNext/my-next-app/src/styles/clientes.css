@@ -1,4 +1,4 @@
-/* Clientes - visão em cards seguindo o novo tema */
+ï»¿/* Clientes - visao em cards seguindo o novo tema */
 .clientes-container {
   margin-left: 0;
   padding: 32px;
@@ -66,3 +66,4 @@
   .clientes-header{ flex-direction:column; align-items:flex-start; gap:12px; }
   .clientes-lista{ grid-template-columns: 1fr; }
 }
+

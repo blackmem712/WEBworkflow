@@ -1,4 +1,4 @@
-
+﻿
 "use client"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -17,7 +17,7 @@ export default function EtiquetaPage(){
     setEq({ id:data.id, qr_slug:data.qr_slug, equipamento:data.equipamento })
   })() }, [id])
 
-  if(!eq) return <div className={styles.page}>Carregando…</div>
+  if(!eq) return <div className={styles.page}>Carregando...</div>
 
   const base = (process.env.NEXT_PUBLIC_SITE_URL || "").replace(/\/$/,"")
   const publicUrl = `${base}/qr/${eq.qr_slug}`

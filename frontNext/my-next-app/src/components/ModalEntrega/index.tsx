@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useEffect, useMemo, useState } from 'react'
 import { api } from '@/services/api'
@@ -9,6 +9,9 @@ import { Orcamento } from '@/types/orcamento/orcamento'
 import { Servico } from '@/types/servico/servico'
 import { Produto } from '@/types/produto/produto'
 import { Funcionario } from '@/types/funcionario/funcionario'
+import Button from '@/components/buton'
+import ModalShell from '@/components/ModalShell'
+import '@/styles/components/modalVisualizarOrcamento.css'
 import '@/styles/components/modalOrcamento.css'
 
 type Mode = 'delivery' | 'report'
@@ -33,6 +36,8 @@ interface Props {
   onAfterSetSaida?: (equipId: number) => void
 }
 
+const statusLabel = (code: string) => STATUS_LIST.find((status) => status.code === code)?.label || code
+
 export default function ModalEntrega({
   mode,
   equipamento,
@@ -49,32 +54,30 @@ export default function ModalEntrega({
   const [histLoading, setHistLoading] = useState(mode === 'report')
   const [historico, setHistorico] = useState<HistoricoItem[]>([])
 
-  const statusLabel = (code: string) => STATUS_LIST.find(s => s.code === code)?.label || code
-
-  // Busca o histórico completo somente no modo relatório (SA)
   useEffect(() => {
     if (mode !== 'report') return
     let alive = true
     ;(async () => {
       try {
         setHistLoading(true)
-        const r = await api.get(`/equipamentos/api/v1/${equipamento.id}/historico/`)
+        const response = await api.get(`/equipamentos/api/v1/${equipamento.id}/historico/`)
         if (!alive) return
-        setHistorico(r.data as HistoricoItem[])
-      } catch (e) {
-        console.error(e)
+        setHistorico(response.data as HistoricoItem[])
+      } catch (error) {
+        console.error(error)
       } finally {
         if (alive) setHistLoading(false)
       }
     })()
-    return () => { alive = false }
+    return () => {
+      alive = false
+    }
   }, [mode, equipamento.id])
 
   const tecnico = useMemo(() => {
     if (!orcamento || !funcionarios) return null
     const cfId = orcamento.cargo_funcionario
-    const f = funcionarios.find(x => x.cargo_funcionario && x.cargo_funcionario.id === cfId)
-    return f || null
+    return funcionarios.find((funcionario) => funcionario.cargo_funcionario?.id === cfId) ?? null
   }, [orcamento, funcionarios])
 
   const handleConfirmSaida = async () => {
@@ -84,124 +87,152 @@ export default function ModalEntrega({
       await api.post(`/equipamentos/api/v1/${equipamento.id}/set_status/`, { status: 'SA' })
       const nowIso = new Date().toISOString()
       if (setEquipamentos) {
-        setEquipamentos(prev => prev.map(e => (
-          e.id === equipamento.id ? { ...e, status: { ...e.status, status: 'SA' as any, date_entrada: nowIso } } : e
-        )))
+        setEquipamentos((prev) =>
+          prev.map((item) =>
+            item.id === equipamento.id
+              ? { ...item, status: { ...item.status, status: 'SA' as any, date_entrada: nowIso } }
+              : item,
+          ),
+        )
       }
       onAfterSetSaida?.(equipamento.id)
       onClose()
-    } catch (err: any) {
-      console.error(err)
-      alert(err?.response?.data?.detail || 'Não foi possível registrar a saída.')
+    } catch (error: any) {
+      console.error(error)
+      alert(error?.response?.data?.detail || 'Nao foi possivel registrar a saida.')
     } finally {
       setLoading(false)
     }
   }
 
-  // Helpers para renderização de serviços/produtos
-  const servRows = (orcamento?.servico || []).map((sid) => {
-    const s = servicos.find(x => x.id === sid)
-    return s ? (
-      <tr key={sid}>
-        <td>{s.nome}</td>
-        <td>{Number((s as any).valor ?? 0).toFixed(2)}</td>
+  const serviceRows = (orcamento?.servico || []).map((id) => {
+    const servico = servicos.find((item) => item.id === id)
+    return servico ? (
+      <tr key={`service-${id}`}>
+        <td>{servico.nome}</td>
+        <td>{Number((servico as any).valor ?? 0).toFixed(2)}</td>
       </tr>
     ) : null
   })
 
-  const prodRows = (orcamento?.produto || []).map((pid) => {
-    const p = produtos.find(x => x.id === pid)
-    return p ? (
-      <tr key={pid}>
-        <td>{p.nome}</td>
-        <td>{Number((p as any).preco ?? 0).toFixed(2)}</td>
+  const productRows = (orcamento?.produto || []).map((id) => {
+    const produto = produtos.find((item) => item.id === id)
+    return produto ? (
+      <tr key={`product-${id}`}>
+        <td>{produto.nome}</td>
+        <td>{Number((produto as any).preco ?? 0).toFixed(2)}</td>
       </tr>
     ) : null
   })
+
+  const footer = (
+    <>
+      {mode === 'delivery' && (
+        <Button type="button" variant="success" onClick={handleConfirmSaida} disabled={loading}>
+          {loading ? 'Registrando...' : 'Confirmar Saida'}
+        </Button>
+      )}
+      <Button type="button" variant="danger" onClick={onClose} disabled={loading}>
+        Fechar
+      </Button>
+    </>
+  )
 
   return (
-    <div className="mvo modal-overlay">
-      <div className="mvo modal-window">
-        <h2 className="mvo title">{mode === 'delivery' ? 'Entrega do Equipamento' : 'Relatório do Equipamento'}</h2>
-
-        <div className="mvo summary">
-          <p><strong>Cliente:</strong> {cliente?.nome ?? '—'}</p>
-          <p><strong>Equipamento:</strong> {equipamento.equipamento}</p>
-          <p><strong>Série:</strong> {equipamento.nun_serie}</p>
+    <ModalShell
+      title={mode === 'delivery' ? 'Entrega do Equipamento' : 'Relatorio do Equipamento'}
+      onClose={onClose}
+      size="lg"
+      footer={footer}
+      bodyClassName="modal-vo"
+    >
+      <section className="summary-panel">
+        <div>
+          <span className="summary-label">Cliente</span>
+          <span className="summary-value">{cliente?.nome ?? '-'}</span>
         </div>
+        <div>
+          <span className="summary-label">Equipamento</span>
+          <span className="summary-value">{equipamento.equipamento}</span>
+        </div>
+        <div>
+          <span className="summary-label">Serie</span>
+          <span className="summary-value">{equipamento.nun_serie}</span>
+        </div>
+      </section>
 
-        {orcamento && (
-          <>
-            <div className="mvo entries-section">
-              <h3>Serviços</h3>
-              <table className="mvo entries-table">
-                <thead>
-                  <tr><th>Serviço</th><th>Valor (R$)</th></tr>
-                </thead>
-                <tbody>{servRows}</tbody>
-              </table>
+      {orcamento && (
+        <>
+          <div className="entries-section">
+            <div className="entries-header">
+              <h3>Servicos</h3>
             </div>
+            <table className="entries-table">
+              <thead>
+                <tr>
+                  <th>Servico</th>
+                  <th>Valor (R$)</th>
+                </tr>
+              </thead>
+              <tbody>{serviceRows}</tbody>
+            </table>
+          </div>
 
-            <div className="mvo entries-section">
+          <div className="entries-section">
+            <div className="entries-header">
               <h3>Produtos</h3>
-              <table className="mvo entries-table">
-                <thead>
-                  <tr><th>Produto</th><th>Valor (R$)</th></tr>
-                </thead>
-                <tbody>{prodRows}</tbody>
-              </table>
             </div>
-          </>
-        )}
-
-        {tecnico && (
-          <div className="mvo entries-section">
-            <h3>Técnico Responsável</h3>
-            <p>{tecnico.nome}</p>
+            <table className="entries-table">
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Valor (R$)</th>
+                </tr>
+              </thead>
+              <tbody>{productRows}</tbody>
+            </table>
           </div>
-        )}
+        </>
+      )}
 
-        {mode === 'report' && (
-          <div className="mvo entries-section">
-            <h3>Linha do Tempo</h3>
-            {histLoading ? (
-              <p>Carregando histórico…</p>
-            ) : (
-              <table className="mvo entries-table">
-                <thead>
-                  <tr>
-                    <th>Status</th>
-                    <th>Entrada</th>
-                    <th>Saída</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {historico.map((h) => (
-                    <tr key={h.id}>
-                      <td>{statusLabel(h.status)}</td>
-                      <td>{h.date_entrada ? new Date(h.date_entrada).toLocaleString() : '—'}</td>
-                      <td>{h.date_saida ? new Date(h.date_saida).toLocaleString() : '—'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+      {tecnico && (
+        <div className="entries-section">
+          <div className="entries-header">
+            <h3>Tecnico Responsavel</h3>
           </div>
-        )}
-
-        <div className="mvo modal-buttons">
-          {mode === 'delivery' && (
-            <button
-              className="btn btn-success"
-              onClick={handleConfirmSaida}
-              disabled={loading}
-            >
-              {loading ? 'Registrando…' : 'Confirmar Saída'}
-            </button>
-          )}
-          <button className="btn btn-danger" onClick={onClose} disabled={loading}>Fechar</button>
+          <p>{tecnico.nome}</p>
         </div>
-      </div>
-    </div>
+      )}
+
+      {mode === 'report' && (
+        <div className="entries-section">
+          <div className="entries-header">
+            <h3>Linha do Tempo</h3>
+          </div>
+          {histLoading ? (
+            <p>Carregando historico...</p>
+          ) : (
+            <table className="entries-table">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Entrada</th>
+                  <th>Saida</th>
+                </tr>
+              </thead>
+              <tbody>
+                {historico.map((item) => (
+                  <tr key={item.id}>
+                    <td>{statusLabel(item.status)}</td>
+                    <td>{item.date_entrada ? new Date(item.date_entrada).toLocaleString() : '-'}</td>
+                    <td>{item.date_saida ? new Date(item.date_saida).toLocaleString() : '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
+    </ModalShell>
   )
 }

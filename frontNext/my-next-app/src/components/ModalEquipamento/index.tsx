@@ -1,30 +1,19 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef, useEffect } from 'react'
 import { Equipamento } from '@/types/equipamento/equipamento'
-import { Cliente }     from '@/types/cliente/cliente'
+import { Cliente } from '@/types/cliente/cliente'
 import InputCampo from '@/components/InputCampo'
 import Button from '@/components/buton'
+import ModalShell from '@/components/ModalShell'
 import ModalNovoCliente from '@/components/ModalNovoCliente'
 import '@/styles/components/modalEquipamento.css'
 
-/** Status retornado pela API */
-interface Status {
-  status: string
-  date_entrada: string
-  date_saida: string | null
-}
-
-/** Extensão de Equipamento para incluir status */
-interface EquipamentoAPI extends Equipamento {
-  status: Status
-}
-
 interface Props {
-  equipamento: EquipamentoAPI
+  equipamento: Equipamento
   clientes: Cliente[]
   setClientes: React.Dispatch<React.SetStateAction<Cliente[]>>
-  setEquipamentos: React.Dispatch<React.SetStateAction<EquipamentoAPI[]>>
+  setEquipamentos: React.Dispatch<React.SetStateAction<Equipamento[]>>
   onClose: () => void
 }
 
@@ -33,172 +22,170 @@ export default function ModalEquipamento({
   clientes,
   setClientes,
   setEquipamentos,
-  onClose
+  onClose,
 }: Props) {
-  // Estado do formulário (todos os campos de Equipamento menos status)
-  const [form, setForm] = useState<Omit<EquipamentoAPI, 'status'>>(
-    (({ status, ...rest }) => rest)(equipamento)
-  )
+  const [form, setForm] = useState<Omit<Equipamento, 'status'>>((({ status, ...rest }) => rest)(equipamento))
 
-  // Para campo de busca de cliente
-  const initialCliente = clientes.find(c => c.id === equipamento.cliente)
-  const [search, setSearch]       = useState(initialCliente?.nome ?? '')
-  const [showSug, setShowSug]     = useState(false)
+  const initialCliente = clientes.find((cliente) => cliente.id === equipamento.cliente)
+  const [search, setSearch] = useState(initialCliente?.nome ?? '')
+  const [showSug, setShowSug] = useState(false)
   const [showCliente, setShowCliente] = useState(false)
-  const sugRef = useRef<HTMLUListElement>(null)
+  const suggestionsRef = useRef<HTMLUListElement>(null)
+  const searchWrapperRef = useRef<HTMLDivElement>(null)
 
-  // Fecha dropdown de sugestões ao clicar fora
   useEffect(() => {
-    function onClickOutside(e: MouseEvent) {
-      if (sugRef.current && !sugRef.current.contains(e.target as Node)) {
-        setShowSug(false)
-      }
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!searchWrapperRef.current) return
+      if (searchWrapperRef.current.contains(event.target as Node)) return
+      setShowSug(false)
     }
-    document.addEventListener('mousedown', onClickOutside)
-    return () => document.removeEventListener('mousedown', onClickOutside)
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Seleciona cliente da lista de sugestões
-  const handleSelectCliente = (c: Cliente) => {
-    setForm(prev => ({ ...prev, cliente: c.id }))
-    setSearch(c.nome ?? '')
+  const sugestoes = clientes.filter((cliente) =>
+    (cliente.nome ?? '').toLowerCase().includes(search.toLowerCase()),
+  )
+
+  const handleSelectCliente = (cliente: Cliente) => {
+    setForm((prev) => ({ ...prev, cliente: cliente.id }))
+    setSearch(cliente.nome ?? '')
     setShowSug(false)
   }
 
-  // Envia PATCH para atualizar o equipamento
+  const handleClienteCriado = (cliente: Cliente) => {
+    setClientes((prev) => [...prev, cliente])
+    handleSelectCliente(cliente)
+  }
+
   const handleSalvar = () => {
     fetch(`http://127.0.0.1:8000/equipamentos/api/v1/${equipamento.id}/`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
     })
-      .then(res => {
-        if (!res.ok) throw new Error('Erro ao salvar')
-        return res.json()
+      .then((response) => {
+        if (!response.ok) throw new Error('Erro ao salvar')
+        return response.json()
       })
-      .then((updated: EquipamentoAPI) => {
-        setEquipamentos(prev =>
-          prev.map(e => (e.id === updated.id ? updated : e))
-        )
+      .then((updated: Equipamento) => {
+        setEquipamentos((prev) => prev.map((eq) => (eq.id === updated.id ? updated : eq)))
         onClose()
       })
       .catch(console.error)
   }
 
-  // Filtra sugestões de clientes conforme texto digitado
-  const sugestoes = clientes.filter(c =>
-    (c.nome ?? '').toLowerCase().includes(search.toLowerCase())
-  )
-
-  // Formata data de entrada
-  const dtEnt = new Date(equipamento.status.date_entrada)
-    .toLocaleString()
+  const formattedEntrada = new Date(equipamento.status.date_entrada).toLocaleString()
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-equip wide">
-        <h2>Editar Equipamento</h2>
-
-        <div className="form-grid">
-          <div className="grid-col-6">
+    <>
+      <ModalShell
+        title='Editar Equipamento'
+        onClose={onClose}
+        size='xl'
+        footer={(
+          <>
+            <Button type='button' variant='danger' onClick={onClose}>
+              Cancelar
+            </Button>
+            <Button type='button' onClick={handleSalvar}>
+              Salvar
+            </Button>
+          </>
+        )}
+      >
+        <div className='modal-grid'>
+          <div className='grid-col-6'>
             <InputCampo
-              label="Equipamento"
-              name="equipamento"
+              label='Equipamento'
+              name='equipamento'
               value={form.equipamento}
-              onChange={e => setForm({ ...form, equipamento: e.target.value })}
+              onChange={(event) => setForm((prev) => ({ ...prev, equipamento: event.target.value }))}
             />
           </div>
-          <div className="grid-col-6">
+          <div className='grid-col-6'>
             <InputCampo
-              label="Marca"
-              name="marca"
+              label='Marca'
+              name='marca'
               value={form.marca}
-              onChange={e => setForm({ ...form, marca: e.target.value })}
+              onChange={(event) => setForm((prev) => ({ ...prev, marca: event.target.value }))}
             />
           </div>
-          <div className="grid-col-6">
+          <div className='grid-col-6'>
             <InputCampo
-              label="Modelo"
-              name="modelo"
+              label='Modelo'
+              name='modelo'
               value={form.modelo}
-              onChange={e => setForm({ ...form, modelo: e.target.value })}
+              onChange={(event) => setForm((prev) => ({ ...prev, modelo: event.target.value }))}
             />
           </div>
-          <div className="grid-col-6">
+          <div className='grid-col-6'>
             <InputCampo
-              label="Cor"
-              name="cor"
+              label='Cor'
+              name='cor'
               value={form.cor}
-              onChange={e => setForm({ ...form, cor: e.target.value })}
+              onChange={(event) => setForm((prev) => ({ ...prev, cor: event.target.value }))}
             />
           </div>
-          <div className="grid-col-6">
+          <div className='grid-col-6'>
             <InputCampo
-              label="Nº Série"
-              name="nun_serie"
+              label='Numero de serie'
+              name='nun_serie'
               value={form.nun_serie}
-              onChange={e => setForm({ ...form, nun_serie: e.target.value })}
+              onChange={(event) => setForm((prev) => ({ ...prev, nun_serie: event.target.value }))}
             />
           </div>
-
-          {/* Data de Entrada (read-only) */}
-          <div className="grid-col-6">
-            <label>Data de Entrada</label>
-            <p className="date-field">{dtEnt}</p>
+          <div className='grid-col-6'>
+            <label>Data de entrada</label>
+            <p className='date-field'>{formattedEntrada}</p>
           </div>
-
-          {/* Status Card */}
-          <div className="grid-col-6">
+          <div className='grid-col-6'>
             <label>Status</label>
-            <div className={`status-card status-${equipamento.status.status}`}>
-              {equipamento.status.status === 'EN' ? 'Entrada' : equipamento.status.status}
+            <div className={`status-chip status-chip--${equipamento.status.status}`}>
+              {equipamento.status.status}
             </div>
           </div>
-
-          {/* Busca de Cliente com sugestões */}
-          <div className="grid-col-6">
-            <label htmlFor="cliente-search" className="input-label">Cliente</label>
-            <div className="search-wrap">
+          <div className='grid-col-6'>
+            <label htmlFor='cliente-search' className='input-label'>Cliente</label>
+            <div className='combo-field' ref={searchWrapperRef}>
               <input
-                id="cliente-search"
-                className="search-input"
-                type="text"
-                placeholder="Buscar cliente..."
+                id='cliente-search'
+                className='combo-input'
+                type='text'
+                placeholder='Buscar cliente...'
                 value={search}
-                onChange={e => { setSearch(e.target.value); setShowSug(true) }}
+                onChange={(event) => {
+                  setSearch(event.target.value)
+                  setShowSug(true)
+                }}
                 onFocus={() => setShowSug(true)}
               />
-              <Button variant="secondary" onClick={() => setShowCliente(true)}>
+              <Button type='button' variant='secondary' onClick={() => setShowCliente(true)}>
                 + Cliente
               </Button>
+              {showSug && (
+                <ul className='combo-suggestions' ref={suggestionsRef}>
+                  {sugestoes.slice(0, 8).map((cliente) => (
+                    <li key={cliente.id} onMouseDown={() => handleSelectCliente(cliente)}>
+                      {cliente.nome}
+                    </li>
+                  ))}
+                  {sugestoes.length === 0 && <li className='combo-empty'>Nenhum cliente encontrado</li>}
+                </ul>
+              )}
             </div>
-            {showSug && (
-              <ul className="suggestions" ref={sugRef}>
-                {sugestoes.slice(0, 8).map(c => (
-                  <li key={c.id} onClick={() => handleSelectCliente(c)}>
-                    {c.nome}
-                  </li>
-                ))}
-                {sugestoes.length === 0 && (
-                  <li className="no-sug">Nenhum cliente encontrado</li>
-                )}
-              </ul>
-            )}
           </div>
         </div>
+      </ModalShell>
 
-        <div className="modal-buttons">
-          <Button variant="primary" onClick={handleSalvar}>Salvar</Button>
-          <Button variant="danger"  onClick={onClose}>Cancelar</Button>
-        </div>
-
-        {showCliente && (
-          <ModalNovoCliente
-            onClose={() => setShowCliente(false)}
-            setClientes={setClientes}
-          />
-        )}
-      </div>
-    </div>
+      {showCliente && (
+        <ModalNovoCliente
+          onClose={() => setShowCliente(false)}
+          setClientes={setClientes}
+          onCreated={handleClienteCriado}
+        />
+      )}
+    </>
   )
 }

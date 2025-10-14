@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { Servico } from '@/types/servico/servico'
@@ -24,7 +24,7 @@ export default function ServicosPage() {
   return (
     <div className="serv-page">
       <div className="serv-header">
-        <PageTitle icon={<ServicesIcon size={28} />}>Serviços</PageTitle>
+        <PageTitle icon={<ServicesIcon size={28} />}>ServiAos</PageTitle>
       </div>
 
       <TabelaServicos
@@ -50,3 +50,4 @@ export default function ServicosPage() {
     </div>
   )
 }
+

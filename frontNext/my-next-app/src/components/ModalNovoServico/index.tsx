@@ -1,87 +1,96 @@
-'use client'
+﻿'use client'
 
 import { useState, ChangeEvent } from 'react'
 import { Servico } from '@/types/servico/servico'
 import InputCampo from '@/components/InputCampo'
-import Button     from '@/components/buton'
-import '@/styles/components/modalServico.css'
+import Button from '@/components/buton'
+import ModalShell from '@/components/ModalShell'
 
 interface Props {
   onClose: () => void
   setServicos: React.Dispatch<React.SetStateAction<Servico[]>>
 }
 
+type ServicoCreate = Omit<Servico, 'id'>
+
 export default function ModalNovoServico({ onClose, setServicos }: Props) {
-  const [form, setForm] = useState<Omit<Servico,'id'>>({
+  const [form, setForm] = useState<ServicoCreate>({
     nome: '',
     valor: 0,
-    descricao: ''
+    descricao: '',
   })
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setForm(prev => ({
+  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = event.target
+    setForm((prev) => ({
       ...prev,
-      [name]: name === 'valor'
-        ? Number(value)
-        : value
+      [name]: name === 'valor' ? Number(value) : value,
     }))
   }
 
   const handleSalvar = () => {
     fetch('http://127.0.0.1:8000/servicos/api/v1/', {
       method: 'POST',
-      headers: { 'Content-Type':'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
     })
-      .then(r => {
-        if (!r.ok) throw new Error('Erro ao criar serviço')
-        return r.json()
+      .then((response) => {
+        if (!response.ok) throw new Error('Erro ao criar servico')
+        return response.json()
       })
       .then((novo: Servico) => {
-        setServicos(prev => [...prev, novo])
+        setServicos((prev) => [...prev, novo])
         onClose()
       })
       .catch(console.error)
   }
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-serv wide">
-        <h2>Novo Serviço</h2>
-        <div className="form-grid">
-          <div className="grid-col-12">
-            <InputCampo
-              label="Nome"
-              name="nome"
-              value={form.nome}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="grid-col-6">
-            <InputCampo
-              label="Valor (R$)"
-              name="valor"
-              type="number"
-              value={form.valor}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="grid-col-12">
-            <label>Descrição</label>
-            <textarea
-              name="descricao"
-              value={form.descricao}
-              onChange={handleChange}
-              rows={4}
-            />
-          </div>
+    <ModalShell
+      title="Novo Servico"
+      onClose={onClose}
+      size="md"
+      footer={(
+        <>
+          <Button type="button" variant="danger" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button type="button" onClick={handleSalvar}>
+            Salvar
+          </Button>
+        </>
+      )}
+    >
+      <div className="modal-grid">
+        <div className="grid-col-12">
+          <InputCampo
+            label="Nome"
+            name="nome"
+            value={form.nome}
+            onChange={handleChange}
+          />
         </div>
-        <div className="modal-buttons">
-          <Button variant="primary" onClick={handleSalvar}>Salvar</Button>
-          <Button variant="danger"  onClick={onClose}>Cancelar</Button>
+        <div className="grid-col-6">
+          <InputCampo
+            label="Valor (R$)"
+            name="valor"
+            type="number"
+            value={form.valor}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="grid-col-12">
+          <label htmlFor="descricao-novo-servico">Descricao</label>
+          <textarea
+            id="descricao-novo-servico"
+            name="descricao"
+            value={form.descricao}
+            onChange={handleChange}
+            rows={4}
+          />
         </div>
       </div>
-    </div>
+    </ModalShell>
   )
 }
+

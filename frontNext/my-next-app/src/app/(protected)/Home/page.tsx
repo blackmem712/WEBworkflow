@@ -17,6 +17,7 @@ import { Produto }     from '@/types/produto/produto'
 import { Funcionario } from '@/types/funcionario/funcionario'
 import { Orcamento }   from '@/types/orcamento/orcamento'
 
+import ModalEntradaEquipamento  from '@/components/ModalEntradaEquipamento'
 import ModalNovoOrcamento       from '@/components/ModalNovoOrcamento'
 import ModalVisualizarOrcamento from '@/components/ModalVisualizarOrcamento'
 import ModalEntrega             from '@/components/ModalEntrega'
@@ -45,7 +46,7 @@ export default function ProtectedHome() {
   const [funcionarios, setFuncionarios] = useState<Funcionario[]>([])
   const [orcamentos, setOrcamentos]     = useState<Orcamento[]>([])
 
-  // Modal: Novo orÃ§amento (EN)
+  // Modal: Novo orAamento (EN)
   const [newOrcEquip, setNewOrcEquip]   = useState<Equipamento | null>(null)
   const [showOrcModal, setShowOrcModal] = useState(false)
 
@@ -54,11 +55,12 @@ export default function ProtectedHome() {
   const [showViewModal, setShowViewModal] = useState(false)
   const [viewMode, setViewMode] = useState<'assign' | 'maintenance'>('assign')
 
-  // Modal: Entrega (GA) e RelatÃ³rio (SA)
+  // Modal: Entrega (GA) e RelatA?rio (SA)
   const [deliveryEquip, setDeliveryEquip] = useState<Equipamento | null>(null)
   const [showDeliveryModal, setShowDeliveryModal] = useState(false)
   const [reportEquip, setReportEquip] = useState<Equipamento | null>(null)
   const [showReportModal, setShowReportModal] = useState(false)
+  const [showEntradaModal, setShowEntradaModal] = useState(false)
 
   // --------- Filtros ---------
   const [filterCliente, setFilterCliente] = useState<string>('')
@@ -109,14 +111,14 @@ export default function ProtectedHome() {
   // corrige typo caso precise
   function setProdotos(data: Produto[]) { setProdutos(data) }
 
-  // ---------------- Mapa clienteId â†’ nome ----------------
+  // ---------------- Mapa clienteId a?? nome ----------------
   const clientMap = useMemo(() => {
     const m = new Map<number, string>()
-    clientes.forEach(c => m.set(c.id, c.nome))
+    clientes.forEach(c => m.set(c.id, c.nome ?? ''))
     return m
   }, [clientes])
 
-  // ---------------- Regras de negÃ³cio ----------------
+  // ---------------- Regras de negA?cio ----------------
   const enforceRules = (equipId: number, desired: StatusCode): StatusCode => {
     const hasOrc = orcamentos.some(o => o.equipamento === equipId)
     if (hasOrc && desired === 'EN') return 'OR'
@@ -150,7 +152,7 @@ export default function ProtectedHome() {
   }, [equipamentos, orcamentos])
 
   // ---------------- Agrupa por status ----------------
-  // Mapeia tecnico por equipamento (a partir do orçamento mais recente)
+  // Mapeia tecnico por equipamento (a partir do orcamento mais recente)
   const techMap = useMemo(() => {
     const map = new Map<number, string>()
     const byEquip = new Map<number, number>() // equipId -> max orc id
@@ -166,7 +168,7 @@ export default function ProtectedHome() {
     return map
   }, [orcamentos, funcionarios])
 
-  // Opções para selects
+  // Opcoes para selects
   const clienteOptions = useMemo(() => {
     return clientes.map(c => c.nome).filter(Boolean) as string[]
   }, [clientes])
@@ -241,7 +243,7 @@ export default function ProtectedHome() {
           )
         )
         removeOverride(equipId)
-        alert(err?.response?.data?.detail || 'Falha ao atualizar status (verifique permissÃµes).')
+        alert(err?.response?.data?.detail || 'Falha ao atualizar status (verifique permissA?es).')
       })
   }
 
@@ -264,19 +266,19 @@ export default function ProtectedHome() {
       const orc = orcamentos.find(o => o.equipamento === eq.id) || null
       if (!orc) return
       setSelOrcamento(orc)
-      setViewMode('maintenance')     // concluir manutenÃ§Ã£o (vai p/ GA)
+      setViewMode('maintenance')     // concluir manutenAA?o (vai p/ GA)
       setShowViewModal(true)
       return
     }
   }
 
-  // ---------------- ABERTURA VIA QUERY (QR â†’ Login â†’ Home) ----------------
+  // ---------------- ABERTURA VIA QUERY (QR a?? Login a?? Home) ----------------
   useEffect(() => {
     const open = search.get('open')
     const orc  = search.get('orc')
     if (!open || !orc) return
 
-    const fetchAndOpen = async (mode: '—' | 'maintenance') => {
+    const fetchAndOpen = async (mode: 'assign' | 'maintenance') => {
       try {
         const r = await api.get(`/orcamentos/api/v1/${orc}/`)
         const o: Orcamento = r.data
@@ -311,7 +313,7 @@ export default function ProtectedHome() {
     if (open === 'atribuir_manutencao') {
       fetchAndOpen('assign')
     } else if (open === 'concluir_manutencao' || open === 'registrar_entrega') {
-      fetchAndOpen('maintenance') // ajuste aqui se vocÃª tiver um modo especÃ­fico de entrega
+      fetchAndOpen('maintenance') // ajuste aqui se vocAa tiver um modo especA?fico de entrega
     }
   }, [search, router, equipamentos])
 
@@ -328,6 +330,16 @@ export default function ProtectedHome() {
 
   return (
     <>
+      <div className="home-actions">
+        <button
+          type="button"
+          className="btn"
+          onClick={() => setShowEntradaModal(true)}
+        >
+          Entrada
+        </button>
+      </div>
+
       {/* Filtros topo */}
       <div className="filters-bar">
         <div className="filters-grid">
@@ -395,11 +407,11 @@ export default function ProtectedHome() {
             <div className="sc-value">{metrics.counts.EN}</div>
           </div>
           <div className="summary-card or">
-            <div className="sc-title">Orçamento</div>
+            <div className="sc-title">Orcamento</div>
             <div className="sc-value">{metrics.counts.OR}</div>
           </div>
           <div className="summary-card ma">
-            <div className="sc-title">Manutenção</div>
+            <div className="sc-title">Manutencao</div>
             <div className="sc-value">{metrics.counts.MA}</div>
           </div>
           <div className="summary-card ga">
@@ -407,7 +419,7 @@ export default function ProtectedHome() {
             <div className="sc-value">{metrics.counts.GA}</div>
           </div>
           <div className="summary-card sa">
-            <div className="sc-title">Saída</div>
+            <div className="sc-title">Saida</div>
             <div className="sc-value">{metrics.counts.SA}</div>
           </div>
         </div>
@@ -424,7 +436,7 @@ export default function ProtectedHome() {
                   {...provDrop.droppableProps}
                 >
                   <h2 className="column-header"><span className="ch-title">{label}</span><span className="ch-count">{grouped[code].length}</span></h2>
-                  <div className={`column-body ${snapDrop.isDraggingOver ? 'dragging-over' : '—'}`}>
+                  <div className={`column-body ${snapDrop.isDraggingOver ? 'dragging-over' : ''}`}>
                     {grouped[code].length === 0 && (
                       <div className="column-empty">Nenhum item nesta etapa</div>
                     )}
@@ -440,21 +452,21 @@ export default function ProtectedHome() {
                           >
                             <h3 className="card-title">{eq.equipamento}</h3>
                             <p className="card-client">
-                              Cliente: {clientMap.get(eq.cliente) ?? '—'}
+                              Cliente: {clientMap.get(eq.cliente) ?? 'N/A'}
                             </p>
                             <p className="card-date">
                               Entrada:{' '}
                               {eq.status.date_entrada
                                 ? new Date(eq.status.date_entrada!).toLocaleDateString()
-                                : '—'}
+                                : 'N/A'}
                             </p>
-                            <p className="card-series">Série: {eq.nun_serie}</p>
+                            <p className="card-series">Serie: {eq.nun_serie}</p>
                             <div className="card-tags">
                               {eq.marca && <span className="tag">{eq.marca}</span>}
                               {eq.modelo && <span className="tag">{eq.modelo}</span>}
                               {eq.cor && <span className="tag mute">{eq.cor}</span>}
                               {!orcamentos.some(o => o.equipamento === eq.id) && (
-                                <span className="tag alert">Sem orçamento</span>
+                                <span className="tag alert">Sem orcamento</span>
                               )}
                               {eq.status.date_entrada && (
                                 <span className="tag time">
@@ -482,7 +494,18 @@ export default function ProtectedHome() {
         </div>
       </DragDropContext>
 
-      {/* Modal: Novo OrÃ§amento (EN) */}
+      {showEntradaModal && (
+        <ModalEntradaEquipamento
+          onClose={() => setShowEntradaModal(false)}
+          equipamentos={equipamentos}
+          clientes={clientes}
+          setEquipamentos={setEquipamentos}
+          setClientes={setClientes}
+          onAfterStatusChange={(id, status) => saveOverride(id, status)}
+        />
+      )}
+
+      {/* Modal: Novo OrAamento (EN) */}
       {showOrcModal && newOrcEquip && (
         <ModalNovoOrcamento
           clientes={clientes}
@@ -500,7 +523,7 @@ export default function ProtectedHome() {
           setEquipamentos={(updater) => {
             // intercepta para tambem gravar no LS quando virar OR
             setEquipamentos(prev => {
-              const next = typeof updater === 'function' ? (updater as any)(prev) : (updater as Equipamento[])
+              const next = typeof updater === 'function' ? (updater as (prev: Equipamento[]) => Equipamento[])(prev) : updater
               next.forEach(e => {
                 if (e.status.status === 'OR') saveOverride(e.id, 'OR')
               })
@@ -534,7 +557,7 @@ export default function ProtectedHome() {
             setEquipamentos={(updater) => {
               // intercepta para gravar no LS quando virar MA/GA
               setEquipamentos(prev => {
-                const next = typeof updater === 'function' ? (updater as any)(prev) : (updater as Equipamento[])
+                const next = typeof updater === 'function' ? (updater as (prev: Equipamento[]) => Equipamento[])(prev) : updater
                 next.forEach(e => {
                   if (e.status.status === 'MA') saveOverride(e.id, 'MA')
                   if (e.status.status === 'GA') saveOverride(e.id, 'GA')
@@ -564,7 +587,7 @@ export default function ProtectedHome() {
             onClose={() => { setShowDeliveryModal(false); setDeliveryEquip(null) }}
             setEquipamentos={(updater) => {
               setEquipamentos(prev => {
-                const next = typeof updater === 'function' ? (updater as any)(prev) : (updater as Equipamento[])
+                const next = typeof updater === 'function' ? (updater as (prev: Equipamento[]) => Equipamento[])(prev) : updater
                 next.forEach(e => { if (e.status.status === 'SA') saveOverride(e.id, 'SA') })
                 return next
               })
@@ -574,7 +597,7 @@ export default function ProtectedHome() {
         )
       })()}
 
-      {/* Modal: RelatÃ³rio (SA) */}
+      {/* Modal: RelatA?rio (SA) */}
       {showReportModal && reportEquip && (() => {
         const cli = clientes.find(c => c.id === reportEquip.cliente)
         if (!cli) return null
@@ -596,6 +619,7 @@ export default function ProtectedHome() {
     </>
   )
 }
+
 
 
 

@@ -1,4 +1,4 @@
-/* Equipamentos - lista e cabeçalho alinhados ao novo tema */
+ï»¿/* Equipamentos - lista e cabecalho alinhados ao novo tema */
 .equip-page {
   margin-left: 0;
   padding: 32px;
@@ -45,3 +45,4 @@
   .equip-actions{ width:100%; }
   .equip-actions .btn{ flex:1; text-align:center; }
 }
+

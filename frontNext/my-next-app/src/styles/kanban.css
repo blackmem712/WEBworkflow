@@ -1,8 +1,8 @@
-/*
-  Kanban UI – Clean + Futuristic (CSS puro)
+﻿/*
+  Kanban UI a?" Clean + Futuristic (CSS puro)
   - Profissional, elegante e responsivo
-  - Azul escuro + branco (tema sóbrio)
-  - Comentários explicam as seções para manutenção
+  - Azul escuro + branco (tema sA?brio)
+  - ComentA!rios explicam as seAA?es para manutenAA?o
 */
 
 /* =======================
@@ -11,10 +11,10 @@
 :root {
   /* Paleta base */
   --bg-app: #f6f8fb;            /* fundo geral claro */
-  --panel: #ffffff;             /* painéis/cards */
+  --panel: #ffffff;             /* painA(c)is/cards */
   --text: #0f172a;              /* texto principal */
-  --muted: #475569;             /* texto secundário */
-  --line: #e5e7eb;              /* divisórias/bordas */
+  --muted: #475569;             /* texto secundA!rio */
+  --line: #e5e7eb;              /* divisA?rias/bordas */
 
   /* Azul escuro com gradiente */
   --brand-deep-1: #0b1a3a;      /* navy profundo */
@@ -73,6 +73,14 @@
 /* =======================
    Barra de filtros
    ======================= */
+.home-actions{
+  display:flex;
+  justify-content:flex-end;
+  padding:12px 16px 0;
+}
+.home-actions .btn{
+  min-width:140px;
+}
 .filters-bar{ padding: 6px 16px 6px; }
 .filters-grid{
   display:grid;
@@ -186,3 +194,4 @@
 @media (max-width: 1280px){ .kanban-column{ flex: 0 0 300px; } }
 @media (max-width: 1024px){ .kanban-board{ gap: 12px; } .kanban-column{ flex: 0 0 270px; } }
 @media (max-width: 768px){  .kanban-board{ gap: 8px; } .kanban-column{ flex: 0 0 80vw; } }
+

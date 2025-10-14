@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { Funcionario, Cargo, Setor } from '@/types/funcionario/funcionario'
@@ -15,12 +15,12 @@ interface Props {
 }
 
 const CARGO_LABELS: Record<Cargo['cargo'], string> = {
-  TC: 'Técnico',
+  TC: 'TA(c)cnico',
   GE: 'Gerente',
   RC: 'Recepcionista'
 }
 const SETOR_LABELS: Record<Setor['setor'], string> = {
-  RE: 'Recepção',
+  RE: 'RecepAA?o',
   OF: 'Oficina',
   ES: 'Estoque'
 }

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -28,7 +28,7 @@ export default function LoginPage() {
     redirect = redirectRaw || '/Home'
   }
 
-  // Sanitiza: precisa começar com "/"
+  // Sanitiza: precisa comeAar com "/"
   if (!redirect.startsWith('/')) {
     redirect = '/Home'
   }
@@ -54,16 +54,16 @@ export default function LoginPage() {
       // Salva tokens (ex.: localStorage + axios headers)
       setTokens(access, refresh)
 
-      // Cookie leve pro middleware (UX, não segurança)
+      // Cookie leve pro middleware (UX, nA?o seguranAa)
       document.cookie = 'auth=1; path=/; max-age=604800; samesite=lax' // 7 dias
-      // Em produção + HTTPS, considere: '; secure'
+      // Em produAA?o + HTTPS, considere: '; secure'
 
-      // Apenas UMA navegação (sem push + replace)
+      // Apenas UMA navegaAA?o (sem push + replace)
       const destino = buildDestino()
       router.replace(destino)
       // Se preferir reload completo: window.location.replace(destino)
     } catch (err: any) {
-      setError(err?.response?.data?.detail || 'Usuário ou senha inválidos')
+      setError(err?.response?.data?.detail || 'UsuA!rio ou senha invA!lidos')
     } finally {
       setLoading(false)
     }
@@ -82,10 +82,10 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <label className={styles.label}>
-            Usuário
+            UsuA!rio
             <input
               className={styles.input}
-              placeholder="seu usuário"
+              placeholder="seu usuA!rio"
               autoComplete="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -97,7 +97,7 @@ export default function LoginPage() {
             <div className={styles.passWrap}>
               <input
                 className={styles.input}
-                placeholder="••••••••"
+                placeholder="a??a??a??a??a??a??a??a??"
                 type={showPass ? 'text' : 'password'}
                 autoComplete="current-password"
                 value={password}
@@ -117,7 +117,7 @@ export default function LoginPage() {
           {error && <div className={styles.error}>{error}</div>}
 
           <button type="submit" className={styles.submit} disabled={loading}>
-            {loading ? 'Entrando…' : 'Entrar'}
+            {loading ? 'Entrandoa??' : 'Entrar'}
           </button>
         </form>
 
@@ -129,3 +129,4 @@ export default function LoginPage() {
   )
 }
  
+

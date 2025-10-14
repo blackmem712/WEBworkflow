@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { Servico } from '@/types/servico/servico'
@@ -25,7 +25,7 @@ export default function TabelaServicos({ servicos, onSelecionar, onNovo }: Props
       <div className="tabela-controls">
         <input
           type="text"
-          placeholder="Buscar nome, descrição ou valor..."
+          placeholder="Buscar nome, descriAA?o ou valor..."
           value={filtro}
           onChange={e => setFiltro(e.target.value)}
           className="tabela-busca"
@@ -38,7 +38,7 @@ export default function TabelaServicos({ servicos, onSelecionar, onNovo }: Props
           <tr>
             <th>Nome</th>
             <th>Valor (R$)</th>
-            <th>Descrição</th>
+            <th>DescriAA?o</th>
           </tr>
         </thead>
         <tbody>
@@ -54,3 +54,4 @@ export default function TabelaServicos({ servicos, onSelecionar, onNovo }: Props
     </div>
   )
 }
+

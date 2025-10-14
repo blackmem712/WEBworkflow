@@ -6,20 +6,10 @@ import { Cliente } from "@/types/cliente/cliente"
 import Button from "@/components/buton"
 import "@/styles/components/tabelaEquipamentos.css"
 
-interface Status {
-  status: string
-  date_entrada: string
-  date_saida: string | null
-}
-
-interface EquipamentoAPI extends Equipamento {
-  status: Status
-}
-
 interface Props {
-  equipamentos: EquipamentoAPI[]
+  equipamentos: Equipamento[]
   clientes: Cliente[]
-  onSelecionar: (e: EquipamentoAPI) => void
+  onSelecionar: (e: Equipamento) => void
   onNovo: () => void
 }
 
@@ -74,7 +64,7 @@ export default function TabelaEquipamentos({
           </tr>
         </thead>
         <tbody>
-          {filtrados.map(e => {
+          {filtrados.map((e) => {
             const cliente = clientes.find(c => c.id === e.cliente)
             const dtEnt = new Date(e.status.date_entrada).toLocaleDateString()
             return (

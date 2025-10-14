@@ -1,8 +1,8 @@
-// src/services/api.ts
+﻿// src/services/api.ts
 import axios from 'axios'
 
 function computeApiBase() {
-  // 1) .env (produção/dev)
+  // 1) .env (produAA?o/dev)
   const fromEnv = process.env.NEXT_PUBLIC_API_BASE
   if (fromEnv) return fromEnv.replace(/\/$/, '')
 
@@ -12,7 +12,7 @@ function computeApiBase() {
     return `${protocol}//${hostname}:8000`
   }
 
-  // 3) fallback neutro (quase não usado)
+  // 3) fallback neutro (quase nA?o usado)
   return 'http://localhost:8000'
 }
 
@@ -45,7 +45,7 @@ export function clearTokens() {
   if (typeof window === 'undefined') return
   localStorage.removeItem(ACCESS_KEY)
   localStorage.removeItem(REFRESH_KEY)
-  // limpa o “sinalizador” do middleware
+  // limpa o a?oesinalizadora?? do middleware
   document.cookie = 'auth=; Path=/; Max-Age=0; SameSite=Lax'
 }
 
@@ -102,3 +102,4 @@ api.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { Orcamento }   from '@/types/orcamento/orcamento'
@@ -48,7 +48,7 @@ export default function TabelaOrcamentos({
       <div className="tabela-controls">
         <input
           type="text"
-          placeholder="Buscar observação, equipamento, serviço, produto ou responsável..."
+          placeholder="Buscar observaAA?o, equipamento, serviAo, produto ou responsA!vel..."
           value={filtro}
           onChange={e => setFiltro(e.target.value)}
           className="tabela-busca"
@@ -59,11 +59,11 @@ export default function TabelaOrcamentos({
       <table className="tabela-orc">
         <thead>
           <tr>
-            <th>Observação</th>
+            <th>ObservaAA?o</th>
             <th>Equipamento</th>
-            <th>Serviços</th>
+            <th>ServiAos</th>
             <th>Produtos</th>
-            <th>Responsável</th>
+            <th>ResponsA!vel</th>
           </tr>
         </thead>
         <tbody>
@@ -81,3 +81,4 @@ export default function TabelaOrcamentos({
     </div>
   )
 }
+

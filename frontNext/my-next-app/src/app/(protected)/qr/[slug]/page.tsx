@@ -1,4 +1,4 @@
-// src/app/qr/[slug]/page.tsx
+﻿// src/app/qr/[slug]/page.tsx
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
@@ -19,8 +19,8 @@ type QRPublic = {
     tecnico?: {
       id: number | null
       nome?: string | null
-      cargo?: string | null        // código (ex.: 'TC')
-      cargo_label?: string | null  // legível (ex.: 'Técnico')
+      cargo?: string | null        // codigo (ex.: 'TC')
+      cargo_label?: string | null  // legivel (ex.: 'Tecnico')
     } | null
     servicos?: { id: number; nome: string; valor?: number | null }[]
     produtos?: { id: number; nome: string; preco?: number | null }[]
@@ -30,11 +30,11 @@ type QRPublic = {
 const API = (path: string) => `http://127.0.0.1:8000${path}`
 
 const STATUS_LABEL: Record<StatusCode, string> = {
-  EN: 'Recepção',
-  OR: 'Orçamento',
-  MA: 'Manutenção',
+  EN: 'Recepcao',
+  OR: 'Orcamento',
+  MA: 'Manutencao',
   GA: 'Entrega',
-  SA: 'Saída',
+  SA: 'Saida',
 }
 
 export default function QRPage() {
@@ -69,7 +69,7 @@ export default function QRPage() {
 
   const chegadaFmt = useMemo(() => {
     const dt = qr?.date_entrada
-    if (!dt) return '—'
+    if (!dt) return '-'
     try {
       const d = new Date(dt)
       return new Intl.DateTimeFormat('pt-BR', {
@@ -84,24 +84,24 @@ export default function QRPage() {
     router.replace(`/login?redirect=${encodeURIComponent(destino)}`)
   }
 
-  // CTA por status — agora MA e GA também vão para a Home (Kanban)
+  // CTA por status - agora MA e GA tambem vao para a Home (Kanban)
   const { ctaLabel, ctaDest, ctaEnabled } = useMemo(() => {
     if (!qr) return { ctaLabel: '', ctaDest: '', ctaEnabled: false }
 
     switch (statusCode) {
       case 'EN': {
         const dest = `/Orcamentos?open=novo_orcamento&equip=${encodeURIComponent(String(qr.equipamento_id))}`
-        return { ctaLabel: 'Cadastrar orçamento', ctaDest: dest, ctaEnabled: !!qr.equipamento_id }
+        return { ctaLabel: 'Cadastrar orcamento', ctaDest: dest, ctaEnabled: !!qr.equipamento_id }
       }
       case 'OR': {
         const orcId = qr.orcamento?.id
         const dest = `/Home?open=atribuir_manutencao&orc=${encodeURIComponent(String(orcId ?? ''))}`
-        return { ctaLabel: 'Atribuir manutenção', ctaDest: dest, ctaEnabled: !!orcId }
+        return { ctaLabel: 'Atribuir manutencao', ctaDest: dest, ctaEnabled: !!orcId }
       }
       case 'MA': {
         const orcId = qr.orcamento?.id
         const dest = `/Home?open=concluir_manutencao&orc=${encodeURIComponent(String(orcId ?? ''))}`
-        return { ctaLabel: 'Concluir manutenção', ctaDest: dest, ctaEnabled: !!orcId }
+        return { ctaLabel: 'Concluir manutencao', ctaDest: dest, ctaEnabled: !!orcId }
       }
       case 'GA': {
         const orcId = qr.orcamento?.id
@@ -115,35 +115,35 @@ export default function QRPage() {
   }, [qr, statusCode])
 
   if (loading) {
-    return <div className="qr-wrap"><div className="qr-card"><p>Carregando…</p></div></div>
+    return <div className="qr-wrap"><div className="qr-card"><p>Carregando...</p></div></div>
   }
   if (err || !qr) {
-    return <div className="qr-wrap"><div className="qr-card error"><h2>Não foi possível carregar</h2><p>{err || 'Tente novamente.'}</p></div></div>
+    return <div className="qr-wrap"><div className="qr-card error"><h2>Nao foi possivel carregar</h2><p>{err || 'Tente novamente.'}</p></div></div>
   }
 
-  // Helper para render do técnico com label legível
+  // Helper para render do tecnico com label legivel
   const tecnicoLegivel = qr.orcamento?.tecnico?.nome
     ? `${qr.orcamento.tecnico.nome}${
         qr.orcamento.tecnico.cargo_label
-          ? ' — ' + qr.orcamento.tecnico.cargo_label
+          ? ' - ' + qr.orcamento.tecnico.cargo_label
           : qr.orcamento.tecnico.cargo
-            ? ' — ' + qr.orcamento.tecnico.cargo
+            ? ' - ' + qr.orcamento.tecnico.cargo
             : ''
       }`
-    : '—'
+    : '-'
 
   return (
     <div className="qr-wrap">
-      {/* Cabeçalho sempre mostra o status vigente */}
+      {/* Cabecalho sempre mostra o status vigente */}
       <header className="qr-header">
         <div className="qr-title">
           <span className="qr-chip">{STATUS_LABEL[statusCode]}</span>
           <h1>{qr.equipamento || 'Equipamento'}</h1>
-          <p className="qr-sub">{qr.cliente_nome ? `Cliente: ${qr.cliente_nome}` : 'Cliente não informado'}</p>
+          <p className="qr-sub">{qr.cliente_nome ? `Cliente: ${qr.cliente_nome}` : 'Cliente nao informado'}</p>
         </div>
       </header>
 
-      {/* Cartão base com dados comuns (inclui Manutenção também) */}
+      {/* Cartao base com dados comuns (inclui Manutencao tambem) */}
       <section className="qr-card">
         <div className="qr-row">
           <span className="qr-key">Etapa:</span>
@@ -155,26 +155,26 @@ export default function QRPage() {
         </div>
         <div className="qr-row">
           <span className="qr-key">Cliente:</span>
-          <span className="qr-val">{qr.cliente_nome || '—'}</span>
+          <span className="qr-val">{qr.cliente_nome || '-'}</span>
         </div>
       </section>
 
-      {/* Resumo de orçamento — aparece em OR, MA e GA (sempre que backend mandar) */}
+      {/* Resumo de orcamento - aparece em OR, MA e GA (sempre que backend mandar) */}
       {qr.orcamento && (
         <section className="qr-card">
           <div className="qr-row">
-            <span className="qr-key">Técnico</span>
+            <span className="qr-key">Tecnico</span>
             <span className="qr-val">{tecnicoLegivel}</span>
           </div>
 
           <div className="qr-row">
-            <span className="qr-key">Serviços</span>
+            <span className="qr-key">Servicos</span>
             <span className="qr-val">{(qr.orcamento.servicos?.length || 0)} item(ns)</span>
           </div>
           {qr.orcamento.servicos?.map(s => (
             <div key={s.id} className="qr-row" style={{ paddingLeft: 10 }}>
               <span className="qr-key">{s.nome}</span>
-              <span className="qr-val">{s.valor != null ? `R$ ${Number(s.valor).toFixed(2)}` : '—'}</span>
+              <span className="qr-val">{s.valor != null ? `R$ ${Number(s.valor).toFixed(2)}` : '-'}</span>
             </div>
           ))}
 
@@ -185,13 +185,13 @@ export default function QRPage() {
           {qr.orcamento.produtos?.map(p => (
             <div key={p.id} className="qr-row" style={{ paddingLeft: 10 }}>
               <span className="qr-key">{p.nome}</span>
-              <span className="qr-val">{p.preco != null ? `R$ ${Number(p.preco).toFixed(2)}` : '—'}</span>
+              <span className="qr-val">{p.preco != null ? `R$ ${Number(p.preco).toFixed(2)}` : '-'}</span>
             </div>
           ))}
         </section>
       )}
 
-      {/* CTA fixo no rodapé (EN / OR / MA / GA) */}
+      {/* CTA fixo no rodape (EN / OR / MA / GA) */}
       {ctaEnabled && (
         <div className="qr-action">
           <button

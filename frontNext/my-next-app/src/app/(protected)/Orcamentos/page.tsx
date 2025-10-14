@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
@@ -41,7 +41,7 @@ export default function OrcamentosPage() {
   const [selOrc, setSelOrc]             = useState<Orcamento | null>(null)
   const [showNovo, setShowNovo]         = useState(false)
 
-  // dados para o cabeçalho do modal "Novo Orçamento" quando vier do QR
+  // dados para o cabeAalho do modal "Novo OrAamento" quando vier do QR
   const [equipDoModal, setEquipDoModal]     = useState<Equipamento | null>(null)
   const [clienteDoModal, setClienteDoModal] = useState<Cliente | null>(null)
 
@@ -91,7 +91,7 @@ export default function OrcamentosPage() {
     })()
   }, [])
 
-  // Abrir "Novo Orçamento" quando vindo do QR: ?open=novo_orcamento&equip=<id>
+  // Abrir "Novo OrAamento" quando vindo do QR: ?open=novo_orcamento&equip=<id>
   useEffect(() => {
     const open  = search.get('open')
     const equip = search.get('equip')
@@ -114,13 +114,13 @@ export default function OrcamentosPage() {
         })()
       }
 
-      // limpa a query para não reabrir ao dar refresh
+      // limpa a query para nA?o reabrir ao dar refresh
       const clean = equip ? `/Orcamentos?equip=${encodeURIComponent(equip)}` : '/Orcamentos'
       router.replace(clean)
     }
   }, [search, router])
 
-  // Abrir o MESMO modal do card de Orçamento: ?open=atribuir_manutencao&orc=<id>
+  // Abrir o MESMO modal do card de OrAamento: ?open=atribuir_manutencao&orc=<id>
   useEffect(() => {
     const open = search.get('open')
     const orc  = search.get('orc')
@@ -139,7 +139,7 @@ export default function OrcamentosPage() {
     }
   }, [search, router])
 
-  // Abrir modal para concluir manutenção: ?open=concluir_manutencao&orc=<id>
+  // Abrir modal para concluir manutenAA?o: ?open=concluir_manutencao&orc=<id>
   useEffect(() => {
     const open = search.get('open')
     const orc  = search.get('orc')
@@ -174,7 +174,7 @@ export default function OrcamentosPage() {
   return (
     <div className="orc-page">
       <div className="orc-header">
-        <PageTitle icon={<BudgetIcon size={28} />}>Orçamentos</PageTitle>
+        <PageTitle icon={<BudgetIcon size={28} />}>OrAamentos</PageTitle>
       </div>
 
       <TabelaOrcamentos
@@ -216,3 +216,4 @@ export default function OrcamentosPage() {
     </div>
   )
 }
+

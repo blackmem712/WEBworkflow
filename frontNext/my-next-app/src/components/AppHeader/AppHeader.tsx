@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import NavLink from '@/components/NavLink/NavLink'
 import { clearTokens } from '@/services/api'
@@ -24,17 +24,17 @@ export default function AppHeader() {
         zIndex: 20,
       }}
     >
-      <b style={{ fontSize: 18 }}>Oficina • Sistema</b>
+      <b style={{ fontSize: 18 }}>Oficina a?? Sistema</b>
 
       <nav style={{ display: 'flex', gap: 8, marginLeft: 16 }}>
-        <NavLink href="/(protected)">Início</NavLink>
+        <NavLink href="/(protected)">InA?cio</NavLink>
         <NavLink href="/(protected)/clientes">Clientes</NavLink>
         <NavLink href="/(protected)/equipamentos">Equipamentos</NavLink>
-        <NavLink href="/(protected)/funcionarios">Funcionários</NavLink>
-        <NavLink href="/(protected)/servicos">Serviços</NavLink>
+        <NavLink href="/(protected)/funcionarios">FuncionA!rios</NavLink>
+        <NavLink href="/(protected)/servicos">ServiAos</NavLink>
         <NavLink href="/(protected)/produtos">Produtos</NavLink>
         <NavLink href="/(protected)/fornecedores">Fornecedores</NavLink>
-        <NavLink href="/(protected)/orcamentos">Orçamentos</NavLink>
+        <NavLink href="/(protected)/orcamentos">OrAamentos</NavLink>
       </nav>
 
       <div style={{ marginLeft: 'auto' }}>
@@ -45,3 +45,4 @@ export default function AppHeader() {
     </header>
   )
 }
+

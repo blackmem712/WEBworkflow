@@ -1,4 +1,4 @@
-.wrap{min-height:100svh;display:grid;place-items:center;background:#0f172a;padding:16px}
+﻿.wrap{min-height:100svh;display:grid;place-items:center;background:#0f172a;padding:16px}
 .card{width:100%;max-width:520px;background:#0b1224;border:1px solid #1f2a44;border-radius:16px;padding:16px;color:#e5e7eb;box-shadow:0 8px 30px rgba(0,0,0,.35)}
 .header{margin-bottom:10px}.title{margin:0;font-size:1.25rem}
 .sub{margin:4px 0 0;color:#94a3b8;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -14,7 +14,7 @@
 .btnGhost{padding:10px 12px;border-radius:10px;color:#cbd5e1;background:transparent;border:1px solid #334155}
 /* estilos locais, sem :global */
 .sEn { color:#38bdf8 }  /* entrada */
-.sOr { color:#f59e0b }  /* orçamento */
-.sMa { color:#a78bfa }  /* manutenção */
-.sGa { color:#10b981 }  /* garantia/revisão */
+.sOr { color:#f59e0b }  /* orcamento */
+.sMa { color:#a78bfa }  /* manutencao */
+.sGa { color:#10b981 }  /* garantia/revisao */
 .sSa { color:#22d3ee }  /* pronto para entrega */

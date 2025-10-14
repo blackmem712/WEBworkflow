@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { Funcionario, Cargo, Setor } from '@/types/funcionario/funcionario'
@@ -37,7 +37,7 @@ export default function FuncionariosPage() {
   return (
     <div className="func-page">
       <div className="func-header">
-        <PageTitle icon={<TeamIcon size={28} />}>Funcionários</PageTitle>
+        <PageTitle icon={<TeamIcon size={28} />}>FuncionA!rios</PageTitle>
       </div>
 
       <TabelaFuncionarios
@@ -69,3 +69,4 @@ export default function FuncionariosPage() {
     </div>
   )
 }
+

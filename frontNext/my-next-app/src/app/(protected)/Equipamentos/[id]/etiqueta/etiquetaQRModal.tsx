@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useEffect, useMemo } from 'react'
 import QRCode from 'react-qr-code'
 import css from './EtiquetaQRModal.module.css'
@@ -13,7 +13,7 @@ type Props = {
   open: boolean
   onClose: () => void
   data: EtiquetaData | null
-  autoPrint?: boolean  // coloque true se quiser abrir a janela de impressão automaticamente
+  autoPrint?: boolean  // coloque true se quiser abrir a janela de impressao automaticamente
 }
 
 export default function EtiquetaQRModal({ open, onClose, data, autoPrint = false }: Props) {
@@ -33,11 +33,11 @@ export default function EtiquetaQRModal({ open, onClose, data, autoPrint = false
     <div className={css.backdrop} role="dialog" aria-modal="true">
       <div className={css.modal}>
         <header className={css.header}>
-          <h3>Imprimir QR • Equipamento #{data.id}</h3>
-          <button className={css.x} onClick={onClose} aria-label="Fechar">×</button>
+          <h3>Imprimir QR - Equipamento #{data.id}</h3>
+          <button className={css.x} onClick={onClose} aria-label="Fechar">x</button>
         </header>
 
-        {/* Área imprimível */}
+        {/* Area imprimivel */}
         <div className={`${css.label} ${css.printArea}`}>
           <div className={css.qrBox}>
             <QRCode value={qrUrl} size={180} />

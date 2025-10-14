@@ -1,4 +1,4 @@
-/* Reset básico */
+﻿/* Reset bA!sico */
 :root{
   --bg-app: #f6f7f9;
   --panel: #ffffff;
@@ -40,7 +40,7 @@ input:focus, textarea:focus, select:focus {
   box-shadow:0 0 0 3px rgba(29,78,216,.15);
 }
 
-/* Sidebar recolhida por padrão */
+/* Sidebar recolhida por padrA?o */
 .sidebar-hover {
   position: fixed;
   top: 0;
@@ -64,7 +64,7 @@ input:focus, textarea:focus, select:focus {
   width: 220px;
 }
 
-/* Cabeçalho da Sidebar (logo ou ícone) */
+/* CabeAalho da Sidebar (logo ou A?cone) */
 .sidebar-brand {
   position: relative;
   width: 100%;
@@ -110,7 +110,7 @@ input:focus, textarea:focus, select:focus {
   align-items: stretch;
 }
 
-/* Link padrão */
+/* Link padrA?o */
 .nav-item {
   display: flex;
   align-items: center;
@@ -139,7 +139,7 @@ input:focus, textarea:focus, select:focus {
   background: linear-gradient(90deg, rgba(255,255,255,.18), rgba(255,255,255,.04));
 }
 
-/* Link ativo (página atual) */
+/* Link ativo (pA!gina atual) */
 .nav-item.active {
   background: linear-gradient(90deg, rgba(255,255,255,.28), rgba(255,255,255,.08));
   font-weight: 700;
@@ -162,15 +162,15 @@ input:focus, textarea:focus, select:focus {
 .sidebar-hover:hover ~ .layout-content {
   margin-left: 220px; /* Largura da sidebar expandida */
 }
-/* A nave ocupa toda a coluna para o botão ficar no rodapé */
+/* A nave ocupa toda a coluna para o botA?o ficar no rodapA(c) */
 .nav-links {
   height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* já existia no seu CSS */
+  align-items: flex-start; /* jA! existia no seu CSS */
 }
 
-/* Botão de logout com destaque */
+/* BotA?o de logout com destaque */
 .nav-item.logout {
   color: #fecaca; /* vermelho clarinho no texto */
 }
@@ -246,7 +246,7 @@ input:focus, textarea:focus, select:focus {
   transform: translateX(0);
 }
 
-/* Botões padrão globais */
+/* BotA?es padrA?o globais */
 .btn {
   display:inline-flex;
   align-items:center;
@@ -267,4 +267,5 @@ input:focus, textarea:focus, select:focus {
 .btn:active{ transform:translateY(0); }
 .btn.ghost{ background:#fff; color:var(--text-primary); border-color:var(--border-soft); box-shadow:var(--shadow-soft); }
 .btn.small{ height:32px; padding:0 12px; font-size:13px; }
+
 

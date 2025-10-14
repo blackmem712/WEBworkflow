@@ -1,11 +1,11 @@
-// src/components/ModalProduto.tsx
+﻿// src/components/ModalProduto.tsx
 'use client'
 
 import { useState, ChangeEvent } from 'react'
 import { Produto } from '@/types/produto/produto'
 import InputCampo from '@/components/InputCampo'
-import Button     from '@/components/buton'
-import '@/styles/components/modalProduto.css'
+import Button from '@/components/buton'
+import ModalShell from '@/components/ModalShell'
 
 interface Props {
   produto: Produto
@@ -14,10 +14,10 @@ interface Props {
 }
 
 interface FormState {
-  nome:      string
-  marca:     string
-  modelo:    string
-  preco:     number
+  nome: string
+  marca: string
+  modelo: string
+  preco: number
   descricao: string
 }
 
@@ -27,78 +27,96 @@ export default function ModalProduto({ produto, onClose, setProdutos }: Props) {
     marca: produto.marca,
     modelo: produto.modelo,
     preco: produto.preco,
-    descricao: produto.descricao
+    descricao: produto.descricao,
   })
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target
-    setForm(prev => ({
+  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = event.target
+    setForm((prev) => ({
       ...prev,
-      [name]: name === 'preco'
-        ? Number(value)
-        : value
+      [name]: name === 'preco' ? Number(value) : value,
     }))
   }
 
   const handleSalvar = () => {
     fetch(`http://127.0.0.1:8000/produtos/api/v1/${produto.id}/`, {
       method: 'PATCH',
-      headers: { 'Content-Type':'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
     })
-      .then(r => {
-        if (!r.ok) throw new Error('Erro ao salvar')
-        return r.json()
+      .then((response) => {
+        if (!response.ok) throw new Error('Erro ao salvar')
+        return response.json()
       })
       .then((updated: Produto) => {
-        setProdutos(prev =>
-          prev.map(p => p.id === updated.id ? updated : p)
-        )
+        setProdutos((prev) => prev.map((p) => (p.id === updated.id ? updated : p)))
         onClose()
       })
       .catch(console.error)
   }
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-prod wide">
-        <h2>Editar Produto</h2>
-        <div className="form-grid">
-          <div className="grid-col-6">
-            <InputCampo label="Nome"   name="nome"   value={form.nome}   onChange={handleChange} />
-          </div>
-          <div className="grid-col-6">
-            <InputCampo label="Marca"  name="marca"  value={form.marca}  onChange={handleChange} />
-          </div>
-          <div className="grid-col-6">
-            <InputCampo label="Modelo" name="modelo" value={form.modelo} onChange={handleChange} />
-          </div>
-          <div className="grid-col-6">
-            <InputCampo
-              label="Preço (R$)"
-              name="preco"
-              type="number"
-              value={form.preco}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="grid-col-12">
-            <label>Descrição</label>
-            <textarea
-              name="descricao"
-              value={form.descricao}
-              onChange={handleChange}
-              rows={3}
-            />
-          </div>
+    <ModalShell
+      title="Editar Produto"
+      onClose={onClose}
+      size="md"
+      footer={(
+        <>
+          <Button type="button" variant="danger" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button type="button" onClick={handleSalvar}>
+            Salvar
+          </Button>
+        </>
+      )}
+    >
+      <div className="modal-grid">
+        <div className="grid-col-6">
+          <InputCampo
+            label="Nome"
+            name="nome"
+            value={form.nome}
+            onChange={handleChange}
+          />
         </div>
-        <div className="modal-buttons">
-          <Button variant="primary" onClick={handleSalvar}>Salvar</Button>
-          <Button variant="danger"  onClick={onClose}>Cancelar</Button>
+        <div className="grid-col-6">
+          <InputCampo
+            label="Marca"
+            name="marca"
+            value={form.marca}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="grid-col-6">
+          <InputCampo
+            label="Modelo"
+            name="modelo"
+            value={form.modelo}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="grid-col-6">
+          <InputCampo
+            label="PreAo (R$)"
+            name="preco"
+            type="number"
+            value={form.preco}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="grid-col-12">
+          <label htmlFor="descricao-produto">DescriAA?o</label>
+          <textarea
+            id="descricao-produto"
+            name="descricao"
+            value={form.descricao}
+            onChange={handleChange}
+            rows={4}
+          />
         </div>
       </div>
-    </div>
+    </ModalShell>
   )
 }
+

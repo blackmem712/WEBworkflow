@@ -1,10 +1,11 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef, useEffect, KeyboardEvent, ChangeEvent } from 'react'
 import { Equipamento } from '@/types/equipamento/equipamento'
-import { Cliente }     from '@/types/cliente/cliente'
-import InputCampo      from '@/components/InputCampo'
-import Button          from '@/components/buton'
+import { Cliente } from '@/types/cliente/cliente'
+import InputCampo from '@/components/InputCampo'
+import Button from '@/components/buton'
+import ModalShell from '@/components/ModalShell'
 import ModalNovoCliente from '@/components/ModalNovoCliente'
 import EtiquetaQRModal, { EtiquetaData } from '@/app/(protected)/Equipamentos/[id]/etiqueta/etiquetaQRModal'
 import '@/styles/components/modalEquipamento.css'
@@ -16,7 +17,6 @@ interface Props {
   setClientes: React.Dispatch<React.SetStateAction<Cliente[]>>
 }
 
-// Tipo específico para criação
 type EquipamentoCreate = {
   equipamento: string
   marca: string
@@ -26,277 +26,270 @@ type EquipamentoCreate = {
   cliente: number
 }
 
-export default function ModalNovoEquipamento({
-  onClose, setEquipamentos, clientes, setClientes
-}: Props) {
+export default function ModalNovoEquipamento({ onClose, setEquipamentos, clientes, setClientes }: Props) {
   const [form, setForm] = useState<Omit<EquipamentoCreate, 'cliente'>>({
-    equipamento: '', marca: '', modelo: '', cor: '', nun_serie: ''
+    equipamento: '',
+    marca: '',
+    modelo: '',
+    cor: '',
+    nun_serie: '',
   })
 
-  // Auto-complete
-  const [search, setSearch]                 = useState('')
-  const [selectedClienteId, setSelectedId]  = useState<number | null>(null)
-  const [showSug, setShowSug]               = useState(false)
-  const [activeIndex, setActiveIndex]       = useState(0)
+  const [search, setSearch] = useState('')
+  const [selectedClienteId, setSelectedClienteId] = useState<number | null>(null)
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(0)
   const comboRef = useRef<HTMLDivElement>(null)
 
-  // Modal novo cliente
   const [showCliente, setShowCliente] = useState(false)
 
-  // === NOVO: controle do modal de etiqueta ===
   const [showEtiqueta, setShowEtiqueta] = useState(false)
   const [etiquetaData, setEtiquetaData] = useState<EtiquetaData | null>(null)
 
-  // Fecha sugestões clicando fora de todo o combobox
   useEffect(() => {
-    const onDown = (e: MouseEvent) => {
-      if (comboRef.current && !comboRef.current.contains(e.target as Node)) {
-        setShowSug(false)
-        setActiveIndex(0)
-      }
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!comboRef.current) return
+      if (comboRef.current.contains(event.target as Node)) return
+      setShowSuggestions(false)
+      setActiveIndex(0)
     }
-    document.addEventListener('mousedown', onDown)
-    return () => document.removeEventListener('mousedown', onDown)
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Filtragem
-  const filtrados = clientes.filter(c =>
-    (c.nome ?? '').toLowerCase().includes(search.toLowerCase())
+  const filtrados = clientes.filter((cliente) =>
+    (cliente.nome ?? '').toLowerCase().includes(search.toLowerCase()),
   )
 
-  const pickByIndex = (idx: number) => {
-    const c = filtrados[idx]
-    if (!c) return
-    setSelectedId(c.id)
-    setSearch(c.nome ?? '')
-    setShowSug(false)
+  const pickCliente = (cliente: Cliente) => {
+    setSelectedClienteId(cliente.id)
+    setSearch(cliente.nome ?? '')
+    setShowSuggestions(false)
   }
 
-  const handleKey = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (!showSug && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
-      setShowSug(true)
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (!showSuggestions && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
+      setShowSuggestions(true)
       return
     }
-    if (!showSug) return
 
-    if (e.key === 'ArrowDown') {
-      e.preventDefault()
-      setActiveIndex((i) => Math.min(i + 1, filtrados.length - 1))
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault()
-      setActiveIndex((i) => Math.max(i - 1, 0))
-    } else if (e.key === 'Enter') {
-      e.preventDefault()
-      pickByIndex(activeIndex)
-    } else if (e.key === 'Escape') {
-      setShowSug(false)
+    if (!showSuggestions) return
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      setActiveIndex((index) => Math.min(index + 1, filtrados.length - 1))
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      setActiveIndex((index) => Math.max(index - 1, 0))
+    } else if (event.key === 'Enter') {
+      event.preventDefault()
+      const cliente = filtrados[activeIndex]
+      if (cliente) pickCliente(cliente)
+    } else if (event.key === 'Escape') {
+      setShowSuggestions(false)
     }
   }
 
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value
-    setSearch(val)
-    setShowSug(true)
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value
+    setSearch(value)
+    setShowSuggestions(true)
     setActiveIndex(0)
-    setSelectedId(null)
+    setSelectedClienteId(null)
   }
 
-  const handleSelect = (c: Cliente) => {
-    setSelectedId(c.id)
-    setSearch(c.nome ?? '')
-    setShowSug(false)
-  }
-
-  // (Opcional) Se seu ModalNovoCliente suportar callback onCreated
-  const handleClienteCriado = (novo: Cliente) => {
-    setClientes((prev) => [...prev, novo])
-    setSelectedId(novo.id)
-    setSearch(novo.nome ?? '')
+  const handleClienteCriado = (cliente: Cliente) => {
+    setClientes((prev) => [...prev, cliente])
+    pickCliente(cliente)
     setShowCliente(false)
   }
 
   const handleSalvar = async () => {
     let clienteId = selectedClienteId
 
-    // Se o usuário só digitou, tenta casar
     if (!clienteId) {
-      const exato = clientes.find(
-        c => (c.nome ?? '').toLowerCase().trim() === search.toLowerCase().trim()
-      )
+      const exato = clientes.find((cliente) => (cliente.nome ?? '').toLowerCase().trim() === search.toLowerCase().trim())
       const unico = filtrados.length === 1 ? filtrados[0] : undefined
 
       if (exato) clienteId = exato.id
       else if (unico) clienteId = unico.id
       else {
-        alert('Selecione um cliente válido na lista de sugestões.')
+        alert('Selecione um cliente valido na lista de sugestoes.')
         return
       }
     }
 
-    const body: EquipamentoCreate = { ...form, cliente: clienteId }
+    const payload: EquipamentoCreate = { ...form, cliente: clienteId }
 
     try {
-      const r = await fetch('http://127.0.0.1:8000/equipamentos/api/v1/', {
+      const response = await fetch('http://127.0.0.1:8000/equipamentos/api/v1/', {
         method: 'POST',
-        headers: { 'Content-Type':'application/json' },
-        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       })
 
-      if (!r.ok) throw new Error('Erro ao criar equipamento')
-      const novo: any = await r.json()
+      if (!response.ok) throw new Error('Erro ao criar equipamento')
+      const novo: Equipamento & { qr_slug?: string } = await response.json()
 
-      // Atualiza listagem externa
-      setEquipamentos(prev => [...prev, novo])
+      setEquipamentos((prev) => [...prev, novo])
 
-      // === NOVO: abrir modal de etiqueta imediatamente ===
-      let id: number | undefined = novo?.id
-      let qr_slug: string | undefined = novo?.qr_slug
-      let nome: string | undefined = novo?.equipamento
-
-      // Fallback: se o serializer ainda não expõe qr_slug, busca por GET /id/
-      if ((!qr_slug || !id) && id) {
-        const r2 = await fetch(`http://127.0.0.1:8000/equipamentos/api/v1/${id}/`)
-        if (r2.ok) {
-          const d2: any = await r2.json()
-          qr_slug = qr_slug || d2?.qr_slug
-          nome    = nome    || d2?.equipamento
+      let etiqueta: EtiquetaData | null = null
+      if (novo.id && novo.qr_slug) {
+        etiqueta = {
+          id: novo.id,
+          equipamento: novo.equipamento,
+          qr_slug: novo.qr_slug,
+        }
+      } else if (novo.id) {
+        try {
+          const refrescado = await fetch(`http://127.0.0.1:8000/equipamentos/api/v1/${novo.id}/`)
+          if (refrescado.ok) {
+            const data = await refrescado.json()
+            if (data?.id && data?.qr_slug) {
+              etiqueta = {
+                id: data.id,
+                equipamento: data.equipamento,
+                qr_slug: data.qr_slug,
+              }
+            }
+          }
+        } catch (error) {
+          console.error(error)
         }
       }
 
-      if (!id || !qr_slug) {
-        alert('Equipamento criado, mas não foi possível obter o QR. Verifique o serializer (qr_slug).')
-        return
+      if (etiqueta) {
+        setEtiquetaData(etiqueta)
+        setShowEtiqueta(true)
+        setForm({ equipamento: '', marca: '', modelo: '', cor: '', nun_serie: '' })
+        setSelectedClienteId(null)
+        setSearch('')
+      } else {
+        alert('Entrada criada com sucesso.')
+        onClose()
       }
-
-      setEtiquetaData({ id, qr_slug, equipamento: nome })
-      setShowEtiqueta(true)
-
-      // Obs.: NÃO fechamos o modal principal agora; o usuário imprime e fecha quando quiser.
-      // Se quiser fechar automaticamente após abrir a etiqueta:
-      // onClose()
-
-    } catch (err) {
-      console.error(err)
-      alert('Não foi possível salvar. Verifique os campos e tente novamente.')
+    } catch (error) {
+      console.error(error)
+      alert('Nao foi possivel salvar. Verifique os campos e tente novamente.')
     }
   }
 
   return (
     <>
-      <div className="modal-overlay">
-        <div className="modal-equip wide">
-          <h2>Novo Equipamento</h2>
-
-          <div className="form-grid">
-            <div className="grid-col-6">
-              <InputCampo
-                label="Equipamento"
-                name="equipamento"
-                value={form.equipamento}
-                onChange={e=>setForm({...form, equipamento: e.target.value})}
-              />
-            </div>
-            <div className="grid-col-6">
-              <InputCampo
-                label="Marca"
-                name="marca"
-                value={form.marca}
-                onChange={e=>setForm({...form, marca: e.target.value})}
-              />
-            </div>
-            <div className="grid-col-6">
-              <InputCampo
-                label="Modelo"
-                name="modelo"
-                value={form.modelo}
-                onChange={e=>setForm({...form, modelo: e.target.value})}
-              />
-            </div>
-            <div className="grid-col-6">
-              <InputCampo
-                label="Cor"
-                name="cor"
-                value={form.cor}
-                onChange={e=>setForm({...form, cor: e.target.value})}
-              />
-            </div>
-            <div className="grid-col-6">
-              <InputCampo
-                label="Nº Série"
-                name="nun_serie"
-                value={form.nun_serie}
-                onChange={e=>setForm({...form, nun_serie: e.target.value})}
-              />
-            </div>
-
-            {/* Combobox de Cliente */}
-            <div className="grid-col-6">
-              <label htmlFor="cliente-search" className="input-label">Cliente</label>
-
-              <div className="search-wrap" ref={comboRef}>
-                <input
-                  id="cliente-search"
-                  className="search-input"
-                  type="text"
-                  placeholder="Buscar cliente..."
-                  autoComplete="off"
-                  value={search}
-                  onChange={handleSearchChange}
-                  onFocus={() => setShowSug(true)}
-                  onKeyDown={handleKey}
-                  aria-autocomplete="list"
-                  aria-expanded={showSug}
-                  aria-controls="cliente-suggestions"
-                  role="combobox"
-                />
-
-                <Button variant="secondary" onClick={() => setShowCliente(true)}>
-                  + Cliente
-                </Button>
-
-                {showSug && (
-                  <ul id="cliente-suggestions" className="suggestions" role="listbox">
-                    {filtrados.slice(0, 8).map((c, i) => (
-                      <li
-                        key={c.id}
-                        role="option"
-                        aria-selected={i === activeIndex}
-                        className={i === activeIndex ? 'active' : ''}
-                        onMouseDown={(e) => e.preventDefault()}
-                        onClick={() => handleSelect(c)}
-                      >
-                        {c.nome}
-                      </li>
-                    ))}
-                    {filtrados.length === 0 && <li className="no-sug">Nenhum cliente</li>}
-                  </ul>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="modal-buttons">
-            <Button variant="primary" onClick={handleSalvar}>Salvar e imprimir QR</Button>
-            <Button variant="danger"  onClick={onClose}>Cancelar</Button>
-          </div>
-
-          {showCliente && (
-            <ModalNovoCliente
-              onClose={()=>setShowCliente(false)}
-              setClientes={setClientes}
-              onCreated={handleClienteCriado as any}
+      <ModalShell
+        title="Novo Equipamento"
+        onClose={onClose}
+        size="xl"
+        footer={(
+          <>
+            <Button type="button" variant="danger" onClick={onClose}>
+              Cancelar
+            </Button>
+            <Button type="button" onClick={handleSalvar}>
+              Salvar e imprimir QR
+            </Button>
+          </>
+        )}
+      >
+        <div className="modal-grid">
+          <div className="grid-col-6">
+            <InputCampo
+              label="Equipamento"
+              name="equipamento"
+              value={form.equipamento}
+              onChange={(event) => setForm((prev) => ({ ...prev, equipamento: event.target.value }))}
             />
-          )}
+          </div>
+          <div className="grid-col-6">
+            <InputCampo
+              label="Marca"
+              name="marca"
+              value={form.marca}
+              onChange={(event) => setForm((prev) => ({ ...prev, marca: event.target.value }))}
+            />
+          </div>
+          <div className="grid-col-6">
+            <InputCampo
+              label="Modelo"
+              name="modelo"
+              value={form.modelo}
+              onChange={(event) => setForm((prev) => ({ ...prev, modelo: event.target.value }))}
+            />
+          </div>
+          <div className="grid-col-6">
+            <InputCampo
+              label="Cor"
+              name="cor"
+              value={form.cor}
+              onChange={(event) => setForm((prev) => ({ ...prev, cor: event.target.value }))}
+            />
+          </div>
+          <div className="grid-col-6">
+            <InputCampo
+              label="No Serie"
+              name="nun_serie"
+              value={form.nun_serie}
+              onChange={(event) => setForm((prev) => ({ ...prev, nun_serie: event.target.value }))}
+            />
+          </div>
+          <div className="grid-col-6">
+            <label htmlFor="cliente-search" className="input-label">Cliente</label>
+            <div className="combo-field" ref={comboRef}>
+              <input
+                id="cliente-search"
+                className="combo-input"
+                type="text"
+                placeholder="Buscar cliente..."
+                autoComplete="off"
+                value={search}
+                onChange={handleSearchChange}
+                onFocus={() => setShowSuggestions(true)}
+                onKeyDown={handleKeyDown}
+                aria-autocomplete="list"
+                aria-expanded={showSuggestions}
+                aria-controls="cliente-suggestions"
+                role="combobox"
+              />
+              <Button type="button" variant="secondary" onClick={() => setShowCliente(true)}>
+                + Cliente
+              </Button>
+              {showSuggestions && (
+                <ul id="cliente-suggestions" className="combo-suggestions" role="listbox">
+                  {filtrados.slice(0, 8).map((cliente, index) => (
+                    <li
+                      key={cliente.id}
+                      role="option"
+                      aria-selected={index === activeIndex}
+                      className={index === activeIndex ? 'active' : ''}
+                      onMouseDown={(event) => event.preventDefault()}
+                      onClick={() => pickCliente(cliente)}
+                    >
+                      {cliente.nome}
+                    </li>
+                  ))}
+                  {filtrados.length === 0 && <li className="combo-empty">Nenhum cliente</li>}
+                </ul>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
+      </ModalShell>
 
-      {/* Modal da etiqueta (QR) */}
       <EtiquetaQRModal
         open={showEtiqueta}
         onClose={() => setShowEtiqueta(false)}
         data={etiquetaData}
-        autoPrint={false}  /* coloque true se quiser imprimir automaticamente */
+        autoPrint={false}
       />
+
+      {showCliente && (
+        <ModalNovoCliente
+          onClose={() => setShowCliente(false)}
+          setClientes={setClientes}
+          onCreated={handleClienteCriado}
+        />
+      )}
     </>
   )
 }
+

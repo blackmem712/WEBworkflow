@@ -1,4 +1,4 @@
-// src/components/TabelaProdutos.tsx
+﻿// src/components/TabelaProdutos.tsx
 'use client'
 
 import { useState } from 'react'
@@ -28,7 +28,7 @@ export default function TabelaProdutos({ produtos, onSelecionar, onNovo }: Props
       <div className="tabela-controls">
         <input
           type="text"
-          placeholder="Buscar nome, marca, modelo, preço ou descrição..."
+          placeholder="Buscar nome, marca, modelo, preAo ou descriAA?o..."
           value={filtro}
           onChange={e => setFiltro(e.target.value)}
           className="tabela-busca"
@@ -42,8 +42,8 @@ export default function TabelaProdutos({ produtos, onSelecionar, onNovo }: Props
             <th>Nome</th>
             <th>Marca</th>
             <th>Modelo</th>
-            <th>Preço (R$)</th>
-            <th>Descrição</th>
+            <th>PreAo (R$)</th>
+            <th>DescriAA?o</th>
           </tr>
         </thead>
         <tbody>
@@ -61,3 +61,4 @@ export default function TabelaProdutos({ produtos, onSelecionar, onNovo }: Props
     </div>
   )
 }
+
