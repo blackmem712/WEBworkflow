@@ -31,7 +31,7 @@
 .existing-pane,
 .new-pane {
   display: grid;
-  gap: 20px;
+  gap: clamp(18px, 2vw, 24px);
 }
 
 .combo-group {
@@ -44,6 +44,10 @@
   display: flex;
   gap: 10px;
   align-items: center;
+}
+
+.combo-inline > .btn {
+  white-space: nowrap;
 }
 
 .combo-label {
@@ -126,8 +130,30 @@
 
 .form-grid {
   display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: clamp(14px, 2vw, 20px);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.form-grid--tight {
+  gap: clamp(12px, 1.8vw, 18px);
+}
+
+.existing-grid .input-group input {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.existing-grid .input-group input[name^='view-qr-'] {
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+}
+
+.existing-placeholder {
+  padding: 18px;
+  border-radius: 14px;
+  border: 1px dashed rgba(148, 163, 184, 0.45);
+  background: rgba(248, 250, 252, 0.65);
 }
 
 .selected-summary {

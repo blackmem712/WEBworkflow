@@ -223,6 +223,36 @@ export default function ModalEntradaEquipamento({
     setSelectedClienteId(null)
   }
 
+  const buildEtiquetaData = async (
+    equipId: number,
+    fallback?: { equipamento?: string; qr_slug?: string | null },
+  ): Promise<EtiquetaData | null> => {
+    const label =
+      fallback?.equipamento
+      ?? equipamentos.find((item) => item.id === equipId)?.equipamento
+      ?? ''
+
+    if (fallback?.qr_slug) {
+      return { id: equipId, equipamento: label, qr_slug: fallback.qr_slug }
+    }
+
+    try {
+      const response = await api.get(`/equipamentos/api/v1/${equipId}/`)
+      const data: (Equipamento & { qr_slug?: string }) | null = response.data ?? null
+      if (data?.id && data.qr_slug) {
+        return {
+          id: data.id,
+          equipamento: data.equipamento ?? label,
+          qr_slug: data.qr_slug,
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao buscar dados para impressao do QR code.', error)
+    }
+
+    return null
+  }
+
   const closeModal = () => {
     resetState()
     onClose()
@@ -233,6 +263,7 @@ export default function ModalEntradaEquipamento({
       alert('Selecione um equipamento com status SA para registrar a entrada.')
       return
     }
+
     const selected = equipamentos.find((equip) => equip.id === selectedEquipId)
     if (!selected) {
       alert('Equipamento nao encontrado.')
@@ -242,13 +273,62 @@ export default function ModalEntradaEquipamento({
       alert('Somente equipamentos em SA podem receber nova entrada.')
       return
     }
+
     try {
       setSubmittingExisting(true)
       const response = await api.post(`/equipamentos/api/v1/${selectedEquipId}/set_status/`, { status: 'EN' })
-      const atualizado: Equipamento = response.data
-      setEquipamentos((prev) => prev.map((equip) => (equip.id === atualizado.id ? atualizado : equip)))
-      onAfterStatusChange?.(atualizado.id, atualizado.status.status as StatusCode)
-      closeModal()
+      const atualizado: Equipamento & { qr_slug?: string } = response.data
+
+      const baseEquip = { ...selected, ...atualizado }
+      setEquipamentos((prev) => prev.map((equip) => (equip.id === baseEquip.id ? { ...equip, ...baseEquip } : equip)))
+      onAfterStatusChange?.(baseEquip.id, baseEquip.status.status as StatusCode)
+
+      let qrSlug: string | null = baseEquip.qr_slug ?? selected.qr_slug ?? null
+
+      if (!qrSlug) {
+        try {
+          const fetchResponse = await api.get(`/equipamentos/api/v1/${baseEquip.id}/`)
+          const fetched: (Equipamento & { qr_slug?: string }) | null = fetchResponse.data ?? null
+          qrSlug = fetched?.qr_slug ?? null
+        } catch (fetchError) {
+          console.error('Erro ao consultar QR code atual do equipamento.', fetchError)
+        }
+      }
+
+      if (!qrSlug) {
+        alert('Entrada registrada, mas nao foi possivel localizar o QR code atual para gerar um novo.')
+        return
+      }
+
+      try {
+        const rotateResponse = await api.post(`/q/${qrSlug}/rotate/`)
+        const rotatedSlug: string | undefined = rotateResponse.data?.new_slug
+        if (!rotatedSlug) {
+          throw new Error('Resposta sem new_slug')
+        }
+        qrSlug = rotatedSlug
+      } catch (rotateError) {
+        console.error('Erro ao gerar novo QR code para o equipamento.', rotateError)
+        alert('Entrada registrada, porem nao foi possivel gerar o novo QR code. Verifique as permissoes e tente novamente.')
+        return
+      }
+
+      const finalEquip = { ...baseEquip, qr_slug: qrSlug ?? undefined }
+      setEquipamentos((prev) => prev.map((equip) => (equip.id === finalEquip.id ? { ...equip, ...finalEquip } : equip)))
+
+      const etiqueta = await buildEtiquetaData(finalEquip.id, {
+        equipamento: finalEquip.equipamento,
+        qr_slug: qrSlug,
+      })
+
+      if (etiqueta) {
+        setEtiquetaData(etiqueta)
+        setShowEtiqueta(true)
+        resetState()
+      } else {
+        alert('Entrada registrada, mas nao foi possivel preparar o QR code para impressao. Abra o equipamento para tentar novamente.')
+        closeModal()
+      }
     } catch (error) {
       console.error(error)
       alert('Nao foi possivel registrar a entrada. Tente novamente.')
@@ -280,35 +360,17 @@ export default function ModalEntradaEquipamento({
       setEquipamentos((prev) => [...prev, novo])
       onAfterStatusChange?.(novo.id, 'EN')
 
-      let etiqueta: EtiquetaData | null = null
-      if (novo.id && novo.qr_slug) {
-        etiqueta = {
-          id: novo.id,
-          equipamento: novo.equipamento,
-          qr_slug: novo.qr_slug,
-        }
-      } else if (novo.id) {
-        try {
-          const refrescado = await api.get(`/equipamentos/api/v1/${novo.id}/`)
-          const data = refrescado.data
-          if (data?.id && data?.qr_slug) {
-            etiqueta = {
-              id: data.id,
-              equipamento: data.equipamento,
-              qr_slug: data.qr_slug,
-            }
-          }
-        } catch (fetchError) {
-          console.error(fetchError)
-        }
-      }
+      const etiqueta = await buildEtiquetaData(novo.id, {
+        equipamento: novo.equipamento,
+        qr_slug: novo.qr_slug ?? null,
+      })
 
       if (etiqueta) {
         setEtiquetaData(etiqueta)
         setShowEtiqueta(true)
         resetState()
       } else {
-        alert('Entrada criada com sucesso.')
+        alert('Entrada criada com sucesso, porem nao foi possivel preparar o QR code automaticamente. Abra o equipamento para imprimir.')
         closeModal()
       }
     } catch (error) {
@@ -328,6 +390,16 @@ export default function ModalEntradaEquipamento({
       statusLabel: STATUS_LABEL_MAP[item.equip.status.status as StatusCode] ?? item.equip.status.status,
     }
   }, [equipmentsWithContext, selectedEquipId])
+
+  const selectedEquipCliente = selectedEquipInfo
+    ? clienteMap.get(selectedEquipInfo.equip.cliente) ?? null
+    : null
+
+  const selectedEquipFieldKey = selectedEquipInfo?.equip.id?.toString() ?? 'selected-equip'
+
+  const selectedEquipContact = selectedEquipCliente
+    ? selectedEquipCliente.telefone || selectedEquipCliente.email || ''
+    : ''
 
   const selectedCliente = selectedClienteId ? clienteMap.get(selectedClienteId) ?? null : null
 
@@ -445,120 +517,194 @@ export default function ModalEntradaEquipamento({
               )}
             </div>
 
-            <div className='selected-summary' role='status' aria-live='polite'>
-              {selectedEquipInfo ? (
-                <>
-                  <div className='summary-row'>
-                    <span className='summary-label'>Cliente</span>
-                    <span className='summary-value'>{selectedEquipInfo.clientName || 'N/A'}</span>
-                  </div>
-                  <div className='summary-row'>
-                    <span className='summary-label'>Status atual</span>
-                    <span className='summary-value badge'>{selectedEquipInfo.statusLabel}</span>
-                  </div>
-                </>
-              ) : (
-                <p className='summary-placeholder'>
-                  Busque um equipamento que esteja em SA para registrar uma nova entrada.
-                </p>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className='new-pane'>
-            <div className='form-grid'>
-              <InputCampo
-                label='Equipamento'
-                name='equipamento'
-                value={form.equipamento}
-                onChange={(event) => setForm((prev) => ({ ...prev, equipamento: event.target.value }))}
-              />
-              <InputCampo
-                label='Marca'
-                name='marca'
-                value={form.marca}
-                onChange={(event) => setForm((prev) => ({ ...prev, marca: event.target.value }))}
-              />
-              <InputCampo
-                label='Modelo'
-                name='modelo'
-                value={form.modelo}
-                onChange={(event) => setForm((prev) => ({ ...prev, modelo: event.target.value }))}
-              />
-              <InputCampo
-                label='Cor'
-                name='cor'
-                value={form.cor}
-                onChange={(event) => setForm((prev) => ({ ...prev, cor: event.target.value }))}
-              />
-              <InputCampo
-                label='Numero de serie'
-                name='nun_serie'
-                value={form.nun_serie}
-                onChange={(event) => setForm((prev) => ({ ...prev, nun_serie: event.target.value }))}
-              />
-            </div>
-
-            <div className='combo-group' ref={clienteComboRef}>
-              <label className='combo-label' htmlFor='entrada-cliente'>Cliente</label>
-              <div className='combo-inline'>
-                <input
-                  id='entrada-cliente'
-                  className='combo-input'
-                  type='text'
-                  placeholder='Buscar cliente'
-                  autoComplete='off'
-                  value={clienteSearch}
-                  onChange={handleClienteChange}
-                  onFocus={() => setClienteOpen(true)}
-                  onKeyDown={handleClienteKey}
-                  role='combobox'
-                  aria-expanded={clienteOpen}
-                  aria-controls='entrada-cliente-listbox'
-                  aria-autocomplete='list'
-                />
-                <Button type='button' variant='secondary' onClick={() => setShowNovoCliente(true)}>
-                  + Cliente
-                </Button>
-              </div>
-              {clienteOpen && (
-                <ul className='combo-suggestions' id='entrada-cliente-listbox' role='listbox'>
-                  {clienteSuggestions.slice(0, 10).map((cliente, index) => (
-                    <li
-                      key={cliente.id}
-                      role='option'
-                      aria-selected={clienteActiveIndex === index}
-                      className={['combo-suggestion', clienteActiveIndex === index ? 'active' : ''].join(' ').trim()}
-                      onMouseDown={(event) => event.preventDefault()}
-                      onClick={() => pickCliente(cliente)}
-                    >
-                      <span className='combo-suggestion__title'>{cliente.nome}</span>
-                      <span className='combo-suggestion__meta'>{cliente.cpf || cliente.telefone || 'N/A'}</span>
-                    </li>
-                  ))}
-                  {clienteSuggestions.length === 0 && (
-                    <li className='combo-suggestion muted'>Nenhum cliente encontrado</li>
-                  )}
-                </ul>
-              )}
-            </div>
-
-            {selectedCliente ? (
-              <div className='selected-summary'>
-                <div className='summary-row'>
-                  <span className='summary-label'>Cliente selecionado</span>
-                  <span className='summary-value'>{selectedCliente.nome}</span>
+            {selectedEquipInfo ? (
+              <div className='form-grid form-grid--tight existing-grid' role='status' aria-live='polite'>
+                <div className='grid-col-6'>
+                  <InputCampo
+                    label='Equipamento'
+                    name={`view-equipamento-${selectedEquipFieldKey}`}
+                    value={selectedEquipInfo.equip.equipamento ?? ''}
+                    disabled
+                  />
                 </div>
-                <div className='summary-row'>
-                  <span className='summary-label'>Contato</span>
-                  <span className='summary-value'>{selectedCliente.telefone || selectedCliente.email || 'N/A'}</span>
+                <div className='grid-col-6'>
+                  <InputCampo
+                    label='Status atual'
+                    name={`view-status-${selectedEquipFieldKey}`}
+                    value={selectedEquipInfo.statusLabel}
+                    disabled
+                  />
+                </div>
+                <div className='grid-col-6'>
+                  <InputCampo
+                    label='Marca'
+                    name={`view-marca-${selectedEquipFieldKey}`}
+                    value={selectedEquipInfo.equip.marca ?? ''}
+                    disabled
+                  />
+                </div>
+                <div className='grid-col-6'>
+                  <InputCampo
+                    label='Modelo'
+                    name={`view-modelo-${selectedEquipFieldKey}`}
+                    value={selectedEquipInfo.equip.modelo ?? ''}
+                    disabled
+                  />
+                </div>
+                <div className='grid-col-6'>
+                  <InputCampo
+                    label='Cor'
+                    name={`view-cor-${selectedEquipFieldKey}`}
+                    value={selectedEquipInfo.equip.cor ?? ''}
+                    disabled
+                  />
+                </div>
+                <div className='grid-col-6'>
+                  <InputCampo
+                    label='Numero de serie'
+                    name={`view-serie-${selectedEquipFieldKey}`}
+                    value={selectedEquipInfo.equip.nun_serie ?? ''}
+                    disabled
+                  />
+                </div>
+                <div className='grid-col-6'>
+                  <InputCampo
+                    label='Cliente'
+                    name={`view-cliente-${selectedEquipFieldKey}`}
+                    value={selectedEquipCliente?.nome ?? selectedEquipInfo.clientName ?? ''}
+                    disabled
+                  />
+                </div>
+                <div className='grid-col-6'>
+                  <InputCampo
+                    label='Contato'
+                    name={`view-contato-${selectedEquipFieldKey}`}
+                    value={selectedEquipContact || 'Nao informado'}
+                    disabled
+                  />
+                </div>
+                <div className='grid-col-12'>
+                  <InputCampo
+                    label='QR code atual'
+                    name={`view-qr-${selectedEquipFieldKey}`}
+                    value={selectedEquipInfo.equip.qr_slug ?? 'Nao disponivel'}
+                    disabled
+                  />
                 </div>
               </div>
             ) : (
-              <p className='summary-placeholder'>
-                Busque e selecione um cliente existente ou cadastre um novo.
+              <p className='summary-placeholder existing-placeholder'>
+                Busque um equipamento que esteja em SA para registrar uma nova entrada.
               </p>
             )}
+          </div>
+        ) : (
+          <div className='new-pane'>
+            <div className='form-grid form-grid--tight'>
+              <div className='grid-col-4'>
+                <InputCampo
+                  label='Equipamento'
+                  name='equipamento'
+                  value={form.equipamento}
+                  onChange={(event) => setForm((prev) => ({ ...prev, equipamento: event.target.value }))}
+                />
+              </div>
+              <div className='grid-col-4'>
+                <InputCampo
+                  label='Marca'
+                  name='marca'
+                  value={form.marca}
+                  onChange={(event) => setForm((prev) => ({ ...prev, marca: event.target.value }))}
+                />
+              </div>
+              <div className='grid-col-4'>
+                <InputCampo
+                  label='Modelo'
+                  name='modelo'
+                  value={form.modelo}
+                  onChange={(event) => setForm((prev) => ({ ...prev, modelo: event.target.value }))}
+                />
+              </div>
+              <div className='grid-col-6'>
+                <InputCampo
+                  label='Cor'
+                  name='cor'
+                  value={form.cor}
+                  onChange={(event) => setForm((prev) => ({ ...prev, cor: event.target.value }))}
+                />
+              </div>
+              <div className='grid-col-6'>
+                <InputCampo
+                  label='Numero de serie'
+                  name='nun_serie'
+                  value={form.nun_serie}
+                  onChange={(event) => setForm((prev) => ({ ...prev, nun_serie: event.target.value }))}
+                />
+              </div>
+              <div className='grid-col-12'>
+                <div className='combo-group' ref={clienteComboRef}>
+                  <label className='combo-label' htmlFor='entrada-cliente'>Cliente</label>
+                  <div className='combo-inline'>
+                    <input
+                      id='entrada-cliente'
+                      className='combo-input'
+                      type='text'
+                      placeholder='Buscar cliente'
+                      autoComplete='off'
+                      value={clienteSearch}
+                      onChange={handleClienteChange}
+                      onFocus={() => setClienteOpen(true)}
+                      onKeyDown={handleClienteKey}
+                      role='combobox'
+                      aria-expanded={clienteOpen}
+                      aria-controls='entrada-cliente-listbox'
+                      aria-autocomplete='list'
+                    />
+                    <Button type='button' variant='secondary' onClick={() => setShowNovoCliente(true)}>
+                      + Cliente
+                    </Button>
+                  </div>
+                  {clienteOpen && (
+                    <ul className='combo-suggestions' id='entrada-cliente-listbox' role='listbox'>
+                      {clienteSuggestions.slice(0, 10).map((cliente, index) => (
+                        <li
+                          key={cliente.id}
+                          role='option'
+                          aria-selected={clienteActiveIndex === index}
+                          className={['combo-suggestion', clienteActiveIndex === index ? 'active' : ''].join(' ').trim()}
+                          onMouseDown={(event) => event.preventDefault()}
+                          onClick={() => pickCliente(cliente)}
+                        >
+                          <span className='combo-suggestion__title'>{cliente.nome}</span>
+                          <span className='combo-suggestion__meta'>{cliente.cpf || cliente.telefone || 'N/A'}</span>
+                        </li>
+                      ))}
+                      {clienteSuggestions.length === 0 && (
+                        <li className='combo-suggestion muted'>Nenhum cliente encontrado</li>
+                      )}
+                    </ul>
+                  )}
+                </div>
+              </div>
+              <div className='grid-col-12'>
+                {selectedCliente ? (
+                  <div className='selected-summary'>
+                    <div className='summary-row'>
+                      <span className='summary-label'>Cliente selecionado</span>
+                      <span className='summary-value'>{selectedCliente.nome}</span>
+                    </div>
+                    <div className='summary-row'>
+                      <span className='summary-label'>Contato</span>
+                      <span className='summary-value'>{selectedCliente.telefone || selectedCliente.email || 'N/A'}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <p className='summary-placeholder'>
+                    Busque e selecione um cliente existente ou cadastre um novo.
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </ModalShell>

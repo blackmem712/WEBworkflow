@@ -330,18 +330,22 @@ export default function ProtectedHome() {
 
   return (
     <>
-      <div className="home-actions">
-        <button
-          type="button"
-          className="btn"
-          onClick={() => setShowEntradaModal(true)}
-        >
-          Entrada
-        </button>
-      </div>
-
       {/* Filtros topo */}
       <div className="filters-bar">
+        <div className="filters-header">
+          <div className="filters-copy">
+            <h2 className="filters-title">Visao geral</h2>
+            <p className="filters-subtitle">Ajuste os filtros para encontrar rapidamente os equipamentos.</p>
+          </div>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => setShowEntradaModal(true)}
+          >
+            Registrar entrada
+          </button>
+        </div>
+
         <div className="filters-grid">
           <div className="filter">
             <label>Cliente</label>
@@ -390,7 +394,7 @@ export default function ProtectedHome() {
             >
               Limpar
             </button>
-            <button type="button" className="btn ghost">Aplicar</button>
+            <button type="button" className="btn btn-primary">Aplicar</button>
           </div>
         </div>
       </div>

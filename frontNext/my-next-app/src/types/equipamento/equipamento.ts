@@ -18,4 +18,5 @@ export interface Equipamento {
   nun_serie: string
   cliente: number
   status: StatusInfo
+  qr_slug?: string
 }

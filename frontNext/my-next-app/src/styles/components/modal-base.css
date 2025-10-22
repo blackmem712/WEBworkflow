@@ -20,9 +20,10 @@
 }
 
 .modal-surface {
-  --modal-max-width: 840px;
-  width: min(100%, var(--modal-max-width));
-  max-height: min(92vh, 900px);
+  --modal-max-width: clamp(360px, 72vw, 840px);
+  --modal-max-height: 900px;
+  width: min(94vw, var(--modal-max-width));
+  max-height: min(92vh, var(--modal-max-height));
   background: #fff;
   color: #0f172a;
   border-radius: var(--modal-radius);
@@ -33,10 +34,22 @@
   overflow: hidden;
 }
 
-.modal-surface--sm { --modal-max-width: 440px; }
-.modal-surface--md { --modal-max-width: 640px; }
-.modal-surface--lg { --modal-max-width: 840px; }
-.modal-surface--xl { --modal-max-width: 1080px; }
+.modal-surface--sm {
+  --modal-max-width: clamp(340px, 64vw, 520px);
+  --modal-max-height: 780px;
+}
+.modal-surface--md {
+  --modal-max-width: clamp(360px, 70vw, 720px);
+  --modal-max-height: 840px;
+}
+.modal-surface--lg {
+  --modal-max-width: clamp(380px, 78vw, 920px);
+  --modal-max-height: 900px;
+}
+.modal-surface--xl {
+  --modal-max-width: clamp(420px, 86vw, 1080px);
+  --modal-max-height: 960px;
+}
 
 .modal-header {
   padding: var(--modal-padding);
@@ -89,6 +102,7 @@
 .modal-body {
   padding: 0 var(--modal-padding) var(--modal-padding);
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: var(--modal-section-gap);
@@ -112,8 +126,13 @@
 .modal-grid,
 .modal-body .form-grid {
   display: grid;
-  gap: clamp(14px, 2vw, 20px);
+  gap: clamp(18px, 2.6vw, 75px);
   grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.modal-grid > *,
+.modal-body .form-grid > * {
+  min-width: 0;
 }
 
 .modal-grid .grid-col-4,

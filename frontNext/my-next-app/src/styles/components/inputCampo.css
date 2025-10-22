@@ -1,8 +1,8 @@
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin: 0;
 }
 
 .input-group label {
@@ -15,13 +15,13 @@
 .input-group textarea,
 .input-group select {
   width: 100%;
-  padding: 10px 14px;
+  padding: 5px 12px;
   border: 1px solid var(--border-soft);
   border-radius: 12px;
-  font-size: 0.95rem;
+  font-size: 0.90rem;
   background: #fff;
   color: var(--text-primary);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .input-group input:focus,
@@ -29,5 +29,25 @@
 .input-group select:focus {
   outline: none;
   border-color: var(--brand-3);
-  box-shadow: 0 0 0 3px rgba(29,78,216,0.15);
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
+}
+
+.input-group input:disabled,
+.input-group textarea:disabled,
+.input-group select:disabled {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: rgba(148, 163, 184, 0.6);
+  cursor: not-allowed;
+}
+
+.input-group input[readonly]:not(:disabled) {
+  background: #f8fafc;
+  color: #1e293b;
+  cursor: default;
+}
+
+.input-hint {
+  font-size: 0.70rem;
+  color: #64748b;
 }
