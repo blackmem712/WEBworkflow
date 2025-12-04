@@ -99,7 +99,7 @@ export default function ModalEntrega({
       onClose()
     } catch (error: any) {
       console.error(error)
-      alert(error?.response?.data?.detail || 'Nao foi possivel registrar a saida.')
+      alert(error?.response?.data?.detail || 'Não foi possível registrar a saída.')
     } finally {
       setLoading(false)
     }

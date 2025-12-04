@@ -22,6 +22,17 @@ import ModalNovoOrcamento       from '@/components/ModalNovoOrcamento'
 import ModalVisualizarOrcamento from '@/components/ModalVisualizarOrcamento'
 import ModalEntrega             from '@/components/ModalEntrega'
 import { STATUS_LIST, StatusCode } from '@/constants/status'
+import {
+  ChartIcon,
+  InboxIcon,
+  ClipboardIcon,
+  WrenchIcon,
+  TruckIcon,
+  CheckCircleIcon,
+  UserIcon,
+  CalendarIcon,
+  HashIcon,
+} from '@/components/icons'
 import '@/styles/kanban.css'
 
 const LS_KEY = 'kanban_equipment_status_v1'
@@ -46,7 +57,7 @@ export default function ProtectedHome() {
   const [funcionarios, setFuncionarios] = useState<Funcionario[]>([])
   const [orcamentos, setOrcamentos]     = useState<Orcamento[]>([])
 
-  // Modal: Novo orAamento (EN)
+  // Modal: Novo orçamento (EN)
   const [newOrcEquip, setNewOrcEquip]   = useState<Equipamento | null>(null)
   const [showOrcModal, setShowOrcModal] = useState(false)
 
@@ -55,7 +66,7 @@ export default function ProtectedHome() {
   const [showViewModal, setShowViewModal] = useState(false)
   const [viewMode, setViewMode] = useState<'assign' | 'maintenance'>('assign')
 
-  // Modal: Entrega (GA) e RelatA?rio (SA)
+  // Modal: Entrega (GA) e Relatório (SA)
   const [deliveryEquip, setDeliveryEquip] = useState<Equipamento | null>(null)
   const [showDeliveryModal, setShowDeliveryModal] = useState(false)
   const [reportEquip, setReportEquip] = useState<Equipamento | null>(null)
@@ -111,14 +122,14 @@ export default function ProtectedHome() {
   // corrige typo caso precise
   function setProdotos(data: Produto[]) { setProdutos(data) }
 
-  // ---------------- Mapa clienteId a?? nome ----------------
+  // ---------------- Mapa clienteId → nome ----------------
   const clientMap = useMemo(() => {
     const m = new Map<number, string>()
     clientes.forEach(c => m.set(c.id, c.nome ?? ''))
     return m
   }, [clientes])
 
-  // ---------------- Regras de negA?cio ----------------
+  // ---------------- Regras de negócio ----------------
   const enforceRules = (equipId: number, desired: StatusCode): StatusCode => {
     const hasOrc = orcamentos.some(o => o.equipamento === equipId)
     if (hasOrc && desired === 'EN') return 'OR'
@@ -243,7 +254,7 @@ export default function ProtectedHome() {
           )
         )
         removeOverride(equipId)
-        alert(err?.response?.data?.detail || 'Falha ao atualizar status (verifique permissA?es).')
+        alert(err?.response?.data?.detail || 'Falha ao atualizar status (verifique permissões).')
       })
   }
 
@@ -266,13 +277,13 @@ export default function ProtectedHome() {
       const orc = orcamentos.find(o => o.equipamento === eq.id) || null
       if (!orc) return
       setSelOrcamento(orc)
-      setViewMode('maintenance')     // concluir manutenAA?o (vai p/ GA)
+      setViewMode('maintenance')     // concluir manutenção (vai p/ GA)
       setShowViewModal(true)
       return
     }
   }
 
-  // ---------------- ABERTURA VIA QUERY (QR a?? Login a?? Home) ----------------
+  // ---------------- ABERTURA VIA QUERY (QR → Login → Home) ----------------
   useEffect(() => {
     const open = search.get('open')
     const orc  = search.get('orc')
@@ -313,7 +324,7 @@ export default function ProtectedHome() {
     if (open === 'atribuir_manutencao') {
       fetchAndOpen('assign')
     } else if (open === 'concluir_manutencao' || open === 'registrar_entrega') {
-      fetchAndOpen('maintenance') // ajuste aqui se vocAa tiver um modo especA?fico de entrega
+      fetchAndOpen('maintenance') // ajuste aqui se você tiver um modo específico de entrega
     }
   }, [search, router, equipamentos])
 
@@ -334,7 +345,7 @@ export default function ProtectedHome() {
       <div className="filters-bar">
         <div className="filters-header">
           <div className="filters-copy">
-            <h2 className="filters-title">Visao geral</h2>
+            <h2 className="filters-title">Visão geral</h2>
             <p className="filters-subtitle">Ajuste os filtros para encontrar rapidamente os equipamentos.</p>
           </div>
           <button
@@ -382,7 +393,7 @@ export default function ProtectedHome() {
             <input type="date" value={filterDesde} onChange={(e) => setFilterDesde(e.target.value)} />
           </div>
           <div className="filter">
-            <label>Ate</label>
+            <label>Até</label>
             <input type="date" value={filterAte} onChange={(e) => setFilterAte(e.target.value)} />
           </div>
 
@@ -403,28 +414,58 @@ export default function ProtectedHome() {
       <div className="kanban-header">
         <div className="summary-cards">
           <div className="summary-card info">
-            <div className="sc-title">Total de Equipamentos</div>
-            <div className="sc-value">{metrics.total}</div>
+            <div className="sc-icon">
+              <ChartIcon size={28} />
+            </div>
+            <div className="sc-content">
+              <div className="sc-title">Total de Equipamentos</div>
+              <div className="sc-value">{metrics.total}</div>
+            </div>
           </div>
           <div className="summary-card en">
-            <div className="sc-title">Entrada</div>
-            <div className="sc-value">{metrics.counts.EN}</div>
+            <div className="sc-icon">
+              <InboxIcon size={28} />
+            </div>
+            <div className="sc-content">
+              <div className="sc-title">Entrada</div>
+              <div className="sc-value">{metrics.counts.EN}</div>
+            </div>
           </div>
           <div className="summary-card or">
-            <div className="sc-title">Orcamento</div>
-            <div className="sc-value">{metrics.counts.OR}</div>
+            <div className="sc-icon">
+              <ClipboardIcon size={28} />
+            </div>
+            <div className="sc-content">
+              <div className="sc-title">Orçamento</div>
+              <div className="sc-value">{metrics.counts.OR}</div>
+            </div>
           </div>
           <div className="summary-card ma">
-            <div className="sc-title">Manutencao</div>
-            <div className="sc-value">{metrics.counts.MA}</div>
+            <div className="sc-icon">
+              <WrenchIcon size={28} />
+            </div>
+            <div className="sc-content">
+              <div className="sc-title">Manutenção</div>
+              <div className="sc-value">{metrics.counts.MA}</div>
+            </div>
           </div>
           <div className="summary-card ga">
-            <div className="sc-title">Entrega</div>
-            <div className="sc-value">{metrics.counts.GA}</div>
+            <div className="sc-icon">
+              <TruckIcon size={28} />
+            </div>
+            <div className="sc-content">
+              <div className="sc-title">Entrega</div>
+              <div className="sc-value">{metrics.counts.GA}</div>
+            </div>
           </div>
           <div className="summary-card sa">
-            <div className="sc-title">Saida</div>
-            <div className="sc-value">{metrics.counts.SA}</div>
+            <div className="sc-icon">
+              <CheckCircleIcon size={28} />
+            </div>
+            <div className="sc-content">
+              <div className="sc-title">Saída</div>
+              <div className="sc-value">{metrics.counts.SA}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -456,15 +497,21 @@ export default function ProtectedHome() {
                           >
                             <h3 className="card-title">{eq.equipamento}</h3>
                             <p className="card-client">
-                              Cliente: {clientMap.get(eq.cliente) ?? 'N/A'}
+                              <UserIcon size={14} />
+                              <span>{clientMap.get(eq.cliente) ?? 'N/A'}</span>
                             </p>
                             <p className="card-date">
-                              Entrada:{' '}
-                              {eq.status.date_entrada
-                                ? new Date(eq.status.date_entrada!).toLocaleDateString()
-                                : 'N/A'}
+                              <CalendarIcon size={14} />
+                              <span>
+                                {eq.status.date_entrada
+                                  ? new Date(eq.status.date_entrada!).toLocaleDateString()
+                                  : 'N/A'}
+                              </span>
                             </p>
-                            <p className="card-series">Serie: {eq.nun_serie}</p>
+                            <p className="card-series">
+                              <HashIcon size={14} />
+                              <span>{eq.nun_serie || 'N/A'}</span>
+                            </p>
                             <div className="card-tags">
                               {eq.marca && <span className="tag">{eq.marca}</span>}
                               {eq.modelo && <span className="tag">{eq.modelo}</span>}
@@ -509,7 +556,7 @@ export default function ProtectedHome() {
         />
       )}
 
-      {/* Modal: Novo OrAamento (EN) */}
+      {/* Modal: Novo Orçamento (EN) */}
       {showOrcModal && newOrcEquip && (
         <ModalNovoOrcamento
           clientes={clientes}
@@ -601,7 +648,7 @@ export default function ProtectedHome() {
         )
       })()}
 
-      {/* Modal: RelatA?rio (SA) */}
+      {/* Modal: Relatório (SA) */}
       {showReportModal && reportEquip && (() => {
         const cli = clientes.find(c => c.id === reportEquip.cliente)
         if (!cli) return null

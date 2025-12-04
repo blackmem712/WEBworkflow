@@ -37,7 +37,7 @@ export default function FuncionariosPage() {
   return (
     <div className="func-page">
       <div className="func-header">
-        <PageTitle icon={<TeamIcon size={28} />}>FuncionA!rios</PageTitle>
+        <PageTitle icon={<TeamIcon size={28} />}>Funcionários</PageTitle>
       </div>
 
       <TabelaFuncionarios

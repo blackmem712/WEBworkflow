@@ -164,3 +164,90 @@ export function EyeOffIcon(props: IconBaseProps) {
   )
 }
 
+// Ícones para métricas
+export function ChartIcon(props: IconBaseProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M3 3v18h18" />
+      <path d="M7 12l4-4 4 4 6-6" />
+    </SvgIcon>
+  )
+}
+
+export function InboxIcon(props: IconBaseProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+      <path d="M22 6l-10 7L2 6" />
+    </SvgIcon>
+  )
+}
+
+export function ClipboardIcon(props: IconBaseProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
+      <rect x="9" y="3" width="6" height="4" rx="1" />
+    </SvgIcon>
+  )
+}
+
+export function WrenchIcon(props: IconBaseProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+    </SvgIcon>
+  )
+}
+
+export function TruckIcon(props: IconBaseProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M1 3h15v13H1z" />
+      <path d="M16 8h4l3 3v5h-7V8z" />
+      <circle cx="5.5" cy="18.5" r="2.5" />
+      <circle cx="18.5" cy="18.5" r="2.5" />
+    </SvgIcon>
+  )
+}
+
+export function CheckCircleIcon(props: IconBaseProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+      <polyline points="22 4 12 14.01 9 11.01" />
+    </SvgIcon>
+  )
+}
+
+export function UserIcon(props: IconBaseProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </SvgIcon>
+  )
+}
+
+export function CalendarIcon(props: IconBaseProps) {
+  return (
+    <SvgIcon {...props}>
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </SvgIcon>
+  )
+}
+
+export function HashIcon(props: IconBaseProps) {
+  return (
+    <SvgIcon {...props}>
+      <line x1="4" y1="9" x2="20" y2="9" />
+      <line x1="4" y1="15" x2="20" y2="15" />
+      <line x1="10" y1="3" x2="8" y2="21" />
+      <line x1="16" y1="3" x2="14" y2="21" />
+    </SvgIcon>
+  )
+}
+

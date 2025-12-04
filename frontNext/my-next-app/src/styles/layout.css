@@ -1,5 +1,6 @@
-﻿/* Reset bA!sico */
+﻿/* Reset básico */
 :root{
+  /* Paleta de cores base */
   --bg-app: #f6f7f9;
   --panel: #ffffff;
   --text-primary: #111318;
@@ -8,10 +9,19 @@
   --shadow-soft: 0 1px 2px rgba(16,24,40,.08), 0 1px 1px rgba(16,24,40,.05);
   --shadow-medium: 0 12px 30px rgba(15,23,42,.12);
 
+  /* Paleta de cores da marca - Padronizada */
   --brand-1: #0b1a3a; /* navy profundo */
   --brand-2: #0f2a6e; /* azul escuro */
-  --brand-3: #1d4ed8; /* azul destaque */
-  --brand-4: #24578e; /* azul forte */
+  --brand-3: #1d4ed8; /* azul destaque principal */
+  --brand-4: #2563eb; /* azul hover/ativo */
+  
+  /* Cores para tabelas - Padronizadas */
+  --table-header-bg: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+  --table-header-color: #ffffff;
+  
+  /* Cores para botões - Padronizadas */
+  --btn-primary-bg: linear-gradient(135deg, #1d4ed8 0%, #0f2a6e 100%);
+  --btn-primary-hover: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
 }
 
 body {
@@ -40,7 +50,7 @@ input:focus, textarea:focus, select:focus {
   box-shadow:0 0 0 3px rgba(29,78,216,.15);
 }
 
-/* Sidebar recolhida por padrA?o */
+/* Sidebar recolhida por padrão */
 .sidebar-hover {
   position: fixed;
   top: 0;
@@ -64,7 +74,7 @@ input:focus, textarea:focus, select:focus {
   width: 220px;
 }
 
-/* CabeAalho da Sidebar (logo ou A?cone) */
+/* Cabeçalho da Sidebar (logo ou ícone) */
 .sidebar-brand {
   position: relative;
   width: 100%;
@@ -110,7 +120,7 @@ input:focus, textarea:focus, select:focus {
   align-items: stretch;
 }
 
-/* Link padrA?o */
+/* Link padrão */
 .nav-item {
   display: flex;
   align-items: center;
@@ -139,7 +149,7 @@ input:focus, textarea:focus, select:focus {
   background: linear-gradient(90deg, rgba(255,255,255,.18), rgba(255,255,255,.04));
 }
 
-/* Link ativo (pA!gina atual) */
+/* Link ativo (página atual) */
 .nav-item.active {
   background: linear-gradient(90deg, rgba(255,255,255,.28), rgba(255,255,255,.08));
   font-weight: 700;
@@ -162,15 +172,15 @@ input:focus, textarea:focus, select:focus {
 .sidebar-hover:hover ~ .layout-content {
   margin-left: 220px; /* Largura da sidebar expandida */
 }
-/* A nave ocupa toda a coluna para o botA?o ficar no rodapA(c) */
+/* A nave ocupa toda a coluna para o botão ficar no rodapé */
 .nav-links {
   height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* jA! existia no seu CSS */
+  align-items: flex-start; /* já existia no seu CSS */
 }
 
-/* BotA?o de logout com destaque */
+/* Botão de logout com destaque */
 .nav-item.logout {
   color: #fecaca; /* vermelho clarinho no texto */
 }
@@ -246,7 +256,7 @@ input:focus, textarea:focus, select:focus {
   transform: translateX(0);
 }
 
-/* BotA?es padrA?o globais */
+/* Botões padrão globais */
 .btn {
   display:inline-flex;
   align-items:center;

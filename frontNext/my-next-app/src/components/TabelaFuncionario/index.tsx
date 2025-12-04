@@ -15,12 +15,12 @@ interface Props {
 }
 
 const CARGO_LABELS: Record<Cargo['cargo'], string> = {
-  TC: 'TA(c)cnico',
+  TC: 'Técnico',
   GE: 'Gerente',
   RC: 'Recepcionista'
 }
 const SETOR_LABELS: Record<Setor['setor'], string> = {
-  RE: 'RecepAA?o',
+  RE: 'Recepção',
   OF: 'Oficina',
   ES: 'Estoque'
 }

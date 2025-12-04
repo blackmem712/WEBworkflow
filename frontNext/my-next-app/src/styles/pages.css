@@ -1,0 +1,320 @@
+/*
+  Estilos unificados para todas as páginas
+  - Visual limpo e profissional
+  - Consistente com a página Home
+*/
+
+/* =======================
+   Containers das páginas
+   ======================= */
+.clientes-page,
+.equip-page,
+.prod-page,
+.serv-page,
+.orc-page,
+.func-page,
+.forn-page {
+  margin-left: 0;
+  padding: 24px;
+  min-height: 100vh;
+  background: var(--bg-app);
+  transition: margin-left 0.3s ease;
+}
+
+/* =======================
+   Headers das páginas
+   ======================= */
+.clientes-header,
+.equip-header,
+.prod-header,
+.serv-header,
+.orc-header,
+.func-header,
+.forn-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 0;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+
+.page-title-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1d4ed8;
+}
+
+/* =======================
+   Containers de tabelas
+   ======================= */
+.tabela-container,
+.tabela-clientes-container,
+.tabela-orc-container,
+.tabela-serv-container,
+.tabela-prod-container,
+.tabela-func-container,
+.tabela-forn-container,
+.tabela-equip-container {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%);
+  padding: 28px 32px;
+  border-radius: 16px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 16px rgba(2, 6, 23, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+/* =======================
+   Controles de tabela
+   ======================= */
+.tabela-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.tabela-busca {
+  flex: 1;
+  min-width: 200px;
+  height: 48px;
+  padding: 0 16px 0 44px;
+  border-radius: 12px;
+  border: 2px solid rgba(203, 213, 225, 0.8);
+  background: #ffffff;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='16' height='16' fill='%2364748b' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11.742 10.344l3.853 3.853-1.398 1.398-3.853-3.853a6.5 6.5 0 1 1 1.398-1.398zM6.5 11a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 16px center;
+  background-size: 16px;
+  font-family: inherit;
+  color: #0f172a;
+}
+
+.tabela-busca::placeholder {
+  color: #94a3b8;
+}
+
+.tabela-busca:hover {
+  border-color: rgba(29, 78, 216, 0.3);
+}
+
+.tabela-busca:focus {
+  outline: none;
+  border-color: #2563eb;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='16' height='16' fill='%232563eb' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11.742 10.344l3.853 3.853-1.398 1.398-3.853-3.853a6.5 6.5 0 1 1 1.398-1.398zM6.5 11a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z'/%3E%3C/svg%3E");
+}
+
+/* =======================
+   Tabelas
+   ======================= */
+.tabela-clientes,
+.tabela-orc,
+.tabela-serv,
+.tabela-prod,
+.tabela-func,
+.tabela-forn,
+.tabela-equip {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(2, 6, 23, 0.06);
+  background: #ffffff;
+}
+
+.tabela-clientes thead,
+.tabela-orc thead,
+.tabela-serv thead,
+.tabela-prod thead,
+.tabela-func thead,
+.tabela-forn thead,
+.tabela-equip thead {
+  background: var(--table-header-bg);
+  color: var(--table-header-color);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.tabela-clientes thead th,
+.tabela-orc thead th,
+.tabela-serv thead th,
+.tabela-prod thead th,
+.tabela-func thead th,
+.tabela-forn thead th,
+.tabela-equip thead th {
+  padding: 16px 20px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.tabela-clientes tbody tr,
+.tabela-orc tbody tr,
+.tabela-serv tbody tr,
+.tabela-prod tbody tr,
+.tabela-func tbody tr,
+.tabela-forn tbody tr,
+.tabela-equip tbody tr {
+  background: #ffffff;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.tabela-clientes tbody tr:nth-child(even),
+.tabela-orc tbody tr:nth-child(even),
+.tabela-serv tbody tr:nth-child(even),
+.tabela-prod tbody tr:nth-child(even),
+.tabela-func tbody tr:nth-child(even),
+.tabela-forn tbody tr:nth-child(even),
+.tabela-equip tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+.tabela-clientes tbody tr:hover,
+.tabela-orc tbody tr:hover,
+.tabela-serv tbody tr:hover,
+.tabela-prod tbody tr:hover,
+.tabela-func tbody tr:hover,
+.tabela-forn tbody tr:hover,
+.tabela-equip tbody tr:hover {
+  background: #eef4fb;
+  cursor: pointer;
+}
+
+.tabela-clientes tbody tr:last-child,
+.tabela-orc tbody tr:last-child,
+.tabela-serv tbody tr:last-child,
+.tabela-prod tbody tr:last-child,
+.tabela-func tbody tr:last-child,
+.tabela-forn tbody tr:last-child,
+.tabela-equip tbody tr:last-child {
+  border-bottom: none;
+}
+
+.tabela-clientes th,
+.tabela-clientes td,
+.tabela-orc th,
+.tabela-orc td,
+.tabela-serv th,
+.tabela-serv td,
+.tabela-prod th,
+.tabela-prod td,
+.tabela-func th,
+.tabela-func td,
+.tabela-forn th,
+.tabela-forn td,
+.tabela-equip th,
+.tabela-equip td {
+  padding: 14px 20px;
+  font-size: 0.9rem;
+  color: #0f172a;
+  text-align: left;
+}
+
+.tabela-clientes tbody td,
+.tabela-orc tbody td,
+.tabela-serv tbody td,
+.tabela-prod tbody td,
+.tabela-func tbody td,
+.tabela-forn tbody td,
+.tabela-equip tbody td {
+  color: #475569;
+}
+
+/* =======================
+   Responsivo
+   ======================= */
+@media (max-width: 1024px) {
+  .clientes-page,
+  .equip-page,
+  .prod-page,
+  .serv-page,
+  .orc-page,
+  .func-page,
+  .forn-page {
+    padding: 20px 16px;
+  }
+
+  .tabela-container,
+  .tabela-clientes-container,
+  .tabela-orc-container,
+  .tabela-serv-container,
+  .tabela-prod-container,
+  .tabela-func-container,
+  .tabela-forn-container,
+  .tabela-equip-container {
+    padding: 24px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .clientes-header,
+  .equip-header,
+  .prod-header,
+  .serv-header,
+  .orc-header,
+  .func-header,
+  .forn-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .tabela-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tabela-busca {
+    width: 100%;
+  }
+
+  .tabela-clientes,
+  .tabela-orc,
+  .tabela-serv,
+  .tabela-prod,
+  .tabela-func,
+  .tabela-forn,
+  .tabela-equip {
+    font-size: 0.85rem;
+  }
+
+  .tabela-clientes th,
+  .tabela-clientes td,
+  .tabela-orc th,
+  .tabela-orc td,
+  .tabela-serv th,
+  .tabela-serv td,
+  .tabela-prod th,
+  .tabela-prod td,
+  .tabela-func th,
+  .tabela-func td,
+  .tabela-forn th,
+  .tabela-forn td,
+  .tabela-equip th,
+  .tabela-equip td {
+    padding: 12px 14px;
+  }
+}
+

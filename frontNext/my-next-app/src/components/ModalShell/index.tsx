@@ -27,7 +27,7 @@ export default function ModalShell({
   title,
   children,
   onClose,
-  size = 'lg',
+  size = 'lg', // Mantido para compatibilidade, mas todos terão o mesmo tamanho
   footer,
   overlayClassName,
   surfaceClassName,
@@ -46,8 +46,11 @@ export default function ModalShell({
       role={role}
       aria-modal="true"
       aria-labelledby={labelledBy}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose()
+      }}
     >
-      <div className={join('modal-surface', `modal-surface--${size}`, surfaceClassName)}>
+      <div className={join('modal-surface', surfaceClassName)} onClick={(e) => e.stopPropagation()}>
         {(title || !hideCloseButton || headerContent) && (
           <header className="modal-header">
             {title && (
@@ -64,7 +67,7 @@ export default function ModalShell({
                   onClick={onClose}
                   aria-label="Fechar modal"
                 >
-                  <span aria-hidden="true">A-</span>
+                  <span aria-hidden="true">×</span>
                 </button>
               )}
             </div>
