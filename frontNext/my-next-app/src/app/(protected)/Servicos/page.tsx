@@ -24,7 +24,7 @@ export default function ServicosPage() {
   return (
     <div className="serv-page">
       <div className="serv-header">
-        <PageTitle icon={<ServicesIcon size={28} />}>ServiAos</PageTitle>
+        <PageTitle icon={<ServicesIcon size={28} />}>Serviços</PageTitle>
       </div>
 
       <TabelaServicos

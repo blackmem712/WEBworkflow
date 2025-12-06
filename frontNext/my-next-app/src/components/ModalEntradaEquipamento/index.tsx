@@ -296,7 +296,7 @@ export default function ModalEntradaEquipamento({
       }
 
       if (!qrSlug) {
-        alert('Entrada registrada, mas nao foi possivel localizar o QR code atual para gerar um novo.')
+        alert('Entrada registrada, mas não foi possível localizar o QR code atual para gerar um novo.')
         return
       }
 
@@ -309,7 +309,7 @@ export default function ModalEntradaEquipamento({
         qrSlug = rotatedSlug
       } catch (rotateError) {
         console.error('Erro ao gerar novo QR code para o equipamento.', rotateError)
-        alert('Entrada registrada, porem nao foi possivel gerar o novo QR code. Verifique as permissoes e tente novamente.')
+        alert('Entrada registrada, porém não foi possível gerar o novo QR code. Verifique as permissões e tente novamente.')
         return
       }
 
@@ -326,12 +326,12 @@ export default function ModalEntradaEquipamento({
         setShowEtiqueta(true)
         resetState()
       } else {
-        alert('Entrada registrada, mas nao foi possivel preparar o QR code para impressao. Abra o equipamento para tentar novamente.')
+        alert('Entrada registrada, mas não foi possível preparar o QR code para impressão. Abra o equipamento para tentar novamente.')
         closeModal()
       }
     } catch (error) {
       console.error(error)
-      alert('Nao foi possivel registrar a entrada. Tente novamente.')
+      alert('Não foi possível registrar a entrada. Tente novamente.')
     } finally {
       setSubmittingExisting(false)
     }
@@ -370,12 +370,12 @@ export default function ModalEntradaEquipamento({
         setShowEtiqueta(true)
         resetState()
       } else {
-        alert('Entrada criada com sucesso, porem nao foi possivel preparar o QR code automaticamente. Abra o equipamento para imprimir.')
+        alert('Entrada criada com sucesso, porém não foi possível preparar o QR code automaticamente. Abra o equipamento para imprimir.')
         closeModal()
       }
     } catch (error) {
       console.error(error)
-      alert('Nao foi possivel criar a entrada. Verifique os campos e tente novamente.')
+      alert('Não foi possível criar a entrada. Verifique os campos e tente novamente.')
     } finally {
       setSubmittingNew(false)
     }
@@ -579,7 +579,7 @@ export default function ModalEntradaEquipamento({
                   <InputCampo
                     label='Contato'
                     name={`view-contato-${selectedEquipFieldKey}`}
-                    value={selectedEquipContact || 'Nao informado'}
+                    value={selectedEquipContact || 'Não informado'}
                     disabled
                   />
                 </div>

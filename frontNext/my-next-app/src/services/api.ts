@@ -2,7 +2,7 @@
 import axios from 'axios'
 
 function computeApiBase() {
-  // 1) .env (produAA?o/dev)
+  // 1) .env (produção/dev)
   const fromEnv = process.env.NEXT_PUBLIC_API_BASE
   if (fromEnv) return fromEnv.replace(/\/$/, '')
 
@@ -12,7 +12,7 @@ function computeApiBase() {
     return `${protocol}//${hostname}:8000`
   }
 
-  // 3) fallback neutro (quase nA?o usado)
+  // 3) fallback neutro (quase não usado)
   return 'http://localhost:8000'
 }
 
@@ -45,7 +45,7 @@ export function clearTokens() {
   if (typeof window === 'undefined') return
   localStorage.removeItem(ACCESS_KEY)
   localStorage.removeItem(REFRESH_KEY)
-  // limpa o a?oesinalizadora?? do middleware
+  // limpa o sinalizador do middleware
   document.cookie = 'auth=; Path=/; Max-Age=0; SameSite=Lax'
 }
 

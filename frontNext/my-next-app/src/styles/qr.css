@@ -1,11 +1,11 @@
-﻿/* src/styles/qr.css a?" layout pensado para mobile */
+﻿/* src/styles/qr.css → layout pensado para mobile */
 .qr-wrap {
   min-height: 100dvh;
   background: #0f172a;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding-bottom: 84px; /* espaAo para a barra de aAA?o fixa */
+  padding-bottom: 84px; /* espaço para a barra de ação fixa */
 }
 
 .qr-header {

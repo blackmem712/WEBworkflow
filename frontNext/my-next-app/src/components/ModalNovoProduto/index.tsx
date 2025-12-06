@@ -99,7 +99,7 @@ export default function ModalNovoProduto({ onClose, setProdutos }: Props) {
           />
         </div>
         <div className="grid-col-12">
-          <label htmlFor="descricao-novo-produto">DescriAA?o</label>
+          <label htmlFor="descricao-novo-produto">Descrição</label>
           <textarea
             id="descricao-novo-produto"
             name="descricao"

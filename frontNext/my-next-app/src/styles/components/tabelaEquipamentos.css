@@ -46,8 +46,8 @@
 }
 
 .tabela-equip thead {
-  background: linear-gradient(180deg, rgba(15,42,110,.8), rgba(11,26,58,.8));
-  color: #fff;
+  background: var(--table-header-bg);
+  color: var(--table-header-color);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   font-size: 0.75rem;

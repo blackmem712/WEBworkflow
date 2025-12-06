@@ -112,7 +112,7 @@ export default function ModalFornecedor({
           />
         </div>
         <div className="grid-col-12">
-          <label htmlFor="descricao-fornecedor">DescriAA?o</label>
+          <label htmlFor="descricao-fornecedor">Descrição</label>
           <textarea
             id="descricao-fornecedor"
             name="descricao"

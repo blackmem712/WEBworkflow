@@ -118,7 +118,7 @@ export default function QRPage() {
     return <div className="qr-wrap"><div className="qr-card"><p>Carregando...</p></div></div>
   }
   if (err || !qr) {
-    return <div className="qr-wrap"><div className="qr-card error"><h2>Nao foi possivel carregar</h2><p>{err || 'Tente novamente.'}</p></div></div>
+    return <div className="qr-wrap"><div className="qr-card error"><h2>Não foi possível carregar</h2><p>{err || 'Tente novamente.'}</p></div></div>
   }
 
   // Helper para render do tecnico com label legivel
@@ -139,7 +139,7 @@ export default function QRPage() {
         <div className="qr-title">
           <span className="qr-chip">{STATUS_LABEL[statusCode]}</span>
           <h1>{qr.equipamento || 'Equipamento'}</h1>
-          <p className="qr-sub">{qr.cliente_nome ? `Cliente: ${qr.cliente_nome}` : 'Cliente nao informado'}</p>
+          <p className="qr-sub">{qr.cliente_nome ? `Cliente: ${qr.cliente_nome}` : 'Cliente não informado'}</p>
         </div>
       </header>
 

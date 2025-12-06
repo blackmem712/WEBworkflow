@@ -22,8 +22,9 @@
   width:100%; border-collapse:collapse; border-radius:14px; overflow:hidden; box-shadow:var(--shadow-soft);
 }
 .tabela-forn thead {
-  background: linear-gradient(180deg, rgba(15,42,110,.8), rgba(11,26,58,.8));
-  color:#fff; text-transform:uppercase; letter-spacing:0.04em; font-size:0.75rem;
+  background: var(--table-header-bg);
+  color: var(--table-header-color);
+  text-transform:uppercase; letter-spacing:0.04em; font-size:0.75rem;
 }
 .tabela-forn thead th { padding:14px 18px; font-weight:600; }
 .tabela-forn tbody tr { background:#fff; transition:background .2s ease, transform .1s ease; }

@@ -170,7 +170,7 @@ export default function ModalNovoEquipamento({ onClose, setEquipamentos, cliente
       }
     } catch (error) {
       console.error(error)
-      alert('Nao foi possivel salvar. Verifique os campos e tente novamente.')
+      alert('Não foi possível salvar. Verifique os campos e tente novamente.')
     }
   }
 

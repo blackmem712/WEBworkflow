@@ -25,7 +25,7 @@ export default function TabelaServicos({ servicos, onSelecionar, onNovo }: Props
       <div className="tabela-controls">
         <input
           type="text"
-          placeholder="Buscar nome, descriAA?o ou valor..."
+          placeholder="Buscar nome, descrição ou valor..."
           value={filtro}
           onChange={e => setFiltro(e.target.value)}
           className="tabela-busca"
@@ -38,7 +38,7 @@ export default function TabelaServicos({ servicos, onSelecionar, onNovo }: Props
           <tr>
             <th>Nome</th>
             <th>Valor (R$)</th>
-            <th>DescriAA?o</th>
+            <th>Descrição</th>
           </tr>
         </thead>
         <tbody>

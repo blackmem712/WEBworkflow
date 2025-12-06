@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import { api, setTokens } from '@/services/api'
-import { EyeIcon, EyeOffIcon, LockIcon } from '@/components/icons'
+import { EyeIcon, EyeOffIcon } from '@/components/icons'
 import styles from '@/app/login/login.module.css'
 
 export default function LoginPage() {
@@ -28,7 +29,7 @@ export default function LoginPage() {
     redirect = redirectRaw || '/Home'
   }
 
-  // Sanitiza: precisa comeAar com "/"
+  // Sanitiza: precisa começar com "/"
   if (!redirect.startsWith('/')) {
     redirect = '/Home'
   }
@@ -54,16 +55,16 @@ export default function LoginPage() {
       // Salva tokens (ex.: localStorage + axios headers)
       setTokens(access, refresh)
 
-      // Cookie leve pro middleware (UX, nA?o seguranAa)
+      // Cookie leve pro middleware (UX, não segurança)
       document.cookie = 'auth=1; path=/; max-age=604800; samesite=lax' // 7 dias
-      // Em produAA?o + HTTPS, considere: '; secure'
+      // Em produção + HTTPS, considere: '; secure'
 
-      // Apenas UMA navegaAA?o (sem push + replace)
+      // Apenas UMA navegação (sem push + replace)
       const destino = buildDestino()
       router.replace(destino)
       // Se preferir reload completo: window.location.replace(destino)
     } catch (err: any) {
-      setError(err?.response?.data?.detail || 'UsuA!rio ou senha invA!lidos')
+      setError(err?.response?.data?.detail || 'Usuário ou senha inválidos')
     } finally {
       setLoading(false)
     }
@@ -71,21 +72,53 @@ export default function LoginPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.card}>
-        <div className={styles.brand}>
-          <div className={styles.logo} aria-hidden="true">
-            <LockIcon size={34} />
+      <div className={styles.container}>
+        <div className={styles.leftPanel}>
+          <div className={styles.brandSection}>
+            <div className={styles.logoWrapper}>
+              <Image
+                src="/images/sgee-logo.png"
+                alt="SGEE - Sistema de Gestão"
+                width={280}
+                height={90}
+                priority
+                className={styles.logo}
+              />
+            </div>
+            <h2 className={styles.welcomeTitle}>Bem-vindo de volta</h2>
+            <p className={styles.welcomeSubtitle}>
+              Sistema de Gestão de Equipamentos e Orçamentos
+            </p>
+            <div className={styles.features}>
+              <div className={styles.feature}>
+                <div className={styles.featureIcon}>✓</div>
+                <span>Gestão completa de equipamentos</span>
+              </div>
+              <div className={styles.feature}>
+                <div className={styles.featureIcon}>✓</div>
+                <span>Controle de orçamentos e serviços</span>
+              </div>
+              <div className={styles.feature}>
+                <div className={styles.featureIcon}>✓</div>
+                <span>Rastreamento em tempo real</span>
+              </div>
+            </div>
           </div>
-          <h1>Entrar</h1>
-          <p className={styles.sub}>Acesse sua conta para continuar</p>
         </div>
+
+        <div className={styles.rightPanel}>
+          <div className={styles.card}>
+            <div className={styles.cardHeader}>
+              <h1>Entrar</h1>
+              <p className={styles.subtitle}>Acesse sua conta para continuar</p>
+            </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <label className={styles.label}>
-            UsuA!rio
+            Usuário
             <input
               className={styles.input}
-              placeholder="seu usuA!rio"
+              placeholder="seu usuário"
               autoComplete="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -97,7 +130,7 @@ export default function LoginPage() {
             <div className={styles.passWrap}>
               <input
                 className={styles.input}
-                placeholder="a??a??a??a??a??a??a??a??"
+                placeholder="••••••••"
                 type={showPass ? 'text' : 'password'}
                 autoComplete="current-password"
                 value={password}
@@ -117,12 +150,14 @@ export default function LoginPage() {
           {error && <div className={styles.error}>{error}</div>}
 
           <button type="submit" className={styles.submit} disabled={loading}>
-            {loading ? 'Entrandoa??' : 'Entrar'}
+            {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
 
-        <div className={styles.tips}>
-          <span>Dica: use o perfil correto (TC, GE ou RC) conforme seu acesso.</span>
+            <div className={styles.tips}>
+              <span>💡 Dica: use o perfil correto (TC, GE ou RC) conforme seu acesso.</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

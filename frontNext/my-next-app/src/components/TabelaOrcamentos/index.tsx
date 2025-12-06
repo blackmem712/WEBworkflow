@@ -48,7 +48,7 @@ export default function TabelaOrcamentos({
       <div className="tabela-controls">
         <input
           type="text"
-          placeholder="Buscar observaAA?o, equipamento, serviAo, produto ou responsA!vel..."
+          placeholder="Buscar observação, equipamento, serviço, produto ou responsável..."
           value={filtro}
           onChange={e => setFiltro(e.target.value)}
           className="tabela-busca"
@@ -59,11 +59,11 @@ export default function TabelaOrcamentos({
       <table className="tabela-orc">
         <thead>
           <tr>
-            <th>ObservaAA?o</th>
+            <th>Observação</th>
             <th>Equipamento</th>
-            <th>ServiAos</th>
+            <th>Serviços</th>
             <th>Produtos</th>
-            <th>ResponsA!vel</th>
+            <th>Responsável</th>
           </tr>
         </thead>
         <tbody>

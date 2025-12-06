@@ -97,7 +97,7 @@ export default function ModalVisualizarOrcamento({
       onClose()
     } catch (error: any) {
       console.error(error)
-      alert(error?.response?.data?.detail || 'Nao foi possivel atribuir tecnico/enviar para manutencao.')
+      alert(error?.response?.data?.detail || 'Não foi possível atribuir técnico/enviar para manutenção.')
     } finally {
       setLoading(false)
     }
@@ -119,7 +119,7 @@ export default function ModalVisualizarOrcamento({
       onClose()
     } catch (error: any) {
       console.error(error)
-      alert(error?.response?.data?.detail || 'Nao foi possivel concluir a manutencao.')
+      alert(error?.response?.data?.detail || 'Não foi possível concluir a manutenção.')
     } finally {
       setLoading(false)
     }

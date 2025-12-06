@@ -20,14 +20,14 @@ import {
 type Item = { href: string; label: string; icon: ReactNode }
 
 const items: Item[] = [
-  { href: '/Home', label: 'InA?cio', icon: <HomeIcon size={18} /> },
+  { href: '/Home', label: 'Início', icon: <HomeIcon size={18} /> },
   { href: '/Clientes', label: 'Clientes', icon: <ClientsIcon size={18} /> },
   { href: '/Equipamentos', label: 'Equipamentos', icon: <EquipmentIcon size={18} /> },
-  { href: '/Funcionarios', label: 'FuncionA!rios', icon: <TeamIcon size={18} /> },
-  { href: '/Servicos', label: 'ServiAos', icon: <ServicesIcon size={18} /> },
+  { href: '/Funcionarios', label: 'Funcionários', icon: <TeamIcon size={18} /> },
+  { href: '/Servicos', label: 'Serviços', icon: <ServicesIcon size={18} /> },
   { href: '/Produtos', label: 'Produtos', icon: <ProductsIcon size={18} /> },
   { href: '/Fornecedores', label: 'Fornecedores', icon: <SuppliersIcon size={18} /> },
-  { href: '/Orcamentos', label: 'OrAamentos', icon: <BudgetIcon size={18} /> },
+  { href: '/Orcamentos', label: 'Orçamentos', icon: <BudgetIcon size={18} /> },
 ]
 
 export default function Sidebar() {
@@ -40,7 +40,7 @@ export default function Sidebar() {
   }
 
   function logout() {
-    // remove presenAa de sessA?o (middleware) + tokens (axios)
+    // remove presença de sessão (middleware) + tokens (axios)
     document.cookie = 'auth=; path=/; max-age=0'
     clearTokens()
     router.push('/login')
