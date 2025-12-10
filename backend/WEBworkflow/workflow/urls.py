@@ -175,6 +175,7 @@ urlpatterns = [
     path('q/<slug:slug>/',
          views.qr_post, name='qr_post'),  # mesmo path; método POST
     path('q/<slug:slug>/rotate/', views.qr_rotate, name='qr_rotate'),
+    
     path(
       'equipamentos/api/v1/<int:pk>/set_status/',
       views.WorkflowEquipamentoAPIv1ViewSet.as_view({'post': 'set_status'}),

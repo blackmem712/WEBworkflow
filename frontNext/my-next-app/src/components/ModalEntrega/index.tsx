@@ -76,6 +76,48 @@ export default function ModalEntrega({
     }
   }, [mode, equipamento.id])
 
+  const formatDateTime = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : '-')
+
+  const visitas = useMemo(() => {
+    if (!historico.length) return []
+
+    const sorted = [...historico].sort((a, b) => {
+      const da = a.date_entrada ?? a.date_saida ?? ''
+      const db = b.date_entrada ?? b.date_saida ?? ''
+      if (da && db) return da.localeCompare(db)
+      if (da) return -1
+      if (db) return 1
+      return a.id - b.id
+    })
+
+    type Visita = { id: number; inicio: string | null; fim: string | null; items: HistoricoItem[] }
+    const groups: Visita[] = []
+    let current: Visita | null = null
+
+    sorted.forEach((item) => {
+      const startCandidate = item.date_entrada ?? item.date_saida ?? null
+
+      if (item.status === 'EN' || !current) {
+        current = {
+          id: groups.length + 1,
+          inicio: startCandidate,
+          fim: null,
+          items: [],
+        }
+        groups.push(current)
+      }
+
+      current.items.push(item)
+
+      if (item.status === 'SA') {
+        current.fim = item.date_saida ?? item.date_entrada ?? current.fim
+        current = null
+      }
+    })
+
+    return groups
+  }, [historico])
+
   const tecnico = useMemo(() => {
     if (!orcamento || !funcionarios) return null
     const cfId = orcamento.cargo_funcionario
@@ -214,25 +256,44 @@ export default function ModalEntrega({
           </div>
           {histLoading ? (
             <p>Carregando historico...</p>
+          ) : visitas.length === 0 ? (
+            <p>Nenhum histórico encontrado.</p>
           ) : (
-            <table className="entries-table">
-              <thead>
-                <tr>
-                  <th>Status</th>
-                  <th>Entrada</th>
-                  <th>Saida</th>
-                </tr>
-              </thead>
-              <tbody>
-                {historico.map((item) => (
-                  <tr key={item.id}>
-                    <td>{statusLabel(item.status)}</td>
-                    <td>{item.date_entrada ? new Date(item.date_entrada).toLocaleString() : '-'}</td>
-                    <td>{item.date_saida ? new Date(item.date_saida).toLocaleString() : '-'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="timeline-visits">
+              {visitas.map((visit, idx) => (
+                <div className="timeline-visit" key={`visit-${visit.id}-${idx}`}>
+                  <div className="timeline-visit__header">
+                    <div>
+                      <span className="timeline-pill">Visita {idx + 1}</span>
+                      <div className="timeline-range">
+                        <span className="timeline-range__date">
+                          {visit.inicio ? formatDateTime(visit.inicio) : 'Entrada não registrada'}
+                        </span>
+                        <span className="timeline-range__arrow">→</span>
+                        <span className="timeline-range__date">
+                          {visit.fim ? formatDateTime(visit.fim) : 'Em andamento'}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="timeline-meta">
+                      <span>{visit.items.length} status</span>
+                    </div>
+                  </div>
+
+                  <div className="timeline-rows">
+                    {visit.items.map((item, itemIdx) => (
+                      <div className="timeline-row" key={`hist-${item.id}-${itemIdx}`}>
+                        <div className="timeline-row__status">{statusLabel(item.status)}</div>
+                        <div className="timeline-row__dates">
+                          <span>Entrada: {formatDateTime(item.date_entrada)}</span>
+                          <span>Saída: {formatDateTime(item.date_saida)}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       )}

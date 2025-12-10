@@ -444,6 +444,7 @@ export default function ModalEntradaEquipamento({
         size='xl'
         footer={footer}
         bodyClassName='modal-entrada-body'
+        surfaceClassName='modal-entrada-surface'
       >
         <div className='mode-switch' role='tablist' aria-label='Modo de registro'>
           <button
@@ -714,7 +715,11 @@ export default function ModalEntradaEquipamento({
 
       <EtiquetaQRModal
         open={showEtiqueta}
-        onClose={() => setShowEtiqueta(false)}
+        onClose={() => {
+          setShowEtiqueta(false)
+          setShowNovoCliente(false)
+          closeModal()
+        }}
         data={etiquetaData}
         autoPrint={false}
       />

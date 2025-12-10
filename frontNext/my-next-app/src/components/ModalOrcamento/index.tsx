@@ -8,6 +8,7 @@ import { Produto } from '@/types/produto/produto'
 import { Funcionario } from '@/types/funcionario/funcionario'
 import Button from '@/components/buton'
 import ModalShell from '@/components/ModalShell'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 interface Props {
   orcamento: Orcamento

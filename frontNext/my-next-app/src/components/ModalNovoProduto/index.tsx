@@ -94,7 +94,7 @@ export default function ModalNovoProduto({ onClose, setProdutos }: Props) {
         </div>
         <div className="grid-col-6">
           <InputCampo
-            label="PreAo (R$)"
+            label="Preço (R$)"
             name="preco"
             type="number"
             value={form.preco}

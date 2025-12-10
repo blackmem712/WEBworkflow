@@ -1,3 +1,9 @@
+/* Modal de entrada maior para acomodar listas de busca */
+.modal-entrada-surface {
+  --modal-max-width: clamp(500px, 90vw, 1100px) !important;
+  --modal-max-height: 92vh !important;
+}
+
 .modal-entrada-body {
   display: grid;
   gap: clamp(18px, 2.5vw, 26px);
