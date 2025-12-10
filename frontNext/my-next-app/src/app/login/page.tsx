@@ -8,18 +8,18 @@ import { EyeIcon, EyeOffIcon } from '@/components/icons'
 import styles from '@/app/login/login.module.css'
 
 export default function LoginPage() {
-  const [username, setUsername]   = useState('')
-  const [password, setPassword]   = useState('')
-  const [showPass, setShowPass]   = useState(false)
-  const [loading, setLoading]     = useState(false)
-  const [error, setError]         = useState<string | null>(null)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPass, setShowPass] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const router = useRouter()
   const search = useSearchParams()
 
   // Pegamos o redirect cru da URL (?redirect=%2FOrcamentos%3Fopen%3Dnovo_orcamento%26equip%3D10)
   const redirectRaw = search.get('redirect') || search.get('next') || '/Home'
-  const startParam  = search.get('start') || '' // compatibilidade com fluxo antigo
+  const startParam = search.get('start') || '' // compatibilidade com fluxo antigo
 
   // Decodifica para virar "/Orcamentos?open=novo_orcamento&equip=10"
   let redirect = '/Home'
@@ -46,7 +46,7 @@ export default function LoginPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
-    setError(null)
+    // Não limpa o erro aqui - ele permanecerá até o login ser bem-sucedido
 
     try {
       const resp = await api.post('/auth/token/', { username, password })
@@ -58,6 +58,9 @@ export default function LoginPage() {
       // Cookie leve pro middleware (UX, não segurança)
       document.cookie = 'auth=1; path=/; max-age=604800; samesite=lax' // 7 dias
       // Em produção + HTTPS, considere: '; secure'
+
+      // Limpa o erro apenas quando o login for bem-sucedido
+      setError(null)
 
       // Apenas UMA navegação (sem push + replace)
       const destino = buildDestino()
@@ -113,46 +116,46 @@ export default function LoginPage() {
               <p className={styles.subtitle}>Acesse sua conta para continuar</p>
             </div>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <label className={styles.label}>
-            Usuário
-            <input
-              className={styles.input}
-              placeholder="seu usuário"
-              autoComplete="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </label>
+            <form onSubmit={handleSubmit} className={styles.form}>
+              <label className={styles.label}>
+                Usuário
+                <input
+                  className={styles.input}
+                  placeholder="seu usuário"
+                  autoComplete="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </label>
 
-          <label className={styles.label}>
-            Senha
-            <div className={styles.passWrap}>
-              <input
-                className={styles.input}
-                placeholder="••••••••"
-                type={showPass ? 'text' : 'password'}
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button
-                type="button"
-                className={styles.toggle}
-                onClick={() => setShowPass(v => !v)}
-                aria-label={showPass ? 'Ocultar senha' : 'Mostrar senha'}
-              >
-                {showPass ? <EyeOffIcon size={20} /> : <EyeIcon size={20} />}
+              <label className={styles.label}>
+                Senha
+                <div className={styles.passWrap}>
+                  <input
+                    className={styles.input}
+                    placeholder="••••••••"
+                    type={showPass ? 'text' : 'password'}
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className={styles.toggle}
+                    onClick={() => setShowPass(v => !v)}
+                    aria-label={showPass ? 'Ocultar senha' : 'Mostrar senha'}
+                  >
+                    {showPass ? <EyeOffIcon size={20} /> : <EyeIcon size={20} />}
+                  </button>
+                </div>
+              </label>
+
+              {error && <div className={styles.error}>{error}</div>}
+
+              <button type="submit" className={styles.submit} disabled={loading}>
+                {loading ? 'Entrando...' : 'Entrar'}
               </button>
-            </div>
-          </label>
-
-          {error && <div className={styles.error}>{error}</div>}
-
-          <button type="submit" className={styles.submit} disabled={loading}>
-            {loading ? 'Entrando...' : 'Entrar'}
-          </button>
-        </form>
+            </form>
 
             <div className={styles.tips}>
               <span>💡 Dica: use o perfil correto (TC, GE ou RC) conforme seu acesso.</span>
@@ -163,5 +166,5 @@ export default function LoginPage() {
     </div>
   )
 }
- 
+
 

@@ -8,6 +8,7 @@ import Button from '@/components/buton'
 import ModalShell from '@/components/ModalShell'
 import ModalNovoCliente from '@/components/ModalNovoCliente'
 import EtiquetaQRModal, { EtiquetaData } from '@/app/(protected)/Equipamentos/[id]/etiqueta/etiquetaQRModal'
+import ConfirmDialog from '@/components/ConfirmDialog'
 import '@/styles/components/modalEquipamento.css'
 
 interface Props {
@@ -27,6 +28,7 @@ type EquipamentoCreate = {
 }
 
 export default function ModalNovoEquipamento({ onClose, setEquipamentos, clientes, setClientes }: Props) {
+  const [showConfirm, setShowConfirm] = useState(false)
   const [form, setForm] = useState<Omit<EquipamentoCreate, 'cliente'>>({
     equipamento: '',
     marca: '',
@@ -185,7 +187,7 @@ export default function ModalNovoEquipamento({ onClose, setEquipamentos, cliente
             <Button type="button" variant="danger" onClick={onClose}>
               Cancelar
             </Button>
-            <Button type="button" onClick={handleSalvar}>
+            <Button type="button" onClick={() => setShowConfirm(true)}>
               Salvar e imprimir QR
             </Button>
           </>
@@ -289,6 +291,20 @@ export default function ModalNovoEquipamento({ onClose, setEquipamentos, cliente
           onCreated={handleClienteCriado}
         />
       )}
+
+      <ConfirmDialog
+        open={showConfirm}
+        title="Confirmar cadastro"
+        message="Tem certeza que deseja cadastrar este novo equipamento?"
+        confirmText="Salvar"
+        cancelText="Cancelar"
+        variant="info"
+        onConfirm={() => {
+          setShowConfirm(false)
+          handleSalvar()
+        }}
+        onCancel={() => setShowConfirm(false)}
+      />
     </>
   )
 }

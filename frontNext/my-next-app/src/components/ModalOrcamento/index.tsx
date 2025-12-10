@@ -43,6 +43,7 @@ export default function ModalOrcamento({
     produto: orcamento.produto ?? [],
     cargo_funcionario: orcamento.cargo_funcionario ?? null,
   })
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -79,6 +80,7 @@ export default function ModalOrcamento({
       })
       .then((updated: Orcamento) => {
         setOrcamentos((prev) => prev.map((orc) => (orc.id === updated.id ? updated : orc)))
+        setShowConfirm(false)
         onClose()
       })
       .catch(console.error)
@@ -94,7 +96,7 @@ export default function ModalOrcamento({
           <Button type="button" variant="danger" onClick={onClose}>
             Cancelar
           </Button>
-          <Button type="button" onClick={handleSalvar}>
+          <Button type="button" onClick={() => setShowConfirm(true)}>
             Salvar
           </Button>
         </>
@@ -176,6 +178,17 @@ export default function ModalOrcamento({
           </select>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={showConfirm}
+        title="Confirmar alterações"
+        message="Tem certeza que deseja salvar as alterações neste orçamento?"
+        confirmText="Salvar"
+        cancelText="Cancelar"
+        variant="info"
+        onConfirm={handleSalvar}
+        onCancel={() => setShowConfirm(false)}
+      />
     </ModalShell>
   )
 }

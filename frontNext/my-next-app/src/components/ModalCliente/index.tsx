@@ -5,6 +5,7 @@ import { Cliente } from '@/types/cliente/cliente'
 import InputCampo from '@/components/InputCampo'
 import Button from '@/components/buton'
 import ModalShell from '@/components/ModalShell'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 interface Props {
   cliente: Cliente
@@ -14,6 +15,7 @@ interface Props {
 
 export default function ModalCliente({ cliente, onClose, setClientes }: Props) {
   const [form, setForm] = useState({ ...cliente })
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
@@ -29,6 +31,7 @@ export default function ModalCliente({ cliente, onClose, setClientes }: Props) {
       .then((response) => {
         if (!response.ok) throw new Error('Erro no PATCH')
         setClientes((prev) => prev.map((c) => (c.id === cliente.id ? { ...c, ...form } : c)))
+        setShowConfirm(false)
         onClose()
       })
       .catch((error) => console.error('Erro ao salvar:', error))
@@ -44,7 +47,7 @@ export default function ModalCliente({ cliente, onClose, setClientes }: Props) {
           <Button type="button" variant="danger" onClick={onClose}>
             Cancelar
           </Button>
-          <Button type="button" onClick={handleSalvar}>
+          <Button type="button" onClick={() => setShowConfirm(true)}>
             Salvar
           </Button>
         </>
@@ -142,6 +145,17 @@ export default function ModalCliente({ cliente, onClose, setClientes }: Props) {
           />
         </div>
       </div>
+
+      <ConfirmDialog
+        open={showConfirm}
+        title="Confirmar alterações"
+        message="Tem certeza que deseja salvar as alterações neste cliente?"
+        confirmText="Salvar"
+        cancelText="Cancelar"
+        variant="info"
+        onConfirm={handleSalvar}
+        onCancel={() => setShowConfirm(false)}
+      />
     </ModalShell>
   )
 }

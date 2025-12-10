@@ -7,6 +7,7 @@ import InputCampo from '@/components/InputCampo'
 import Button from '@/components/buton'
 import ModalShell from '@/components/ModalShell'
 import ModalNovoCliente from '@/components/ModalNovoCliente'
+import ConfirmDialog from '@/components/ConfirmDialog'
 import '@/styles/components/modalEquipamento.css'
 
 interface Props {
@@ -30,6 +31,7 @@ export default function ModalEquipamento({
   const [search, setSearch] = useState(initialCliente?.nome ?? '')
   const [showSug, setShowSug] = useState(false)
   const [showCliente, setShowCliente] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
   const suggestionsRef = useRef<HTMLUListElement>(null)
   const searchWrapperRef = useRef<HTMLDivElement>(null)
 
@@ -71,6 +73,7 @@ export default function ModalEquipamento({
       })
       .then((updated: Equipamento) => {
         setEquipamentos((prev) => prev.map((eq) => (eq.id === updated.id ? updated : eq)))
+        setShowConfirm(false)
         onClose()
       })
       .catch(console.error)
@@ -89,7 +92,7 @@ export default function ModalEquipamento({
             <Button type='button' variant='danger' onClick={onClose}>
               Cancelar
             </Button>
-            <Button type='button' onClick={handleSalvar}>
+            <Button type='button' onClick={() => setShowConfirm(true)}>
               Salvar
             </Button>
           </>
@@ -186,6 +189,17 @@ export default function ModalEquipamento({
           onCreated={handleClienteCriado}
         />
       )}
+
+      <ConfirmDialog
+        open={showConfirm}
+        title="Confirmar alterações"
+        message="Tem certeza que deseja salvar as alterações neste equipamento?"
+        confirmText="Salvar"
+        cancelText="Cancelar"
+        variant="info"
+        onConfirm={handleSalvar}
+        onCancel={() => setShowConfirm(false)}
+      />
     </>
   )
 }

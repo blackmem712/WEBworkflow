@@ -4,6 +4,7 @@ import { useState } from 'react'
 import InputCampo from '@/components/InputCampo'
 import Button from '@/components/buton'
 import ModalShell from '@/components/ModalShell'
+import ConfirmDialog from '@/components/ConfirmDialog'
 import { Cliente } from '@/types/cliente/cliente'
 
 interface Props {
@@ -29,6 +30,7 @@ const initialForm: ClienteCreate = {
 
 export default function ModalNovoCliente({ onClose, setClientes, onCreated }: Props) {
   const [form, setForm] = useState<ClienteCreate>(initialForm)
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
@@ -52,6 +54,7 @@ export default function ModalNovoCliente({ onClose, setClientes, onCreated }: Pr
       .then((novo: Cliente) => {
         setClientes((prev) => [...prev, novo])
         onCreated?.(novo)
+        setShowConfirm(false)
         onClose()
         setForm(initialForm)
       })
@@ -68,7 +71,7 @@ export default function ModalNovoCliente({ onClose, setClientes, onCreated }: Pr
           <Button type="button" variant="danger" onClick={onClose}>
             Cancelar
           </Button>
-          <Button type="button" onClick={handleSalvar}>
+          <Button type="button" onClick={() => setShowConfirm(true)}>
             Salvar
           </Button>
         </>
@@ -166,6 +169,17 @@ export default function ModalNovoCliente({ onClose, setClientes, onCreated }: Pr
           />
         </div>
       </div>
+
+      <ConfirmDialog
+        open={showConfirm}
+        title="Confirmar cadastro"
+        message="Tem certeza que deseja cadastrar este novo cliente?"
+        confirmText="Salvar"
+        cancelText="Cancelar"
+        variant="info"
+        onConfirm={handleSalvar}
+        onCancel={() => setShowConfirm(false)}
+      />
     </ModalShell>
   )
 }

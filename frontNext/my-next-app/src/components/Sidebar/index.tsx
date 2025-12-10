@@ -1,10 +1,11 @@
 ﻿'use client'
 
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { clearTokens } from '@/services/api'
+import ConfirmDialog from '@/components/ConfirmDialog'
 import {
   BudgetIcon,
   ClientsIcon,
@@ -33,13 +34,14 @@ const items: Item[] = [
 export default function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
   function isActive(href: string) {
     // marca ativo na rota exata (ajuste para startsWith se quiser marcar pais)
     return pathname === href
   }
 
-  function logout() {
+  function handleLogout() {
     // remove presença de sessão (middleware) + tokens (axios)
     document.cookie = 'auth=; path=/; max-age=0'
     clearTokens()
@@ -89,7 +91,7 @@ export default function Sidebar() {
 
         <button
           type="button"
-          onClick={logout}
+          onClick={() => setShowLogoutConfirm(true)}
           className="nav-item logout"
           style={{
             textAlign: 'left',
@@ -107,6 +109,17 @@ export default function Sidebar() {
           <span className="nav-label">Sair</span>
         </button>
       </nav>
+
+      <ConfirmDialog
+        open={showLogoutConfirm}
+        title="Confirmar saída"
+        message="Tem certeza que deseja sair do sistema?"
+        confirmText="Sair"
+        cancelText="Cancelar"
+        variant="warning"
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutConfirm(false)}
+      />
     </>
   )
 }

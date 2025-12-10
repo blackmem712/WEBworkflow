@@ -39,7 +39,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var react_1 = require("react");
 var navigation_1 = require("next/navigation");
+var image_1 = require("next/image");
 var api_1 = require("@/services/api");
+var icons_1 = require("@/components/icons");
 var login_module_css_1 = require("@/app/login/login.module.css");
 function LoginPage() {
     var _a = react_1.useState(''), username = _a[0], setUsername = _a[1];
@@ -49,17 +51,38 @@ function LoginPage() {
     var _e = react_1.useState(null), error = _e[0], setError = _e[1];
     var router = navigation_1.useRouter();
     var search = navigation_1.useSearchParams();
-    var next = search.get('next');
+    // Pegamos o redirect cru da URL (?redirect=%2FOrcamentos%3Fopen%3Dnovo_orcamento%26equip%3D10)
+    var redirectRaw = search.get('redirect') || search.get('next') || '/Home';
+    var startParam = search.get('start') || ''; // compatibilidade com fluxo antigo
+    // Decodifica para virar "/Orcamentos?open=novo_orcamento&equip=10"
+    var redirect = '/Home';
+    try {
+        redirect = decodeURIComponent(redirectRaw);
+    }
+    catch (_f) {
+        redirect = redirectRaw || '/Home';
+    }
+    // Sanitiza: precisa começar com "/"
+    if (!redirect.startsWith('/')) {
+        redirect = '/Home';
+    }
+    // Monta destino final, preservando 'start' se vier do fluxo antigo
+    var buildDestino = function () {
+        if (startParam) {
+            var sep = redirect.includes('?') ? '&' : '?';
+            return "" + redirect + sep + "start=" + encodeURIComponent(startParam);
+        }
+        return redirect;
+    };
     function handleSubmit(e) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var resp, _c, access, refresh, err_1;
+            var resp, _c, access, refresh, destino, err_1;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
                         e.preventDefault();
                         setLoading(true);
-                        setError(null);
                         _d.label = 1;
                     case 1:
                         _d.trys.push([1, 3, 4, 5]);
@@ -67,10 +90,15 @@ function LoginPage() {
                     case 2:
                         resp = _d.sent();
                         _c = resp.data, access = _c.access, refresh = _c.refresh;
+                        // Salva tokens (ex.: localStorage + axios headers)
                         api_1.setTokens(access, refresh);
-                        // cookie leve para o middleware decidir (não é segurança, é UX)
+                        // Cookie leve pro middleware (UX, não segurança)
                         document.cookie = 'auth=1; path=/; max-age=604800; samesite=lax'; // 7 dias
-                        router.push(next && next.startsWith('/') ? next : '/');
+                        // Em produção + HTTPS, considere: '; secure'
+                        // Limpa o erro apenas quando o login for bem-sucedido
+                        setError(null);
+                        destino = buildDestino();
+                        router.replace(destino);
                         return [3 /*break*/, 5];
                     case 3:
                         err_1 = _d.sent();
@@ -85,23 +113,40 @@ function LoginPage() {
         });
     }
     return (React.createElement("div", { className: login_module_css_1["default"].page },
-        React.createElement("div", { className: login_module_css_1["default"].card },
-            React.createElement("div", { className: login_module_css_1["default"].brand },
-                React.createElement("div", { className: login_module_css_1["default"].logo }),
-                React.createElement("h1", null, "Entrar"),
-                React.createElement("p", { className: login_module_css_1["default"].sub }, "Acesse sua conta para continuar")),
-            React.createElement("form", { onSubmit: handleSubmit, className: login_module_css_1["default"].form },
-                React.createElement("label", { className: login_module_css_1["default"].label },
-                    "Usu\u00E1rio",
-                    React.createElement("input", { className: login_module_css_1["default"].input, placeholder: "seu usu\u00E1rio", autoComplete: "username", value: username, onChange: function (e) { return setUsername(e.target.value); } })),
-                React.createElement("label", { className: login_module_css_1["default"].label },
-                    "Senha",
-                    React.createElement("div", { className: login_module_css_1["default"].passWrap },
-                        React.createElement("input", { className: login_module_css_1["default"].input, placeholder: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022", type: showPass ? 'text' : 'password', autoComplete: "current-password", value: password, onChange: function (e) { return setPassword(e.target.value); } }),
-                        React.createElement("button", { type: "button", className: login_module_css_1["default"].toggle, onClick: function () { return setShowPass(function (v) { return !v; }); }, "aria-label": showPass ? 'Ocultar senha' : 'Mostrar senha' }, showPass ? 'Ocultar' : 'Mostrar'))),
-                error && React.createElement("div", { className: login_module_css_1["default"].error }, error),
-                React.createElement("button", { type: "submit", className: login_module_css_1["default"].submit, disabled: loading }, loading ? 'Entrando…' : 'Entrar')),
-            React.createElement("div", { className: login_module_css_1["default"].tips },
-                React.createElement("span", null, "Dica: use o usu\u00E1rio/grupo correto (TC, GE ou RC) conforme seu perfil.")))));
+        React.createElement("div", { className: login_module_css_1["default"].container },
+            React.createElement("div", { className: login_module_css_1["default"].leftPanel },
+                React.createElement("div", { className: login_module_css_1["default"].brandSection },
+                    React.createElement("div", { className: login_module_css_1["default"].logoWrapper },
+                        React.createElement(image_1["default"], { src: "/images/sgee-logo.png", alt: "SGEE - Sistema de Gest\u00E3o", width: 280, height: 90, priority: true, className: login_module_css_1["default"].logo })),
+                    React.createElement("h2", { className: login_module_css_1["default"].welcomeTitle }, "Bem-vindo de volta"),
+                    React.createElement("p", { className: login_module_css_1["default"].welcomeSubtitle }, "Sistema de Gest\u00E3o de Equipamentos e Or\u00E7amentos"),
+                    React.createElement("div", { className: login_module_css_1["default"].features },
+                        React.createElement("div", { className: login_module_css_1["default"].feature },
+                            React.createElement("div", { className: login_module_css_1["default"].featureIcon }, "\u2713"),
+                            React.createElement("span", null, "Gest\u00E3o completa de equipamentos")),
+                        React.createElement("div", { className: login_module_css_1["default"].feature },
+                            React.createElement("div", { className: login_module_css_1["default"].featureIcon }, "\u2713"),
+                            React.createElement("span", null, "Controle de or\u00E7amentos e servi\u00E7os")),
+                        React.createElement("div", { className: login_module_css_1["default"].feature },
+                            React.createElement("div", { className: login_module_css_1["default"].featureIcon }, "\u2713"),
+                            React.createElement("span", null, "Rastreamento em tempo real"))))),
+            React.createElement("div", { className: login_module_css_1["default"].rightPanel },
+                React.createElement("div", { className: login_module_css_1["default"].card },
+                    React.createElement("div", { className: login_module_css_1["default"].cardHeader },
+                        React.createElement("h1", null, "Entrar"),
+                        React.createElement("p", { className: login_module_css_1["default"].subtitle }, "Acesse sua conta para continuar")),
+                    React.createElement("form", { onSubmit: handleSubmit, className: login_module_css_1["default"].form },
+                        React.createElement("label", { className: login_module_css_1["default"].label },
+                            "Usu\u00E1rio",
+                            React.createElement("input", { className: login_module_css_1["default"].input, placeholder: "seu usu\u00E1rio", autoComplete: "username", value: username, onChange: function (e) { return setUsername(e.target.value); } })),
+                        React.createElement("label", { className: login_module_css_1["default"].label },
+                            "Senha",
+                            React.createElement("div", { className: login_module_css_1["default"].passWrap },
+                                React.createElement("input", { className: login_module_css_1["default"].input, placeholder: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022", type: showPass ? 'text' : 'password', autoComplete: "current-password", value: password, onChange: function (e) { return setPassword(e.target.value); } }),
+                                React.createElement("button", { type: "button", className: login_module_css_1["default"].toggle, onClick: function () { return setShowPass(function (v) { return !v; }); }, "aria-label": showPass ? 'Ocultar senha' : 'Mostrar senha' }, showPass ? React.createElement(icons_1.EyeOffIcon, { size: 20 }) : React.createElement(icons_1.EyeIcon, { size: 20 })))),
+                        error && React.createElement("div", { className: login_module_css_1["default"].error }, error),
+                        React.createElement("button", { type: "submit", className: login_module_css_1["default"].submit, disabled: loading }, loading ? 'Entrando...' : 'Entrar')),
+                    React.createElement("div", { className: login_module_css_1["default"].tips },
+                        React.createElement("span", null, "\uD83D\uDCA1 Dica: use o perfil correto (TC, GE ou RC) conforme seu acesso.")))))));
 }
 exports["default"] = LoginPage;

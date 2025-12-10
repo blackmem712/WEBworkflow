@@ -10,6 +10,7 @@ import { Produto } from '@/types/produto/produto'
 import { Funcionario } from '@/types/funcionario/funcionario'
 import Button from '@/components/buton'
 import ModalShell from '@/components/ModalShell'
+import ConfirmDialog from '@/components/ConfirmDialog'
 import '@/styles/components/modalOrcamento.css'
 
 interface Props {
@@ -69,6 +70,7 @@ export default function ModalNovoOrcamento({
   const [respId, setRespId] = useState<number | null>(null)
   const [services, setServices] = useState<number[]>([])
   const [productsState, setProductsState] = useState<number[]>([])
+  const [showConfirm, setShowConfirm] = useState(false)
 
   useEffect(() => {
     if (initialEquip) {
@@ -143,6 +145,7 @@ export default function ModalNovoOrcamento({
 
         alert('Orcamento criado com sucesso!')
         resetForm()
+        setShowConfirm(false)
         onClose()
       })
       .catch((error) => {
@@ -171,7 +174,7 @@ export default function ModalNovoOrcamento({
           <Button type="button" variant="danger" onClick={onClose}>
             Cancelar
           </Button>
-          <Button type="button" onClick={handleSalvar}>
+          <Button type="button" onClick={() => setShowConfirm(true)}>
             Salvar
           </Button>
         </>
@@ -330,6 +333,17 @@ export default function ModalNovoOrcamento({
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog
+        open={showConfirm}
+        title="Confirmar cadastro"
+        message="Tem certeza que deseja cadastrar este novo orçamento?"
+        confirmText="Salvar"
+        cancelText="Cancelar"
+        variant="info"
+        onConfirm={handleSalvar}
+        onCancel={() => setShowConfirm(false)}
+      />
     </ModalShell>
   )
 }

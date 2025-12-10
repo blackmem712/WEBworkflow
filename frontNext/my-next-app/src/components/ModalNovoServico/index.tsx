@@ -5,6 +5,7 @@ import { Servico } from '@/types/servico/servico'
 import InputCampo from '@/components/InputCampo'
 import Button from '@/components/buton'
 import ModalShell from '@/components/ModalShell'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 interface Props {
   onClose: () => void
@@ -19,6 +20,7 @@ export default function ModalNovoServico({ onClose, setServicos }: Props) {
     valor: 0,
     descricao: '',
   })
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target
@@ -40,6 +42,7 @@ export default function ModalNovoServico({ onClose, setServicos }: Props) {
       })
       .then((novo: Servico) => {
         setServicos((prev) => [...prev, novo])
+        setShowConfirm(false)
         onClose()
       })
       .catch(console.error)
@@ -55,7 +58,7 @@ export default function ModalNovoServico({ onClose, setServicos }: Props) {
           <Button type="button" variant="danger" onClick={onClose}>
             Cancelar
           </Button>
-          <Button type="button" onClick={handleSalvar}>
+          <Button type="button" onClick={() => setShowConfirm(true)}>
             Salvar
           </Button>
         </>
@@ -90,6 +93,17 @@ export default function ModalNovoServico({ onClose, setServicos }: Props) {
           />
         </div>
       </div>
+
+      <ConfirmDialog
+        open={showConfirm}
+        title="Confirmar cadastro"
+        message="Tem certeza que deseja cadastrar este novo serviço?"
+        confirmText="Salvar"
+        cancelText="Cancelar"
+        variant="info"
+        onConfirm={handleSalvar}
+        onCancel={() => setShowConfirm(false)}
+      />
     </ModalShell>
   )
 }

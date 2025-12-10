@@ -7,6 +7,7 @@ import { Produto } from '@/types/produto/produto'
 import InputCampo from '@/components/InputCampo'
 import Button from '@/components/buton'
 import ModalShell from '@/components/ModalShell'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 interface Props {
   produtos: Produto[]
@@ -22,6 +23,7 @@ export default function ModalNovoFornecedor({ produtos, onClose, setFornecedores
     descricao: '',
     produtos: [],
   })
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -51,6 +53,7 @@ export default function ModalNovoFornecedor({ produtos, onClose, setFornecedores
       })
       .then((novo: Fornecedor) => {
         setFornecedores((prev) => [...prev, novo])
+        setShowConfirm(false)
         onClose()
       })
       .catch(console.error)
@@ -66,7 +69,7 @@ export default function ModalNovoFornecedor({ produtos, onClose, setFornecedores
           <Button type="button" variant="danger" onClick={onClose}>
             Cancelar
           </Button>
-          <Button type="button" onClick={handleSalvar}>
+          <Button type="button" onClick={() => setShowConfirm(true)}>
             Salvar
           </Button>
         </>
@@ -124,6 +127,17 @@ export default function ModalNovoFornecedor({ produtos, onClose, setFornecedores
           </select>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={showConfirm}
+        title="Confirmar cadastro"
+        message="Tem certeza que deseja cadastrar este novo fornecedor?"
+        confirmText="Salvar"
+        cancelText="Cancelar"
+        variant="info"
+        onConfirm={handleSalvar}
+        onCancel={() => setShowConfirm(false)}
+      />
     </ModalShell>
   )
 }

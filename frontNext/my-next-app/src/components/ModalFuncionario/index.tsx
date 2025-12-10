@@ -6,6 +6,7 @@ import { Funcionario, Cargo, Setor } from '@/types/funcionario/funcionario'
 import InputCampo from '@/components/InputCampo'
 import Button from '@/components/buton'
 import ModalShell from '@/components/ModalShell'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 interface ModalFuncionarioProps {
   funcionario: Funcionario
@@ -53,6 +54,7 @@ export default function ModalFuncionario({
     cargo: cargo_funcionario?.cargo ? Number(cargo_funcionario.cargo) : null,
     setor: cargo_funcionario?.setor ? Number(cargo_funcionario.setor) : null,
   })
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target
@@ -78,6 +80,7 @@ export default function ModalFuncionario({
       })
       .then((updated: Funcionario) => {
         setFuncionarios((prev) => prev.map((f) => (f.id === updated.id ? updated : f)))
+        setShowConfirm(false)
         onClose()
       })
       .catch(console.error)
@@ -93,7 +96,7 @@ export default function ModalFuncionario({
           <Button type="button" variant="danger" onClick={onClose}>
             Cancelar
           </Button>
-          <Button type="button" onClick={handleSalvar}>
+          <Button type="button" onClick={() => setShowConfirm(true)}>
             Salvar
           </Button>
         </>
@@ -224,6 +227,17 @@ export default function ModalFuncionario({
           </select>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={showConfirm}
+        title="Confirmar alterações"
+        message="Tem certeza que deseja salvar as alterações neste funcionário?"
+        confirmText="Salvar"
+        cancelText="Cancelar"
+        variant="info"
+        onConfirm={handleSalvar}
+        onCancel={() => setShowConfirm(false)}
+      />
     </ModalShell>
   )
 }

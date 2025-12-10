@@ -11,6 +11,7 @@ import { Produto } from '@/types/produto/produto'
 import { Funcionario } from '@/types/funcionario/funcionario'
 import Button from '@/components/buton'
 import ModalShell from '@/components/ModalShell'
+import ConfirmDialog from '@/components/ConfirmDialog'
 import '@/styles/components/modalVisualizarOrcamento.css'
 import '@/styles/components/modalOrcamento.css'
 
@@ -53,6 +54,7 @@ export default function ModalEntrega({
   const [loading, setLoading] = useState(false)
   const [histLoading, setHistLoading] = useState(mode === 'report')
   const [historico, setHistorico] = useState<HistoricoItem[]>([])
+  const [showConfirm, setShowConfirm] = useState(false)
 
   useEffect(() => {
     if (mode !== 'report') return
@@ -96,6 +98,7 @@ export default function ModalEntrega({
         )
       }
       onAfterSetSaida?.(equipamento.id)
+      setShowConfirm(false)
       onClose()
     } catch (error: any) {
       console.error(error)
@@ -128,7 +131,7 @@ export default function ModalEntrega({
   const footer = (
     <>
       {mode === 'delivery' && (
-        <Button type="button" variant="success" onClick={handleConfirmSaida} disabled={loading}>
+        <Button type="button" variant="success" onClick={() => setShowConfirm(true)} disabled={loading}>
           {loading ? 'Registrando...' : 'Confirmar Saida'}
         </Button>
       )}
@@ -232,6 +235,19 @@ export default function ModalEntrega({
             </table>
           )}
         </div>
+      )}
+
+      {mode === 'delivery' && (
+        <ConfirmDialog
+          open={showConfirm}
+          title="Confirmar saída"
+          message="Tem certeza que deseja confirmar a saída deste equipamento?"
+          confirmText="Confirmar"
+          cancelText="Cancelar"
+          variant="warning"
+          onConfirm={handleConfirmSaida}
+          onCancel={() => setShowConfirm(false)}
+        />
       )}
     </ModalShell>
   )

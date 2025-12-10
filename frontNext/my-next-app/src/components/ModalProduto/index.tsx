@@ -6,6 +6,7 @@ import { Produto } from '@/types/produto/produto'
 import InputCampo from '@/components/InputCampo'
 import Button from '@/components/buton'
 import ModalShell from '@/components/ModalShell'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 interface Props {
   produto: Produto
@@ -29,6 +30,7 @@ export default function ModalProduto({ produto, onClose, setProdutos }: Props) {
     preco: produto.preco,
     descricao: produto.descricao,
   })
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target
@@ -50,6 +52,7 @@ export default function ModalProduto({ produto, onClose, setProdutos }: Props) {
       })
       .then((updated: Produto) => {
         setProdutos((prev) => prev.map((p) => (p.id === updated.id ? updated : p)))
+        setShowConfirm(false)
         onClose()
       })
       .catch(console.error)
@@ -65,7 +68,7 @@ export default function ModalProduto({ produto, onClose, setProdutos }: Props) {
           <Button type="button" variant="danger" onClick={onClose}>
             Cancelar
           </Button>
-          <Button type="button" onClick={handleSalvar}>
+          <Button type="button" onClick={() => setShowConfirm(true)}>
             Salvar
           </Button>
         </>
@@ -116,6 +119,17 @@ export default function ModalProduto({ produto, onClose, setProdutos }: Props) {
           />
         </div>
       </div>
+
+      <ConfirmDialog
+        open={showConfirm}
+        title="Confirmar alterações"
+        message="Tem certeza que deseja salvar as alterações neste produto?"
+        confirmText="Salvar"
+        cancelText="Cancelar"
+        variant="info"
+        onConfirm={handleSalvar}
+        onCancel={() => setShowConfirm(false)}
+      />
     </ModalShell>
   )
 }

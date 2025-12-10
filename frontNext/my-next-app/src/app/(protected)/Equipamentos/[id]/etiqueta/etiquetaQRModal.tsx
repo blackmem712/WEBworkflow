@@ -1,7 +1,7 @@
 ﻿'use client'
 import { useEffect, useMemo } from 'react'
 import QRCode from 'react-qr-code'
-import css from './EtiquetaQRModal.module.css'
+import css from './etiquetaQRModal.module.css'
 
 export type EtiquetaData = {
   id: number

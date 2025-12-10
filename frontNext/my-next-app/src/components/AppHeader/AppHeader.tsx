@@ -1,12 +1,16 @@
 ﻿'use client'
 
+import { useState } from 'react'
 import NavLink from '@/components/NavLink/NavLink'
 import { clearTokens } from '@/services/api'
 import { useRouter } from 'next/navigation'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 export default function AppHeader() {
   const router = useRouter()
-  function logout() {
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
+
+  function handleLogout() {
     clearTokens()
     router.push('/login')
   }
@@ -38,10 +42,21 @@ export default function AppHeader() {
       </nav>
 
       <div style={{ marginLeft: 'auto' }}>
-        <button onClick={logout} style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #e5e7eb' }}>
+        <button onClick={() => setShowLogoutConfirm(true)} style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #e5e7eb' }}>
           Sair
         </button>
       </div>
+
+      <ConfirmDialog
+        open={showLogoutConfirm}
+        title="Confirmar saída"
+        message="Tem certeza que deseja sair do sistema?"
+        confirmText="Sair"
+        cancelText="Cancelar"
+        variant="warning"
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutConfirm(false)}
+      />
     </header>
   )
 }

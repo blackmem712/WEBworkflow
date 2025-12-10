@@ -8,6 +8,7 @@ import ModalShell from '@/components/ModalShell'
 import ModalNovoCliente from '@/components/ModalNovoCliente'
 import InputCampo from '@/components/InputCampo'
 import Button from '@/components/buton'
+import ConfirmDialog from '@/components/ConfirmDialog'
 import EtiquetaQRModal, { EtiquetaData } from '@/app/(protected)/Equipamentos/[id]/etiqueta/etiquetaQRModal'
 import { STATUS_LIST, StatusCode } from '@/constants/status'
 import '@/styles/components/modalEntrada.css'
@@ -72,6 +73,8 @@ export default function ModalEntradaEquipamento({
 
   const [isSubmittingExisting, setSubmittingExisting] = useState(false)
   const [isSubmittingNew, setSubmittingNew] = useState(false)
+  const [showConfirmExisting, setShowConfirmExisting] = useState(false)
+  const [showConfirmNew, setShowConfirmNew] = useState(false)
 
   const clienteMap = useMemo(() => {
     const map = new Map<number, Cliente>()
@@ -416,7 +419,7 @@ export default function ModalEntradaEquipamento({
       {mode === 'existing' ? (
         <Button
           type='button'
-          onClick={submitExisting}
+          onClick={() => setShowConfirmExisting(true)}
           disabled={isSubmittingExisting || !selectedEquipId}
         >
           {isSubmittingExisting ? 'Registrando...' : 'Registrar entrada'}
@@ -424,7 +427,7 @@ export default function ModalEntradaEquipamento({
       ) : (
         <Button
           type='button'
-          onClick={submitNew}
+          onClick={() => setShowConfirmNew(true)}
           disabled={isSubmittingNew}
         >
           {isSubmittingNew ? 'Salvando...' : 'Salvar e imprimir QR'}
@@ -723,6 +726,34 @@ export default function ModalEntradaEquipamento({
           onCreated={handleClienteCreated}
         />
       )}
+
+      <ConfirmDialog
+        open={showConfirmExisting}
+        title="Confirmar entrada"
+        message="Tem certeza que deseja registrar a entrada deste equipamento?"
+        confirmText="Registrar"
+        cancelText="Cancelar"
+        variant="info"
+        onConfirm={() => {
+          setShowConfirmExisting(false)
+          submitExisting()
+        }}
+        onCancel={() => setShowConfirmExisting(false)}
+      />
+
+      <ConfirmDialog
+        open={showConfirmNew}
+        title="Confirmar cadastro"
+        message="Tem certeza que deseja cadastrar este novo equipamento e imprimir o QR code?"
+        confirmText="Salvar"
+        cancelText="Cancelar"
+        variant="info"
+        onConfirm={() => {
+          setShowConfirmNew(false)
+          submitNew()
+        }}
+        onCancel={() => setShowConfirmNew(false)}
+      />
     </>
   )
 }
