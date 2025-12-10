@@ -54,16 +54,16 @@ export default function Sidebar() {
         <Image
           src="/images/sgee-logomark.png"
           alt="SGEE"
-          width={44}
-          height={44}
+          width={36}
+          height={36}
           className="sidebar-logo sidebar-logo--compact"
           priority
         />
         <Image
           src="/images/sgee-logo.png"
           alt="SGEE"
-          width={220}
-          height={70}
+          width={160}
+          height={52}
           className="sidebar-logo sidebar-logo--expanded"
           priority
         />

@@ -7,6 +7,7 @@
   background: linear-gradient(135deg, #0b1a3a 0%, #0f2a6e 50%, #1d4ed8 100%);
   position: relative;
   overflow: hidden;
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
 }
 
 .page::before {
@@ -68,7 +69,7 @@
   margin: 0 0 16px 0;
   color: #ffffff;
   line-height: 1.2;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.6px;
 }
 
 .welcomeSubtitle {
@@ -150,7 +151,7 @@
   font-weight: 700;
   color: #0f172a;
   margin: 0 0 8px 0;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.6px;
 }
 
 .subtitle {

@@ -1,6 +1,6 @@
 ﻿'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { api, setTokens } from '@/services/api'
@@ -13,6 +13,7 @@ export default function LoginPage() {
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const ERROR_STORAGE_KEY = 'loginErrorMessage'
 
   const router = useRouter()
   const search = useSearchParams()
@@ -43,8 +44,17 @@ export default function LoginPage() {
     return redirect
   }
 
+  // Carrega último erro persistido (caso a página recarregue após falha)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const stored = sessionStorage.getItem(ERROR_STORAGE_KEY)
+    if (stored) setError(stored)
+  }, [])
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    e.stopPropagation()
+    if (loading) return
     setLoading(true)
     // Não limpa o erro aqui - ele permanecerá até o login ser bem-sucedido
 
@@ -61,13 +71,16 @@ export default function LoginPage() {
 
       // Limpa o erro apenas quando o login for bem-sucedido
       setError(null)
+      if (typeof window !== 'undefined') sessionStorage.removeItem(ERROR_STORAGE_KEY)
 
       // Apenas UMA navegação (sem push + replace)
       const destino = buildDestino()
       router.replace(destino)
       // Se preferir reload completo: window.location.replace(destino)
     } catch (err: any) {
-      setError(err?.response?.data?.detail || 'Usuário ou senha inválidos')
+      const msg = err?.response?.data?.detail || 'Usuário ou senha inválidos'
+      setError(msg)
+      if (typeof window !== 'undefined') sessionStorage.setItem(ERROR_STORAGE_KEY, msg)
     } finally {
       setLoading(false)
     }
@@ -157,9 +170,6 @@ export default function LoginPage() {
               </button>
             </form>
 
-            <div className={styles.tips}>
-              <span>💡 Dica: use o perfil correto (TC, GE ou RC) conforme seu acesso.</span>
-            </div>
           </div>
         </div>
       </div>

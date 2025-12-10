@@ -92,6 +92,7 @@ input:focus, textarea:focus, select:focus {
   display: block;
   max-width: 100%;
   height: auto;
+  max-height: 52px;
   pointer-events: none;
   user-select: none;
   transition: transform 0.25s ease, opacity 0.25s ease;
@@ -99,6 +100,7 @@ input:focus, textarea:focus, select:focus {
 
 .sidebar-logo--expanded {
   display: none;
+  max-width: 160px;
 }
 
 .sidebar-hover:hover .sidebar-logo--expanded {
